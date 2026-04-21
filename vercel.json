@@ -1,0 +1,14 @@
+{
+  "redirects": [
+    {
+      "source": "/double-lengeds-pack-review",
+      "destination": "/double-legends-pack-review.html",
+      "permanent": true
+    },
+    {
+      "source": "/double-legends-pack-review",
+      "destination": "/double-legends-pack-review.html",
+      "permanent": true
+    }
+  ]
+}
