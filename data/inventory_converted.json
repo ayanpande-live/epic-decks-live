@@ -1,0 +1,41 @@
+{
+  "generated_items": 12,
+  "all_items": [
+    {
+      "Epic Decks Inventory System": ""
+    },
+    {
+      "Epic Decks Inventory System": "How to use"
+    },
+    {
+      "Epic Decks Inventory System": "1. Add every slab, single, or sealed product as one row in Inventory_Master."
+    },
+    {
+      "Epic Decks Inventory System": "2. Keep SKU unique. Suggested format: ED-SLAB-0001, ED-SINGLE-0001, ED-SEALED-0001."
+    },
+    {
+      "Epic Decks Inventory System": "3. Update Whatnot fields when an item is listed: whatnot_store, whatnot_listing_url, listing_status."
+    },
+    {
+      "Epic Decks Inventory System": "4. Set featured_on_site to Yes for items you want shown on the homepage."
+    },
+    {
+      "Epic Decks Inventory System": "5. Run inventory_to_json.py whenever you want to export website-ready JSON."
+    },
+    {
+      "Epic Decks Inventory System": "6. Upload the exported JSON file to your site folder later when we wire the homepage."
+    },
+    {
+      "Epic Decks Inventory System": ""
+    },
+    {
+      "Epic Decks Inventory System": ""
+    },
+    {
+      "Epic Decks Inventory System": "Design recommendation"
+    },
+    {
+      "Epic Decks Inventory System": "Use this workbook as the master inventory source. Whatnot remains the live selling channel. Your website should show featured items and link out to Whatnot."
+    }
+  ]
+}

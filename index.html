@@ -416,52 +416,47 @@
     margin-bottom: 40px;
   }
 
-  .card-item {
-    background: var(--navy-mid);
-    border: 1px solid rgba(245,240,232,0.07);
-    overflow: hidden;
-    transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s;
-    cursor: pointer;
-  }
-
-  .card-item:hover {
-    transform: translateY(-4px);
-    border-color: rgba(255,107,43,0.4);
-    box-shadow: 0 12px 40px rgba(255,107,43,0.12);
-  }
-
   .card-img {
-    aspect-ratio: 3/4;
-    background: linear-gradient(135deg, var(--navy-light) 0%, var(--navy-mid) 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 2.5rem;
-    position: relative;
-    overflow: hidden;
-  }
+  aspect-ratio: 5 / 7;
+  background: linear-gradient(135deg, var(--navy-light) 0%, var(--navy-mid) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
 
-  .card-img::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(180deg, transparent 60%, var(--navy-mid) 100%);
-  }
+.card-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 16px;
+  position: relative;
+  z-index: 1;
+}
 
-  .grade-badge {
-    position: absolute;
-    top: 12px;
-    right: 12px;
-    background: var(--orange);
-    color: var(--navy);
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.1rem;
-    letter-spacing: 0.05em;
-    padding: 4px 10px;
-    z-index: 2;
-    clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
-  }
+.card-img::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 72%, rgba(15,32,64,0.9) 100%);
+  pointer-events: none;
+  z-index: 2;
+}
 
+.grade-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: var(--orange);
+  color: var(--navy);
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.1rem;
+  letter-spacing: 0.05em;
+  padding: 4px 10px;
+  z-index: 3;
+  clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
+}
   .grade-badge.ace { background: var(--blue); }
   .grade-badge.bgs { background: var(--gold); color: var(--navy); }
   .grade-badge.psa { background: #E63946; }
@@ -1261,73 +1256,11 @@
         <div class="offers-badge">
           💬 Offers Accepted on All Items
         </div>
-        <p>Every product in our inventory is open to reasonable offers. <strong>DM us on Instagram</strong> or make an offer directly on <a href="epicdecks.whatnot"><strong>WhatNot</strong></a>.</p>
-      </div>
+        <p>Every product in our inventory is open to reasonable offers. <strong>DM us on Instagram</strong> or make an offer directly on <<a href="https://www.whatnot.com/user/epicdecksnl" target="_blank" rel="noopener noreferrer">><strong>WhatNot</strong></a>.</p>
+      </div>python -m http.server
     </div>
 
-    <div class="inventory-grid fade-in">
-      <!-- Card 1 -->
-      <div class="card-item">
-        <div class="card-img">
-          🐢
-          <div class="grade-badge ace">ACE 10</div>
-        </div>
-        <div class="card-info">
-          <div class="card-name">Blastoise EX (JP)</div>
-          <div class="card-set">CP6 20th Anniversary · 1st Ed.</div>
-          <div class="card-footer">
-            <div class="card-price">£ POA</div>
-            <div class="card-offer">Offer</div>
-          </div>
-        </div>
-      </div>
-      <!-- Card 2 -->
-      <div class="card-item">
-        <div class="card-img">
-          🌙
-          <div class="grade-badge bgs">BGS 9.5</div>
-        </div>
-        <div class="card-info">
-          <div class="card-name">Cynthia's Garchomp ex</div>
-          <div class="card-set">Scarlet & Violet Promo · 204</div>
-          <div class="card-footer">
-            <div class="card-price">£ POA</div>
-            <div class="card-offer">Offer</div>
-          </div>
-        </div>
-      </div>
-      <!-- Card 3 -->
-      <div class="card-item">
-        <div class="card-img">
-          🔮
-          <div class="grade-badge ace">ACE 10</div>
-        </div>
-        <div class="card-info">
-          <div class="card-name">Celebi V (JP)</div>
-          <div class="card-set">Jet Black Geist · Secret Rare</div>
-          <div class="card-footer">
-            <div class="card-price">£ POA</div>
-            <div class="card-offer">Offer</div>
-          </div>
-        </div>
-      </div>
-      <!-- Card 4 -->
-      <div class="card-item">
-        <div class="card-img">
-          ⚡
-          <div class="grade-badge bgs">BGS 9</div>
-        </div>
-        <div class="card-info">
-          <div class="card-name">Moltres & Zapdos & Articuno GX (JP)</div>
-          <div class="card-set">Sky Legend · Ultra Rare</div>
-          <div class="card-footer">
-            <div class="card-price">£ POA</div>
-            <div class="card-offer">Offer</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
+    <div id="inventory-grid" class="inventory-grid fade-in"></div>
     <div class="inventory-cta fade-in">
       <p>Full inventory available on WhatNot or via requested purchase orders from our website. New items listed weekly — follow us to stay updated.</p>
       <div style="display:flex; gap:16px; justify-content:center; flex-wrap:wrap;">
@@ -1563,6 +1496,59 @@
     }
   });
 </script>
+<script>
+  async function loadFeaturedInventory() {
+    const grid = document.getElementById("inventory-grid");
 
+    try {
+      const response = await fetch("/data/inventory.json");
+      const data = await response.json();
+
+      const items = data.featured_items || [];
+
+      grid.innerHTML = "";
+
+      items.forEach((item) => {
+        const price = item.target_price
+          ? `${item.currency || "€"} ${item.target_price}`
+          : "POA";
+
+        const grade = item.grade_company && item.grade_value
+          ? `${item.grade_company} ${item.grade_value}`
+          : "Graded";
+
+        const link = item.whatnot_listing_url || "https://www.whatnot.com/user/epicdecksnl";
+
+        const card = document.createElement("a");
+        card.className = "card-item";
+        card.href = link;
+        card.target = "_blank";
+        card.rel = "noopener noreferrer";
+
+        card.innerHTML = `
+          <div class="card-img">
+            <img src="${item.hero_image}" alt="${item.item_title}" loading="lazy">
+            <div class="grade-badge ace">${grade}</div>
+          </div>
+          <div class="card-info">
+            <div class="card-name">${item.item_title || "Epic Decks Collectible"}</div>
+            <div class="card-set">${item.set_name || "Pokémon TCG"}</div>
+            <div class="card-footer">
+              <div class="card-price">${price}</div>
+              <div class="card-offer">View</div>
+            </div>
+          </div>
+        `;
+
+        grid.appendChild(card);
+      });
+    } catch (error) {
+      grid.innerHTML = "<p>Inventory is loading. Please check back soon.</p>";
+      console.error("Inventory load error:", error);
+    }
+  }
+
+  loadFeaturedInventory();
+</script>
 </body>
 </html>
