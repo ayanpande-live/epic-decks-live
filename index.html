@@ -1149,7 +1149,32 @@
     .inventory-grid { grid-template-columns: repeat(2, 1fr); }
     .commitments-grid { grid-template-columns: 1fr; }
     .footer-top { grid-template-columns: 1fr 1fr; }
-    .hero-stats { gap: 24px; }
+    .hero-stats {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 22px;
+      margin-top: 48px;
+      width: 100%;
+    }
+
+    .stat-divider {
+      display: none;
+    }
+
+    .stat-item {
+      background: rgba(245,240,232,0.06);
+      border: 1px solid rgba(245,240,232,0.08);
+      padding: 18px 12px;
+    }
+
+    .stat-number {
+      font-size: 2.1rem;
+    }
+
+    .stat-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.14em;
+    }
     .dl-wrapper { padding: 48px 24px; }
     .dl-wrapper::before { display: none; }
     .upcoming-grid { grid-template-columns: 1fr; }
