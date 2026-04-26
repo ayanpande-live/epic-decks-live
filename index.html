@@ -159,7 +159,7 @@
 
   .hero-eyebrow {
     font-family: 'Barlow Condensed', sans-serif;
-    font-size: 1.75rem;
+    font-size: 1.25rem;
     font-weight: 600;
     letter-spacing: 0.3em;
     text-transform: uppercase;
@@ -243,7 +243,12 @@
     display: inline-block;
   }
 
-  .btn-secondary:hover { border-color: var(--blue); color: var(--blue); transform: translateY(-2px); }
+  .btn-secondary:hover { 
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--navy);
+  transform: translateY(-2px); 
+  }
 
   .hero-stats {
     display: flex;
@@ -289,16 +294,16 @@
   }
 
   .section-tag {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 1.75rem;
-    font-weight: 600;
-    letter-spacing: 0.35em;
-    text-transform: uppercase;
-    color: var(--orange);
-    margin-bottom: 16px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 1.2  5rem;
+  font-weight: 600;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: var(--orange);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
   }
 
   .section-tag::before {
@@ -789,7 +794,7 @@
 
   .dl-eyebrow {
     font-family: 'Barlow Condensed', sans-serif;
-    font-size: 1.75rem;
+    font-size: 1.25rem;
     font-weight: 600;
     letter-spacing: 0.3em;
     text-transform: uppercase;
@@ -1166,7 +1171,7 @@
     <li><a href="#inventory">Shop</a></li>
     <li><a href="#double-legends">Double Legends (coming soon)</a></li>
   </ul>
-  <a href="#whatnot" class="nav-cta">Shop Live</a>
+  <a href="https://www.whatnot.com/user/epicdecksnl/shop" class="nav-cta">Shop Live</a>
 </nav>
 
 <!-- ─── HERO ─── -->
@@ -1186,26 +1191,33 @@
       <a href="#whatnot" class="btn-secondary">Shop with us Live</a>
     </div>
     <div class="hero-stats">
-      <div class="stat-item">
-        <div class="stat-number">Starting from</div>
-        <div class="stat-label">Rotterdam, Netherlands</div>
-      </div>
-      <div class="stat-divider"></div>
-      <div class="stat-item">
-        <div class="stat-number">€462 raised</div>
-        <div class="stat-label">As of 27.04.2026</div>
-      </div>
-      <div class="stat-divider"></div>
-      <div class="stat-item">
-        <div class="stat-number">5% of sales</div>
-        <div class="stat-label">Donated Monthly</div>
-      </div>
-      <div class="stat-divider"></div>
-      <div class="stat-item">
-        <div class="stat-number">>150</div>
-        <div class="stat-label">Graded Slabs, Singles & more</div>
-      </div>
-    </div>
+
+  <div class="stat-item">
+    <div class="stat-number">NL</div>
+    <div class="stat-label">Based in Rotterdam</div>
+  </div>
+
+  <div class="stat-divider"></div>
+
+  <div class="stat-item">
+    <div class="stat-number">€462</div>
+    <div class="stat-label">Raised So Far</div>
+  </div>
+
+  <div class="stat-divider"></div>
+
+  <div class="stat-item">
+    <div class="stat-number">5%</div>
+    <div class="stat-label">Monthly Donations</div>
+  </div>
+
+  <div class="stat-divider"></div>
+
+  <div class="stat-item">
+    <div class="stat-number">150+</div>
+    <div class="stat-label">Cards Available</div>
+  </div>
+</div>
   </div>
 
   <div class="scroll-line">
@@ -1255,8 +1267,14 @@
         <div class="offers-badge">
           💬 Offers Accepted on All Items
         </div>
-        <p>Every product in our inventory is open to reasonable offers. <strong>DM us on Instagram</strong> or make an offer directly on <<a href="https://www.whatnot.com/user/epicdecksnl" target="_blank" rel="noopener noreferrer">><strong>WhatNot</strong></a>.</p>
-      </div>python -m http.server
+      <p>
+      Every product in our inventory is open to reasonable offers.
+      <strong>DM us on Instagram</strong> or make an offer directly on
+      <a href="https://www.whatnot.com/user/epicdecksnl" target="_blank" rel="noopener noreferrer">
+      <strong>WhatNot</strong>
+      </a>.
+      </p>
+      </div>
     </div>
 
     <div id="inventory-grid" class="inventory-grid fade-in"></div>
