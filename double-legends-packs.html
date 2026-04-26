@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script
+    id="Cookiebot"
+    src="https://consent.cookiebot.com/uc.js"
+    data-cbid="2e619847-7b78-4413-b352-08c01acea3ed"
+    data-blockingmode="auto"
+    type="text/javascript"
+    async>
+  </script>
+
+  <link rel="icon" type="image/png" href="/images/favicon.png" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Double Legends Pack — Epic Decks</title>
+  <meta name="description" content="Epic Decks Double Legends Packs: 7 cards, 2 guaranteed hits, zero disappointment. Follow launch updates, join community voting, and take part in contests." />
+
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --navy: #0A1628;
+      --navy-mid: #0F2040;
+      --navy-light: #162d56;
+      --orange: #FF6B2B;
+      --blue: #00B4D8;
+      --gold: #FFD166;
+      --white: #F5F0E8;
+      --white-dim: rgba(245,240,232,0.65);
+      --white-faint: rgba(245,240,232,0.08);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--navy);
+      color: var(--white);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      overflow-x: hidden;
+      line-height: 1.7;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.4;
+    }
+
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      height: 84px;
+      padding: 0 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(10,22,40,0.88);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(245,240,232,0.06);
+    }
+
+    .nav-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.6rem;
+      letter-spacing: 0.12em;
+      color: var(--white);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .nav-logo span { color: var(--orange); }
+
+    .nav-logo img {
+      width: 28px;
+      height: 28px;
+      object-fit: contain;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 32px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--white-dim);
+      text-decoration: none;
+    }
+
+    .nav-links a:hover { color: var(--orange); }
+
+    .nav-cta {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--navy);
+      background: var(--orange);
+      padding: 10px 22px;
+      text-decoration: none;
+      clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+    }
+
+    .hero {
+      min-height: 100vh;
+      padding: 140px 48px 90px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      text-align: center;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 60% 50% at 20% 50%, rgba(255,107,43,0.15), transparent 70%),
+        radial-gradient(ellipse 50% 60% at 80% 30%, rgba(0,180,216,0.12), transparent 70%),
+        radial-gradient(ellipse 40% 40% at 60% 80%, rgba(255,209,102,0.09), transparent 60%);
+    }
+
+    .hero-grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(245,240,232,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(245,240,232,0.025) 1px, transparent 1px);
+      background-size: 60px 60px;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 980px;
+    }
+
+    .eyebrow {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--orange);
+      margin-bottom: 20px;
+    }
+
+    h1, h2, h3 {
+      font-family: 'Bebas Neue', sans-serif;
+      letter-spacing: 0.04em;
+      line-height: 0.95;
+    }
+
+    h1 {
+      font-size: clamp(4.2rem, 10vw, 9rem);
+      margin-bottom: 24px;
+    }
+
+    h1 span { color: var(--gold); }
+
+    .hero-sub {
+      max-width: 680px;
+      margin: 0 auto 40px;
+      color: var(--white-dim);
+      font-size: 1.1rem;
+    }
+
+    .promise-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      max-width: 760px;
+      margin: 44px auto;
+    }
+
+    .promise-card {
+      background: var(--white-faint);
+      border: 1px solid rgba(245,240,232,0.08);
+      padding: 26px 18px;
+    }
+
+    .promise-number {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 3.3rem;
+      color: var(--gold);
+      line-height: 1;
+    }
+
+    .promise-label {
+      margin-top: 8px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--white-dim);
+    }
+
+    .actions {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary,
+    .btn-secondary {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 16px 34px;
+      text-decoration: none;
+      clip-path: polygon(10px 0%, 100% 0%, calc(100% - 10px) 100%, 0% 100%);
+      display: inline-block;
+    }
+
+    .btn-primary {
+      background: var(--orange);
+      color: var(--navy);
+    }
+
+    .btn-primary:hover { background: var(--gold); }
+
+    .btn-secondary {
+      background: var(--blue);
+      color: var(--navy);
+      border: 1px solid rgba(245,240,232,0.18);
+    }
+
+    .btn-secondary:hover { background: var(--gold); }
+
+    section {
+      position: relative;
+      z-index: 1;
+      padding: 110px 48px;
+    }
+
+    .section-inner {
+      max-width: 1180px;
+      margin: 0 auto;
+    }
+
+    .section-title {
+      font-size: clamp(3rem, 6vw, 5rem);
+      margin-bottom: 24px;
+      text-align: center;
+    }
+
+    .section-sub {
+      max-width: 760px;
+      margin: 0 auto 48px;
+      text-align: center;
+      color: var(--white-dim);
+      font-size: 1.05rem;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 22px;
+    }
+
+    .feature-card {
+      background: var(--white-faint);
+      border: 1px solid rgba(245,240,232,0.08);
+      padding: 32px;
+    }
+
+    .feature-icon {
+      font-size: 2rem;
+      margin-bottom: 16px;
+    }
+
+    .feature-card h3 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .feature-card p {
+      color: var(--white-dim);
+      font-size: 0.92rem;
+    }
+
+    .impact-band {
+      background: linear-gradient(135deg, rgba(255,209,102,0.08), rgba(0,180,216,0.08));
+      border-top: 1px solid rgba(245,240,232,0.06);
+      border-bottom: 1px solid rgba(245,240,232,0.06);
+    }
+
+    .split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 56px;
+      align-items: center;
+    }
+
+    .impact-number {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(6rem, 12vw, 10rem);
+      color: var(--blue);
+      line-height: 0.9;
+      text-shadow: 0 0 60px rgba(0,180,216,0.35);
+    }
+
+    .impact-copy h2 {
+      font-size: clamp(2.8rem, 5vw, 4.5rem);
+      margin-bottom: 20px;
+    }
+
+    .impact-copy p {
+      color: var(--white-dim);
+      margin-bottom: 22px;
+    }
+
+    .steps {
+      display: grid;
+      gap: 22px;
+      max-width: 860px;
+      margin: 0 auto;
+    }
+
+    .step {
+      display: grid;
+      grid-template-columns: 80px 1fr;
+      gap: 24px;
+      align-items: start;
+      background: var(--white-faint);
+      border: 1px solid rgba(245,240,232,0.08);
+      padding: 30px;
+    }
+
+    .step-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 3rem;
+      color: var(--orange);
+      line-height: 1;
+    }
+
+    .step h3 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .step p {
+      color: var(--white-dim);
+    }
+
+    .badge {
+      display: inline-flex;
+      margin-top: 16px;
+      padding: 6px 14px;
+      border: 1px solid rgba(255,209,102,0.28);
+      color: var(--gold);
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .final-cta {
+      text-align: center;
+      background: var(--navy-mid);
+      border-top: 1px solid rgba(245,240,232,0.06);
+    }
+
+    footer {
+      background: var(--navy-mid);
+      border-top: 1px solid rgba(245,240,232,0.07);
+      padding: 44px 48px;
+      text-align: center;
+      color: rgba(245,240,232,0.45);
+      font-size: 0.82rem;
+    }
+
+    footer a {
+      color: rgba(245,240,232,0.55);
+      text-decoration: none;
+      margin: 0 8px;
+    }
+
+    footer a:hover { color: var(--orange); }
+
+    @media (max-width: 768px) {
+      nav { padding: 0 20px; }
+      .nav-links { display: none; }
+
+      .hero {
+        padding: 120px 20px 70px;
+      }
+
+      .promise-grid,
+      .feature-grid,
+      .split {
+        grid-template-columns: 1fr;
+      }
+
+      section {
+        padding: 80px 20px;
+      }
+
+      .step {
+        grid-template-columns: 1fr;
+      }
+
+      h1 {
+        font-size: clamp(3.8rem, 18vw, 6rem);
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<nav>
+  <a href="/" class="nav-logo">
+    <img src="/images/logo.webp" alt="Epic Decks Logo">
+    EPIC <span>DECKS</span>
+  </a>
+
+  <ul class="nav-links">
+    <li><a href="/">Home</a></li>
+    <li><a href="#inside">What’s Inside</a></li>
+    <li><a href="#impact">Impact</a></li>
+    <li><a href="#contest">Contest</a></li>
+  </ul>
+
+  <a href="https://www.instagram.com/yourepicdecks" class="nav-cta" target="_blank" rel="noopener noreferrer">
+    Follow Launch
+  </a>
+</nav>
+
+<header class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+
+  <div class="hero-content">
+    <div class="eyebrow">Epic Decks Presents</div>
+
+    <h1>
+      DOUBLE<br>
+      <span>LEGENDS</span><br>
+      PACKS
+    </h1>
+
+    <p class="hero-sub">
+      A curated Pokémon TCG repack experience built for collectors who want surprise, value and excitement — without the disappointment.
+    </p>
+
+    <div class="promise-grid">
+      <div class="promise-card">
+        <div class="promise-number">7</div>
+        <div class="promise-label">Cards Per Pack</div>
+      </div>
+
+      <div class="promise-card">
+        <div class="promise-number">2</div>
+        <div class="promise-label">Guaranteed Hits</div>
+      </div>
+
+      <div class="promise-card">
+        <div class="promise-number">0</div>
+        <div class="promise-label">Disappointment</div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <a href="https://www.instagram.com/yourepicdecks" class="btn-primary" target="_blank" rel="noopener noreferrer">
+        Follow Launch Updates
+      </a>
+      <a href="https://www.whatnot.com/user/epicdecksnl" class="btn-secondary" target="_blank" rel="noopener noreferrer">
+        Shop With Us Live
+      </a>
+    </div>
+  </div>
+</header>
+
+<section id="inside">
+  <div class="section-inner">
+    <div class="eyebrow" style="text-align:center;">What’s Inside</div>
+    <h2 class="section-title">Built For<br>Collectors</h2>
+    <p class="section-sub">
+      Every Double Legends Pack is hand-assembled by Epic Decks with a focus on value, excitement and collector appeal.
+    </p>
+
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🎴</div>
+        <h3>7-Card Curated Repack</h3>
+        <p>Each pack contains seven Pokémon TCG cards selected to create a fun and satisfying opening experience.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">✨</div>
+        <h3>2 Guaranteed Hits</h3>
+        <p>Every pack includes two guaranteed hits, so each opening delivers excitement and collector value.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">💎</div>
+        <h3>Collector Picks</h3>
+        <p>Expect rare cards, shiny cards, special art cards and handpicked surprises from across the Pokémon TCG universe.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="impact" class="impact-band">
+  <div class="section-inner">
+    <div class="split">
+      <div>
+        <div class="impact-number">€0.50</div>
+      </div>
+
+      <div class="impact-copy">
+        <div class="eyebrow">Community Impact</div>
+        <h2>Every Pack<br>Helps</h2>
+        <p>
+          €0.50 from every Double Legends Pack sold goes toward Epic Decks commitment initiatives — supporting organizations that help make life in our communities a little bit better.
+        </p>
+        <a href="/commitments.html" class="btn-primary">View Our Commitments</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="vote">
+  <div class="section-inner">
+    <div class="eyebrow" style="text-align:center;">Vote For Cause Of The Month</div>
+    <h2 class="section-title">The Community<br>Helps Decide</h2>
+    <p class="section-sub">
+      Join our Whatnot commitment streams. During the first 30 minutes, a poll will be active so viewers can choose from shortlisted organizations for that month.
+    </p>
+
+    <div class="actions">
+      <a href="https://www.whatnot.com/user/epicdecksnl" class="btn-secondary" target="_blank" rel="noopener noreferrer">
+        Join Us On Whatnot
+      </a>
+    </div>
+  </div>
+</section>
+
+<section id="contest">
+  <div class="section-inner">
+    <div class="eyebrow" style="text-align:center;">Instagram Contest</div>
+    <h2 class="section-title">Show Us<br>Your Pulls</h2>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">01</div>
+        <div>
+          <h3>Follow Epic Decks</h3>
+          <p>Follow <strong>@yourepicdecks</strong> on Instagram to stay updated on launch news, giveaways and pack reveals.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">02</div>
+        <div>
+          <h3>Tag Us In Your Pulls</h3>
+          <p>Open your Double Legends Pack, post your pulls, and tag <strong>@yourepicdecks</strong> to take part.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">03</div>
+        <div>
+          <h3>Stand A Chance To Win</h3>
+          <p>Contest details, prizes and launch rules will be announced on Instagram closer to release.</p>
+          <div class="badge">Coming Soon</div>
+        </div>
+      </div>
+    </div>
+
+    <p class="section-sub" style="margin-top:36px; font-size:0.9rem;">
+      Instagram accounts must be at least 13 years old. Participants under 18 should have parent or guardian permission.
+    </p>
+
+    <div class="actions">
+      <a href="https://www.instagram.com/yourepicdecks" class="btn-primary" target="_blank" rel="noopener noreferrer">
+        Follow @yourepicdecks
+      </a>
+    </div>
+  </div>
+</section>
+
+<section id="amazon">
+  <div class="section-inner">
+    <div class="eyebrow" style="text-align:center;">Review Us On Amazon</div>
+    <h2 class="section-title">Coming<br>Soon</h2>
+    <p class="section-sub">
+      Amazon reviews will open after the official product launch. Once live, collectors will be able to review their Double Legends Pack experience and stand a chance to win future rewards.
+    </p>
+    <div class="actions">
+      <span class="badge">Amazon Review Campaign Coming Soon</span>
+    </div>
+  </div>
+</section>
+
+<section class="final-cta">
+  <div class="section-inner">
+    <div class="eyebrow">Stay Connected</div>
+    <h2 class="section-title">Follow The<br>Launch</h2>
+    <p class="section-sub">
+      Double Legends Packs are coming soon. Follow us on Instagram, join us live on Whatnot, or return to the Epic Decks homepage.
+    </p>
+
+    <div class="actions">
+      <a href="https://www.instagram.com/yourepicdecks" class="btn-primary" target="_blank" rel="noopener noreferrer">
+        Instagram
+      </a>
+      <a href="https://www.whatnot.com/user/epicdecksnl" class="btn-secondary" target="_blank" rel="noopener noreferrer">
+        Whatnot
+      </a>
+      <a href="/" class="btn-secondary">
+        Back Home
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div>
+    <a href="/privacy-policy.html">Privacy Policy</a> |
+    <a href="/terms-and-conditions.html">Terms & Conditions</a> |
+    <a href="/cookie-policy.html">Cookie Policy</a>
+  </div>
+  <div style="margin-top:10px;">
+    © 2026 Epic Decks NL · Made with ♥ for the collector community
+  </div>
+</footer>
+
+</body>
+</html>
