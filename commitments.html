@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script
+    id="Cookiebot"
+    src="https://consent.cookiebot.com/uc.js"
+    data-cbid="2e619847-7b78-4413-b352-08c01acea3ed"
+    data-blockingmode="auto"
+    type="text/javascript"
+    async>
+  </script>
+
+  <link rel="icon" type="image/png" href="/images/favicon.png" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Our Commitments — Epic Decks</title>
+  <meta name="description" content="Epic Decks donates 10% of monthly sales to community-selected causes. View our pledge, monthly donation records, and transparency updates." />
+
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --navy: #0A1628;
+      --navy-mid: #0F2040;
+      --orange: #FF6B2B;
+      --blue: #00B4D8;
+      --gold: #FFD166;
+      --white: #F5F0E8;
+      --white-dim: rgba(245,240,232,0.65);
+      --white-faint: rgba(245,240,232,0.08);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--navy);
+      color: var(--white);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      line-height: 1.7;
+    }
+
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      height: 84px;
+      padding: 0 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(10,22,40,0.9);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(245,240,232,0.06);
+    }
+
+    .nav-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.6rem;
+      letter-spacing: 0.12em;
+      color: var(--white);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .nav-logo span { color: var(--orange); }
+
+    .nav-logo img {
+      width: 28px;
+      height: 28px;
+      object-fit: contain;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 32px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--white-dim);
+      text-decoration: none;
+    }
+
+    .nav-links a:hover,
+    .nav-links a.active {
+      color: var(--orange);
+    }
+
+    .page-hero {
+      padding: 170px 48px 90px;
+      text-align: center;
+      background:
+        radial-gradient(ellipse 60% 50% at 50% 20%, rgba(0,180,216,0.12), transparent 70%),
+        linear-gradient(180deg, var(--navy) 0%, var(--navy-mid) 100%);
+      border-bottom: 1px solid rgba(245,240,232,0.06);
+    }
+
+    .eyebrow {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--orange);
+      margin-bottom: 18px;
+    }
+
+    h1, h2, h3 {
+      font-family: 'Bebas Neue', sans-serif;
+      letter-spacing: 0.04em;
+      line-height: 0.95;
+    }
+
+    h1 {
+      font-size: clamp(4rem, 9vw, 8rem);
+      margin-bottom: 24px;
+    }
+
+    h1 span { color: var(--blue); }
+
+    .hero-sub {
+      max-width: 720px;
+      margin: 0 auto;
+      color: var(--white-dim);
+      font-size: 1.1rem;
+    }
+
+    section {
+      padding: 100px 48px;
+    }
+
+    .inner {
+      max-width: 1150px;
+      margin: 0 auto;
+    }
+
+    .pledge-box {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 56px;
+      text-align: center;
+      background: linear-gradient(135deg, rgba(0,180,216,0.09), rgba(255,107,43,0.09));
+      border: 1px solid rgba(0,180,216,0.22);
+    }
+
+    .pledge-number {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 7rem;
+      line-height: 1;
+      color: var(--blue);
+      text-shadow: 0 0 60px rgba(0,180,216,0.35);
+    }
+
+    .pledge-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--white-dim);
+      margin-bottom: 24px;
+    }
+
+    .section-title {
+      font-size: clamp(2.8rem, 5vw, 4.5rem);
+      margin-bottom: 28px;
+      text-align: center;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-top: 48px;
+    }
+
+    .card {
+      background: var(--white-faint);
+      border: 1px solid rgba(245,240,232,0.08);
+      padding: 32px;
+    }
+
+    .card-icon {
+      font-size: 2rem;
+      margin-bottom: 18px;
+    }
+
+    .card h3 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .card p {
+      color: var(--white-dim);
+      font-size: 0.92rem;
+    }
+
+    .timeline {
+      max-width: 820px;
+      margin: 56px auto 0;
+      display: grid;
+      gap: 24px;
+    }
+
+    .donation-record {
+      background: var(--white-faint);
+      border: 1px solid rgba(245,240,232,0.08);
+      padding: 32px;
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 28px;
+      align-items: center;
+    }
+
+    .donation-record h3 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1.15rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+      color: var(--gold);
+    }
+
+    .donation-record p {
+      color: var(--white-dim);
+      font-size: 0.95rem;
+    }
+
+    .donation-record img {
+      width: 100%;
+      border-radius: 8px;
+      border: 1px solid rgba(245,240,232,0.08);
+      background: var(--navy-mid);
+    }
+
+    .cta-band {
+      text-align: center;
+      background: var(--navy-mid);
+      border-top: 1px solid rgba(245,240,232,0.06);
+      border-bottom: 1px solid rgba(245,240,232,0.06);
+    }
+
+    .btn {
+      display: inline-block;
+      margin-top: 28px;
+      padding: 16px 34px;
+      background: var(--orange);
+      color: var(--navy);
+      text-decoration: none;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      clip-path: polygon(10px 0%, 100% 0%, calc(100% - 10px) 100%, 0% 100%);
+    }
+
+    .btn:hover {
+      background: var(--gold);
+    }
+
+    footer {
+      background: var(--navy-mid);
+      border-top: 1px solid rgba(245,240,232,0.07);
+      padding: 44px 48px;
+      text-align: center;
+      color: rgba(245,240,232,0.45);
+      font-size: 0.82rem;
+    }
+
+    footer a {
+      color: rgba(245,240,232,0.55);
+      text-decoration: none;
+      margin: 0 8px;
+    }
+
+    footer a:hover {
+      color: var(--orange);
+    }
+
+    @media (max-width: 768px) {
+      nav { padding: 0 20px; }
+      .nav-links { display: none; }
+
+      .page-hero,
+      section {
+        padding-left: 22px;
+        padding-right: 22px;
+      }
+
+      .grid-3,
+      .donation-record {
+        grid-template-columns: 1fr;
+      }
+
+      .pledge-box {
+        padding: 36px 24px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<nav>
+  <a href="/" class="nav-logo">
+    <img src="/images/logo.webp" alt="Epic Decks Logo">
+    EPIC <span>DECKS</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="/">Home</a></li>
+    <li><a href="/#inventory">Inventory</a></li>
+    <li><a href="/#whatnot">WhatNot</a></li>
+    <li><a href="/commitments.html" class="active">Commitments</a></li>
+  </ul>
+</nav>
+
+<header class="page-hero">
+  <div class="eyebrow">Our Pledge</div>
+  <h1>More Than<br><span>Just Cards</span></h1>
+  <p class="hero-sub">
+    Epic Decks is built around collecting, community and impact. Every month, a share of our sales goes to causes chosen by the community — with proof published here.
+  </p>
+</header>
+
+<section>
+  <div class="inner">
+    <div class="pledge-box">
+      <div class="pledge-number">10%</div>
+      <div class="pledge-label">Of Monthly Sales · Donated Every Month</div>
+      <p>
+        Every month, 10% of our total sales is donated to a cause selected with help from the Epic Decks community. You buy from us — you help shape where the support goes.
+      </p>
+    </div>
+
+    <div class="grid-3">
+      <div class="card">
+        <div class="card-icon">🗳️</div>
+        <h3>Community Votes</h3>
+        <p>Our followers help decide which cause receives support. The goal is simple: make giving back part of the collecting experience.</p>
+      </div>
+
+      <div class="card">
+        <div class="card-icon">📊</div>
+        <h3>Proof Published</h3>
+        <p>We publish monthly donation records on this page so the community can see what was donated and where it went.</p>
+      </div>
+
+      <div class="card">
+        <div class="card-icon">🌱</div>
+        <h3>Built To Last</h3>
+        <p>We want Epic Decks to grow responsibly — proving that even a small collector business can operate with ambition and impact.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cta-band">
+  <div class="inner">
+    <div class="eyebrow">Recommend A Cause</div>
+    <h2 class="section-title">Who Should We<br>Support Next?</h2>
+    <p class="hero-sub">
+      Know a charity, foundation or community initiative doing meaningful work? Recommend a cause and help guide our next monthly donation.
+    </p>
+    <a href="/double-legends-pack-review.html" class="btn">Recommend A Cause</a>
+  </div>
+</section>
+
+<section>
+  <div class="inner">
+    <div class="eyebrow" style="text-align:center;">Donation Records</div>
+    <h2 class="section-title">Monthly<br>Transparency</h2>
+
+    <div class="timeline">
+      <div class="donation-record">
+        <div>
+          <h3>September 2025 · €50 Donated</h3>
+          <p>
+            Our first recorded community donation supported Stichting Leven met Kanker, helping make life a little better for children and adults living with cancer.
+          </p>
+        </div>
+        <img src="/commitments/september-2025-donations.webp" alt="Donation proof September 2025">
+      </div>
+
+      <div class="donation-record">
+        <div>
+          <h3>April 2026 · €76 Raised</h3>
+          <p>
+            Current reported total as of 22.04.2026. Donation proof and cause details will be added once the monthly contribution is finalized.
+          </p>
+        </div>
+        <img src="/images/commitments/april-2026-placeholder.webp" alt="April 2026 donation placeholder">
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div>
+    <a href="/privacy-policy.html">Privacy Policy</a> |
+    <a href="/terms-and-conditions.html">Terms & Conditions</a> |
+    <a href="/cookie-policy.html">Cookie Policy</a>
+  </div>
+  <div style="margin-top:10px;">
+    © 2026 Epic Decks NL · Made with ♥ for the collector community
+  </div>
+</footer>
+
+</body>
+</html>
