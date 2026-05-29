@@ -14,10 +14,10 @@ if (header) {
       </button>
 
       <ul class="nav-links">
-        <li><a href="/">Home</a></li>
-        <li><a href="/#inventory">Shop</a></li>
+        <li><a href="/#story">Our Story</a></li>
         <li><a href="/commitments.html">Commitments</a></li>
-        <li><a href="/double-legends-packs.html">Double Legends</a></li>
+        <li><a href="/#inventory">Our Collection</a></li>
+        <li><a href="/double-legends-packs.html" class="active">Double Legends Packs</a></li>
       </ul>
 
       <a href="https://www.whatnot.com/user/epicdecksnl/shop" class="nav-cta" target="_blank" rel="noopener noreferrer">
