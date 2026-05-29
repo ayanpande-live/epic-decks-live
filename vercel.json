@@ -1,14 +1,7 @@
 {
   "redirects": [
-    {
-      "source": "/double-lengeds-pack-review",
-      "destination": "/double-legends-pack-review.html",
-      "permanent": true
-    },
-    {
-      "source": "/double-legends-pack-review",
-      "destination": "/double-legends-pack-review.html",
-      "permanent": true
-    }
+    { "source": "/privacy-policy.html", "destination": "/legal/privacy-policy.html", "permanent": true },
+    { "source": "/cookie-policy.html", "destination": "/legal/cookie-policy.html", "permanent": true },
+    { "source": "/terms-and-conditions.html", "destination": "/legal/legal-notice.html", "permanent": true }
   ]
 }

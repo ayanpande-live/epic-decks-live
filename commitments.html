@@ -6,8 +6,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>Our Commitments — Epic Decks</title>
-  <meta name="description" content="Epic Decks supports community-selected causes through monthly commitment streams, donations from stream sales, and future Double Legends Pack contributions." />
+  <title>Our Commitments — Epic Decks NL</title>
+  <meta name="description" content="Epic Decks NL supports community-selected causes through monthly commitment streams, donations from stream sales, and future Double Legends Pack contributions." />
+  <meta property="og:title" content="Our Commitments — Epic Decks NL" />
+  <meta property="og:description" content="5% of monthly stream sales donated to community-chosen causes. Transparent records, live donation streams, community voting." />
+  <meta property="og:image" content="/images/logo.webp" />
+  <meta property="og:type" content="website" />
 
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
 
@@ -80,11 +84,47 @@
       text-transform: uppercase;
       color: var(--white-dim);
       text-decoration: none;
+      transition: color 0.2s;
     }
 
     .nav-links a:hover,
     .nav-links a.active {
       color: var(--orange);
+    }
+
+    .nav-cta {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--navy);
+      background: var(--orange);
+      padding: 10px 22px;
+      text-decoration: none;
+      clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+      transition: background 0.2s;
+    }
+
+    .nav-cta:hover { background: var(--gold); }
+
+    .nav-hamburger {
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      gap: 5px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    .nav-hamburger span {
+      display: block;
+      width: 22px;
+      height: 2px;
+      background: var(--white);
+      transition: all 0.2s;
     }
 
     .page-hero {
@@ -255,6 +295,7 @@
       letter-spacing: 0.16em;
       text-transform: uppercase;
       clip-path: polygon(10px 0%, 100% 0%, calc(100% - 10px) 100%, 0% 100%);
+      transition: background 0.2s;
     }
 
     .btn:hover { background: var(--gold); }
@@ -270,10 +311,6 @@
       background: var(--white-faint);
       border: 1px solid rgba(245,240,232,0.08);
       padding: 32px;
-      display: grid;
-      grid-template-columns: 1.2fr 1fr;
-      gap: 28px;
-      align-items: center;
     }
 
     .donation-record h3 {
@@ -297,11 +334,18 @@
       font-size: 0.95rem;
     }
 
-    .donation-record img {
-      width: 100%;
-      border-radius: 8px;
-      border: 1px solid rgba(245,240,232,0.08);
-      background: var(--navy-mid);
+    .donation-placeholder {
+      margin-top: 20px;
+      padding: 24px;
+      background: rgba(255,209,102,0.06);
+      border: 1px dashed rgba(255,209,102,0.2);
+      color: rgba(255,209,102,0.6);
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      text-align: center;
     }
 
     footer {
@@ -323,7 +367,23 @@
 
     @media (max-width: 768px) {
       nav { padding: 0 20px; }
-      .nav-links { display: none; }
+      .nav-hamburger { display: flex; }
+      .nav-links {
+        display: none;
+        position: absolute;
+        top: 84px;
+        left: 0; right: 0;
+        background: rgba(10,22,40,0.97);
+        backdrop-filter: blur(20px);
+        flex-direction: column;
+        gap: 0;
+        padding: 16px 0;
+        border-bottom: 1px solid rgba(245,240,232,0.08);
+        z-index: 99;
+      }
+      .nav-links.nav-open { display: flex; }
+      .nav-links li a { display: block; padding: 14px 24px; }
+      .nav-cta { display: none; }
 
       .page-hero,
       section {
@@ -331,18 +391,21 @@
         padding-right: 22px;
       }
 
+      .page-hero { padding-top: 130px; }
+
       .impact-grid {
         grid-template-columns: 1fr 1fr;
       }
 
-      .grid-3,
-      .donation-record {
+      .grid-3 {
         grid-template-columns: 1fr;
       }
 
       .pledge-box {
         padding: 36px 24px;
       }
+
+      footer { padding: 44px 22px; }
     }
   </style>
 </head>
@@ -351,22 +414,28 @@
 
 <nav>
   <a href="/" class="nav-logo">
-    <img src="/images/logo.webp" alt="Epic Decks Logo">
-    EPIC <span>DECKS</span>
+    <img src="/images/logo.webp" alt="Epic Decks NL Logo">
+    EPIC <span>DECKS NL</span>
   </a>
-  <ul class="nav-links">
+  <button class="nav-hamburger" aria-label="Toggle menu" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+  <ul class="nav-links" id="main-nav-links">
     <li><a href="/">Home</a></li>
     <li><a href="/#inventory">Shop</a></li>
-    <li><a href="/#whatnot">WhatNot</a></li>
+    <li><a href="/#whatnot">Live on Whatnot</a></li>
     <li><a href="/commitments.html" class="active">Commitments</a></li>
   </ul>
+  <a href="https://www.whatnot.com/user/epicdecksnl/shop" class="nav-cta" target="_blank" rel="noopener noreferrer">Shop Live</a>
 </nav>
+
+<main>
 
 <header class="page-hero">
   <div class="eyebrow">Our Commitment</div>
-  <h1>Let’s Make Life<br><span>A Little Better</span></h1>
+  <h1>Let's Make Life<br><span>A Little Better</span></h1>
   <p class="hero-sub">
-    Epic Decks supports the people and organizations helping make life in our communities a little bit better. Through our live streams, future Double Legends Packs, and community-led initiatives, we turn collecting into impact.
+    Epic Decks NL supports the people and organizations helping make life in our communities a little bit better. Through our live streams, future Double Legends Packs, and community-led initiatives, we turn collecting into impact.
   </p>
 </header>
 
@@ -407,7 +476,7 @@
       <div class="pledge-number">5%</div>
       <div class="pledge-label">Of Monthly Stream Sales Donated</div>
       <p>
-        Every month, Epic Decks donates 5% of stream sales to organizations chosen with help from our community. On months with special occasions or special campaigns, we aim to increase this commitment to 10%.
+        Every month, Epic Decks NL donates 5% of stream sales to organizations chosen with help from our community. On months with special occasions or special campaigns, we aim to increase this commitment to 10%.
       </p>
     </div>
 
@@ -479,43 +548,55 @@
 
     <div class="timeline">
       <div class="donation-record">
-        <div>
-          <h3>September 2025 · First Test Commitment Stream · €76 Raised</h3>
-          <p>Our first test commitment stream raised €76 in total.</p>
-          <ul>
-            <li>€50 donated to Stichting Leven met Kanker</li>
-            <li>€26 donated to UNICEF</li>
-          </ul>
-        </div>
-        <img src="/commitments/september-2025-donations.webp" alt="Donation proof September 2025">
+        <h3>September 2025 · First Test Commitment Stream · €76 Raised</h3>
+        <p>Our first test commitment stream raised €76 in total.</p>
+        <ul>
+          <li>€50 donated to Stichting Leven met Kanker</li>
+          <li>€26 donated to UNICEF</li>
+        </ul>
+        <div class="donation-placeholder">Donation proof image — coming soon</div>
       </div>
 
       <div class="donation-record">
-        <div>
-          <h3>April 27, 2026 · Second Commitment Stream Planned · ~€380 Expected</h3>
-          <p>
-            Our second commitment stream is planned for 27 April. We expect to donate approximately €380. The organization receiving the donation will be announced after the community vote and updated here.
-          </p>
-          <p>
-            Stream link and donation proof will be added after the commitment stream.
-          </p>
-        </div>
-        <img src="/images/commitments/april-2026-placeholder.webp" alt="April 2026 donation placeholder">
+        <h3>April 27, 2026 · Second Commitment Stream Planned · ~€380 Expected</h3>
+        <p>
+          Our second commitment stream is planned for 27 April. We expect to donate approximately €380. The organization receiving the donation will be announced after the community vote and updated here.
+        </p>
+        <p>
+          Stream link and donation proof will be added after the commitment stream.
+        </p>
+        <div class="donation-placeholder">Stream proof — to be added after April 27</div>
       </div>
     </div>
   </div>
 </section>
 
+</main>
+
 <footer>
   <div>
-    <a href="/privacy-policy.html">Privacy Policy</a> |
-    <a href="/terms-and-conditions.html">Terms & Conditions</a> |
-    <a href="/cookie-policy.html">Cookie Policy</a>
+    <a href="/legal/privacy-policy.html">Privacy Policy</a> |
+    <a href="/legal/legal-notice.html">Legal Notice</a> |
+    <a href="/legal/cookie-policy.html">Cookie Policy</a>
   </div>
   <div style="margin-top:10px;">
-    © 2026 Epic Decks NL · Made with ♥ for the collector community
+    © <span id="footer-year"></span> Epic Decks NL · Made with ♥ for the collector community
   </div>
 </footer>
+
+<script>
+  const hamburger = document.querySelector('.nav-hamburger');
+  const navLinks = document.getElementById('main-nav-links');
+  if (hamburger && navLinks) {
+    hamburger.addEventListener('click', () => {
+      const open = navLinks.classList.toggle('nav-open');
+      hamburger.setAttribute('aria-expanded', open);
+    });
+  }
+
+  const yearEl = document.getElementById('footer-year');
+  if (yearEl) yearEl.textContent = new Date().getFullYear();
+</script>
 
 </body>
 </html>
