@@ -1,0 +1,7 @@
+# Exclude internal tools, tests and private sources from static deployment
+private-data/
+tools/
+tests/
+data/*.xlsx
+.env
+.env.*
