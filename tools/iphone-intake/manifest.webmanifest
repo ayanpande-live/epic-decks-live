@@ -1,0 +1,10 @@
+{
+  "name": "Epic Decks Slab Intake",
+  "short_name": "Slab Intake",
+  "description": "Local-only slab photo review drafts",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#091526",
+  "theme_color": "#10192b"
+}
