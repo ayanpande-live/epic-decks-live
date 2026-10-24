@@ -1,7 +1,8 @@
-# Exclude internal tools, tests and private sources from static deployment
+# Exclude private sources and internal scripts from static deployment
 private-data/
-tools/
 tests/
 data/*.xlsx
+tools/excel_to_json.py
+.claude/
 .env
 .env.*
