@@ -28,3 +28,17 @@ If no Vercel project is linked, import the existing repository as a Vercel proje
 
 ## Next
 Test with five slabs; only then build private authenticated storage and server-side AI/ACE verification. 
+
+## AI extraction setup (preview-only)
+The photo gallery works without any AI setup. To enable the optional **Analyze current photos** feature:
+1. In Vercel open Epic Decks Live → Settings → Environment Variables.
+2. Add `OPENAI_API_KEY` = your OpenAI API key (server-side, sensitive), scoped to **Preview** only. Never enter or commit it in GitHub or the web page.
+3. Add `INTAKE_ACCESS_TOKEN` = a separate long randomly generated access code, also Preview only. Type this value into the iPhone app when you deliberately choose to analyze a pair.
+4. Optional `OPENAI_MODEL` = `gpt-4.1-mini`.
+5. Redeploy the **preview** after adding variables, then use its latest URL. Keep deployment protection enabled.
+
+The endpoint `/api/slab-analyze` has an access code gate, only handles 1–2 images per request, and calls the OpenAI Responses API server-side. It does **not** verify grading certificates, prices, or authenticity and must not be treated as a production public intake backend. This is a limited pilot; before larger usage implement actual account authentication, quotas/rate limits, audit logging and private cloud draft storage.
+
+**Photo grouping is suggested by order, not AI certificate matching.** Use the gallery to visually assign photos; images are sent for metadata extraction only if Analyze is clicked.
+
+IMPORTANT: do not merge the branch until the public inventory workbook is securely backed up and prior Git history exposure is addressed.
