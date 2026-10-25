@@ -10,23 +10,32 @@
 - Excel .xlsx/.xls, with worksheet picker and configurable header row
 - Generic CSV / TSV / semicolon-delimited files, with field mapping
 - Shopify product export CSV (groups additional image rows by Handle; preserves variant SKU separation)
+- **eBay Seller Hub active listings CSV**: detects Item number, Title, Custom label (SKU), Available quantity, Format, Currency and prices; preserves item IDs and variation SKUs; auction bids are never treated as sale prices. Photos and product descriptions are not normally present in the report and need enrichment.
 - Whatnot inventory templates / seller-provided CSV **when available** — schema must be reviewed. We have not established an official full listing export/API for every seller.
 - Cardmarket authorized stock API export or independently prepared CSV. Not an unrestricted Cardmarket account connector.
 - Existing iPhone Slab Intake JSON exports
 - Existing website's `data/inventory.json` `all_items` array as a staged import
 
-All data is processed in the browser, in memory; the only file generated is an optional locally downloaded **review JSON**. The tool does not call Shopify, Whatnot, Cardmarket, or a database; never publishes and never updates live stock.
+All data is processed in the browser, in memory; the only file generated is an optional locally downloaded **review JSON**. The tool does not call Shopify, eBay, Whatnot, Cardmarket, or a database; never publishes and never updates live stock.
 
 **Excel dependency:** the pilot loads a version-pinned SheetJS library (0.20.3) from the official CDN. Before importing confidential commercial data in production, **vendor and audit** the parser instead of relying on mutable third-party code. The preview must remain access-protected and is for dummy/test inventory only at this stage.
 
 ## Quick preview test
 1. Open the latest Vercel Preview deployment for branch `feature/universal-inventory-import-20261025`. Do not use production.
 2. Append `/tools/inventory-import/index.html`.
-3. Upload `tools/inventory-import/example-shopify.csv` or your own sanitized CSV.
+3. Upload `tools/inventory-import/example-shopify.csv`, `tools/inventory-import/example-ebay-active-listings.csv`, or your own sanitized CSV.
 4. Review automatically suggested column mapping; override incorrect columns.
 5. Click **Add reviewed import to staging**, inspect records and duplicate warnings, and export JSON.
 6. Optionally add another different file in the same session to test cross-source overlap.
 7. Test photo workflow separately. Export iPhone JSON and import it here.
+
+## eBay onboarding and future integration
+
+Download an active-listings report from [eBay Seller Hub Reports](https://www.ebay.com/sh/reports/downloads): select **Listings** → **All active listings** (labels may vary) → **Download**. Upload that CSV and choose **eBay Seller Hub active listings report** or auto-detect. Do not upload customer/order reports because they may contain personal data.
+
+The initial report usually supplies listing ID, SKU, title, quantity, listing format and current price, but not complete media or descriptions. Auction "current price" is a bid, not a stable fixed asking price. The importer keeps it as original listing metadata and asks for review.
+
+**Future automatic access:** Use seller-authorized OAuth and the eBay Sell Feed API (`LMS_ACTIVE_INVENTORY_REPORT`) for active inventory reporting. The Inventory API can manage API-owned inventory/offers but imposes restrictions and migration considerations for Seller Hub listings. Do not assume it can edit every existing listing without permission or migration. For multi-channel sellers, treat each eBay offer/listing as a child of a canonical stock unit, not another physical copy of that slab.
 
 ## Canonical inventory record (v1)
 - `identity`: SKU, grader, grade, certificate, title, set, number, language, item type, condition
@@ -41,7 +50,7 @@ All data is processed in the browser, in memory; the only file generated is an o
 ## Commercial SaaS architecture (future)
 A production build needs tenant and user tables, tenant-scoped authentication and storage, encrypted connector credentials, imports with idempotency keys, row-level permissions, an inventory ledger (hold/available/sold), source listing references, sync events, an audit trail, and tenant-specific deletion/export controls. Account API connectors must respect each platform's terms.
 
-Suggested stages: (1) reliable file migration and human review, (2) multi-file reconciliation and photo enrichment, (3) Shopify OAuth and approved read-only catalogs, (4) Whatnot official Shopify-channel integration for eligible customers, (5) approved Cardmarket integration where possible, (6) selling-channel publishing and reconciliation after extensive test coverage.
+Suggested stages: (1) reliable file migration and human review, (2) multi-file reconciliation and photo enrichment, (3) Shopify and eBay seller-authorized read-only connections, (4) Whatnot official Shopify-channel integration for eligible customers, (5) approved Cardmarket integration where possible, (6) selling-channel publishing and reconciliation after extensive test coverage.
 
 ## Local developer smoke test
 `node --test tools/inventory-import/normalize.test.mjs`
