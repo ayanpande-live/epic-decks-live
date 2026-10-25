@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow"><meta name="theme-color" content="#091526">
+<title>Epic Decks | Universal Inventory Intake (Pilot)</title>
+<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+<style>
+:root{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;color-scheme:dark;background:#091526;color:#f7f3ed}
+*{box-sizing:border-box}body{margin:0}main{max-width:1100px;margin:0 auto;padding:28px 18px 80px}
+h1{font-size:clamp(33px,6vw,58px);line-height:1.05;margin:26px 0 14px}h2{margin:0 0 12px;font-size:22px}
+p{color:#c7d3e1;line-height:1.55}header{display:flex;justify-content:space-between;gap:12px;align-items:center}
+.brand{font-size:17px;font-weight:900;letter-spacing:.06em}.brand em{color:#ff7441;font-style:normal}
+.pill{border:1px solid #49657e;border-radius:100px;color:#c8d8e8;font-size:12px;padding:6px 10px}
+.panel{background:#152941;border:1px solid #314a65;border-radius:20px;padding:22px;margin:18px 0}
+.step{color:#ffad79;font-size:12px;letter-spacing:.1em;font-weight:800;text-transform:uppercase;margin-bottom:9px}
+.columns{display:grid;grid-template-columns:1fr 1fr;gap:16px}.field{display:flex;flex-direction:column;gap:7px;font-weight:600;font-size:14px;margin:9px 0}
+input,select{width:100%;padding:13px 12px;border-radius:9px;border:1px solid #566d86;background:#091b32;color:#f7f3ed;font:inherit;min-width:0}
+input[type=file]{border-style:dashed;cursor:pointer}
+button{background:#ff7441;color:#0d1524;border:0;border-radius:11px;padding:12px 16px;font-size:15px;font-weight:800;cursor:pointer;min-height:45px}
+button:hover{filter:brightness(1.07)}button:disabled{opacity:.45;cursor:not-allowed}
+button.ghost{background:#354d68;color:#fff}.buttons{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.notice{background:#0c2039;border-left:3px solid #ffae6d;border-radius:9px;padding:13px;margin-top:12px;font-size:13px;color:#cad7e4}
+.banner{background:#103624;border:1px solid #236847;padding:12px 14px;border-radius:12px;font-size:13px;color:#d2f6db}
+.warn{color:#ffba89}.ok{color:#a5efbc}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.metric{background:#0a1c33;border-radius:12px;padding:15px}.metric strong{display:block;font-size:28px}.metric span{color:#c0cbd8;font-size:12px}
+.scroll{overflow:auto;max-width:100%}table{border-collapse:collapse;width:100%;font-size:13px}td,th{padding:9px 10px;border-bottom:1px solid #354963;text-align:left;white-space:nowrap}th{color:#cbd9e8;font-weight:700}td{max-width:250px;overflow:hidden;text-overflow:ellipsis}
+.subtle{font-size:13px;color:#b8c8d8}.hidden{display:none!important}details summary{cursor:pointer;padding:12px 0;font-weight:700}
+.mapping{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}.mapping .field{font-size:12px;margin:0}.mapping select{font-size:13px;padding:10px}
+.record{border-bottom:1px solid #384c64;padding:11px 0;display:flex;justify-content:space-between;gap:12px}
+.record b{display:block;font-size:14px}.record small{display:block;color:#b9cddd;margin-top:4px}.tag{font-size:11px;border:1px solid #77613f;border-radius:100px;padding:5px 8px;height:fit-content;white-space:nowrap}
+footer{font-size:12px;color:#9baec1;margin-top:25px}
+@media(max-width:700px){.columns,.mapping{grid-template-columns:1fr}.stats{grid-template-columns:repeat(3,minmax(0,1fr))}.panel{padding:16px}.metric{padding:10px}.metric strong{font-size:20px}}
+</style></head>
+<body><main>
+<header><div class="brand">EPIC <em>DECKS</em> <span style="color:#a7b7c7">/ LABS</span></div><span class="pill">PRIVATE INTAKE PILOT</span></header>
+<h1>Start anywhere.<br>Manage everything.</h1>
+<p>Already have a spreadsheet or online store? Import it. Starting from scratch? Use the iPhone slab scanner. Every source becomes a <strong>reviewable inventory draft</strong> before any channel synchronization.</p>
+<div class="banner">No product files are sent to our servers by this tool. Processing happens in your browser. Export the results to save them; refreshing clears this staging session.</div>
+
+<section class="panel"><div class="step">Step 1 · Choose starting point</div><h2>Import your existing catalog</h2>
+<div class="columns">
+<label class="field">Source
+<select id="source">
+<option value="auto">Auto-detect columns</option>
+<option value="spreadsheet">Excel or generic CSV</option>
+<option value="shopify">Shopify product export CSV</option>
+<option value="whatnot">Whatnot listing file / template</option>
+<option value="cardmarket">Cardmarket stock file (authorized export)</option>
+<option value="iphone">iPhone Slab Intake draft JSON</option>
+</select></label>
+<label class="field">Choose file (CSV, Excel or intake JSON)
+<input type="file" id="file" accept=".csv,.tsv,.txt,.xlsx,.xls,.json"></label>
+</div>
+<div class="notice"><strong>Platform limits:</strong> Shopify CSV export works today. Whatnot supports CSV <em>imports</em> and a Shopify sync, but this isn't a verified direct Whatnot inventory export connector. Cardmarket stock API access is restricted. Upload only inventory/listing files, not customer order reports.</div>
+<div class="columns hidden" id="excel-controls">
+<label class="field">Excel worksheet<select id="worksheet"></select></label>
+<label class="field">Column header row<select id="header-row"></select></label>
+</div>
+<p id="file-info" class="subtle" aria-live="polite">No file selected.</p>
+</section>
+
+<section class="panel hidden" id="mapping-panel"><div class="step">Step 2 · Interpret the file</div><h2>Review column matching</h2>
+<p class="subtle">We've suggested fields from the source column names. Check them before importing. An empty selection means we won't guess.</p>
+<details open><summary>Show field mapping</summary><div class="mapping" id="mapping"></div></details>
+<h3 style="margin-top:24px;font-size:16px">Original data preview</h3>
+<div class="scroll"><table id="preview-table"></table></div>
+<div class="buttons"><button id="stage" type="button">Add reviewed import to staging</button></div>
+<p id="map-message" class="subtle" aria-live="polite"></p>
+</section>
+
+<section class="panel"><div class="step">Step 3 · Stage and inspect</div><h2>Inventory staging area</h2>
+<div class="stats">
+<div class="metric"><strong id="total">0</strong><span>Records</span></div>
+<div class="metric"><strong id="issues">0</strong><span>Need attention</span></div>
+<div class="metric"><strong id="sources">0</strong><span>Files staged</span></div>
+</div>
+<p class="subtle">Potential duplicates are flagged but <strong>never automatically merged</strong>. Importing inventory does not update stock, publish products or connect accounts.</p>
+<div id="items"><p class="subtle">Your imported records will appear here.</p></div>
+<div class="buttons">
+<button id="download" type="button" disabled>Export review JSON</button>
+<button id="clear" type="button" class="ghost">Clear staging session</button>
+</div><p id="export-message" class="subtle" aria-live="polite"></p>
+</section>
+<footer>Prototype only · Multi-business use requires authentication, private storage and tenant isolation before launch. Excel support loads SheetJS 0.20.3 from its official CDN. Do not use this preview as the sole inventory record.</footer>
+</main>
+<script type="module">
+import {FIELDS,suggestedSource,suggestedMapping,parseDelimited,normalizeRows,normalizeSlabDrafts,exportPackage} from "./normalize.js";
+const $=x=>document.getElementById(x), clean=x=>String(x??"").trim();
+let selectedFile=null, workbook=null, currentRows=[],headers=[],staged=[],fileCount=0,draftJSON=null;
+const sourceChoice=()=> $("source").value==="auto"?suggestedSource(headers):$("source").value;
+const setInfo=(message,isError=false)=>{$("file-info").textContent=message;$("file-info").className=isError?"subtle warn":"subtle"};
+function downloadFile(object,name){const b=new Blob([JSON.stringify(object,null,2)],{type:"application/json"});const url=URL.createObjectURL(b);const a=document.createElement("a");a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),10000);}
+function emptyOption(){return new Option("— Not mapped —","");}
+function rebuildMapping(){
+ const guesses=suggestedMapping(headers),box=$("mapping");box.replaceChildren();
+ for(const [key,label] of FIELDS){
+ const wrap=document.createElement("label");wrap.className="field";wrap.textContent=label;
+ const select=document.createElement("select");select.dataset.field=key;select.append(emptyOption());
+ for(const h of headers)select.append(new Option(h,h));
+ select.value=guesses[key]||"";wrap.append(select);box.append(wrap);
+ }
+ const preview=$("preview-table");preview.replaceChildren();
+ const head=document.createElement("tr");headers.slice(0,8).forEach(h=>{const th=document.createElement("th");th.textContent=h;head.append(th)});preview.append(head);
+ for(const row of currentRows.slice(0,4)){const tr=document.createElement("tr");headers.slice(0,8).forEach(h=>{const td=document.createElement("td");td.textContent=clean(row[h]).slice(0,100);tr.append(td)});preview.append(tr)}
+ $("map-message").textContent="Detected "+sourceChoice()+" · "+currentRows.length+" rows. Map carefully, especially SKU, price and quantity.";
+ $("mapping-panel").classList.remove("hidden");
+}
+function setRowsFromMatrix(matrix,headerIndex){
+ const header=(matrix[headerIndex]||[]).map((x,i)=>clean(x)||"Column_"+(i+1));
+ if(!header.length||header.every(x=>x.startsWith("Column_")))throw new Error("No column headers found on that row.");
+ headers=header;
+ currentRows=matrix.slice(headerIndex+1).filter(r=>Array.isArray(r)&&r.some(v=>clean(v))).map((r,i)=>({__row:i+headerIndex+2,...Object.fromEntries(headers.map((h,j)=>[h,r[j]??""]))}));
+ if(!currentRows.length)throw new Error("No inventory rows found below header row.");
+ rebuildMapping();
+}
+function loadSheet(){
+ const name=$("worksheet").value,sheet=workbook.Sheets[name];if(!sheet)return;
+ const matrix=window.XLSX.utils.sheet_to_json(sheet,{header:1,defval:"",raw:false,blankrows:false});
+ const idx=Number($("header-row").value)-1;
+ setRowsFromMatrix(matrix,idx);
+ setInfo(selectedFile.name+" · "+matrix.length+" worksheet rows");
+}
+$("worksheet").onchange=()=>{const special=$("worksheet").value==="Inventory_Master";$("header-row").value=special?"3":"1";try{loadSheet()}catch(e){setInfo(e.message,true)}};
+$("header-row").onchange=()=>{try{loadSheet()}catch(e){setInfo(e.message,true)}};
+$("source").onchange=()=>{if(headers.length)rebuildMapping()};
+$("file").onchange=async(e)=>{
+ selectedFile=e.target.files?.[0]||null;headers=[];currentRows=[];workbook=null;draftJSON=null;$("mapping-panel").classList.add("hidden");$("excel-controls").classList.add("hidden");
+ if(!selectedFile){setInfo("No file selected.");return;}
+ if(selectedFile.size>35*1024*1024){setInfo("File exceeds the pilot's 35MB limit. Split it into smaller files.",true);return}
+ setInfo("Reading "+selectedFile.name+" on this device…");
+ try{
+ const filename=selectedFile.name.toLowerCase();
+ if(filename.endsWith(".json")){
+   const json=JSON.parse(await selectedFile.text());
+   if(Array.isArray(json?.drafts)){draftJSON=json;headers=["iphone_draft"];currentRows=json.drafts; $("mapping-panel").classList.remove("hidden");$("mapping").replaceChildren();$("preview-table").replaceChildren();$("map-message").textContent=json.drafts.length+" iPhone drafts recognized. No field mapping required.";setInfo(selectedFile.name+" · iPhone draft JSON");return;}
+   const array=Array.isArray(json)?json:Array.isArray(json?.all_items)?json.all_items:Array.isArray(json?.records)?json.records:null;
+   if(!array)throw new Error("Unsupported JSON format. Use an iPhone drafts export or inventory records array.");
+   headers=[...new Set(array.flatMap(r=>Object.keys(r)))];
+   currentRows=array.map((r,i)=>({__row:i+1,...r}));rebuildMapping();setInfo(selectedFile.name+" · "+currentRows.length+" records");return;
+ }
+ if(filename.endsWith(".csv")||filename.endsWith(".tsv")||filename.endsWith(".txt")){
+   const result=parseDelimited(await selectedFile.text());
+   headers=result.headers;currentRows=result.rows;rebuildMapping();setInfo(selectedFile.name+" · "+currentRows.length+" data rows");return;
+ }
+ if(filename.endsWith(".xlsx")||filename.endsWith(".xls")){
+   if(!window.XLSX)throw new Error("Excel reader unavailable. Check internet connection or save a CSV copy.");
+   workbook=window.XLSX.read(await selectedFile.arrayBuffer(),{type:"array",cellFormula:false,cellHTML:false,bookVBA:false});
+   const sheets=$("worksheet");sheets.replaceChildren();
+   workbook.SheetNames.forEach(name=>sheets.add(new Option(name,name)));
+   for(let i=1;i<=25;i++)$("header-row").add(new Option("Row "+i,String(i)));
+   const special=workbook.SheetNames.includes("Inventory_Master");
+   sheets.value=special?"Inventory_Master":workbook.SheetNames[0];$("header-row").value=special?"3":"1";
+   $("excel-controls").classList.remove("hidden");loadSheet();return;
+ }
+ throw new Error("Unsupported file type");
+ }catch(err){setInfo("Cannot import: "+err.message,true);$("mapping-panel").classList.add("hidden");}
+};
+function crossDuplicateFlags(records){
+ const seen=new Map(),flags=new Set();
+ records.forEach((r,i)=>{
+ const id=r.identity||{};const keys=[];
+ if(id.sku)keys.push("SKU:"+clean(id.sku).toLowerCase());
+ if(id.certificate&&id.grader)keys.push("CERT:"+clean(id.grader).toLowerCase()+":"+clean(id.certificate).toLowerCase());
+ for(const k of keys){if(seen.has(k)){flags.add(i);flags.add(seen.get(k))}else seen.set(k,i)}
+ });
+ return flags;
+}
+function renderStaging(){
+ const duplicates=crossDuplicateFlags(staged),warnings=staged.filter((r,i)=>r.warnings.length||duplicates.has(i));
+ $("total").textContent=staged.length;$("issues").textContent=warnings.length;$("sources").textContent=fileCount;$("download").disabled=!staged.length;
+ const container=$("items");container.replaceChildren();
+ if(!staged.length){const p=document.createElement("p");p.className="subtle";p.textContent="Your imported records will appear here.";container.append(p);return}
+ const notice=document.createElement("p");notice.className="subtle";notice.textContent=staged.length+" staged record(s). First 40 shown. Download JSON for the full set.";container.append(notice);
+ staged.slice(0,40).forEach((r,i)=>{
+  const wrapper=document.createElement("div");wrapper.className="record";const left=document.createElement("div");
+  const bold=document.createElement("b");bold.textContent=r.identity.title||"(untitled)";
+  const sub=document.createElement("small");sub.textContent=[r.source,r.identity.sku?"SKU "+r.identity.sku:"",r.identity.grader,r.identity.grade,r.commercial.price!==""?r.commercial.currency+" "+r.commercial.price:""].filter(Boolean).join(" · ");
+  left.append(bold,sub);const right=document.createElement("span");right.className="tag";right.textContent=duplicates.has(i)?"Possible duplicate":r.warnings.length?"Needs review":"Draft";wrapper.append(left,right);container.append(wrapper);
+ });
+}
+$("stage").onclick=()=>{
+ if(!selectedFile)return;
+ try{
+ let records;
+ if(draftJSON){records=normalizeSlabDrafts(draftJSON,selectedFile.name);}
+ else{
+ const mapping={};document.querySelectorAll("#mapping select[data-field]").forEach(s=>mapping[s.dataset.field]=s.value);
+ if(!mapping.title && !mapping.sku && !mapping.certificate)throw new Error("Map at least a product title, SKU, or certificate number.");
+ records=normalizeRows(currentRows,headers,{source:sourceChoice(),mapping,file:selectedFile.name});
+ }
+ if(!records.length)throw new Error("No products found after normalization");
+ if(staged.length+records.length>5000)throw new Error("Maximum 5,000 staged products in this pilot");
+ staged.push(...records);fileCount++;renderStaging();
+ $("map-message").textContent="Added "+records.length+" drafts. You can upload another file to combine sources.";
+ }catch(err){$("map-message").textContent="Import blocked: "+err.message}
+};
+$("download").onclick=()=>{
+ if(!staged.length)return;
+ downloadFile(exportPackage(staged,{files_staged:fileCount,warning:"Internal inventory staging only; not verified or suitable for public publishing."}),"epic-decks-inventory-review.json");
+ $("export-message").textContent="Exported locally. Keep the JSON private; it may contain purchase costs and inventory.";
+};
+$("clear").onclick=()=>{
+ if(!staged.length||confirm("Clear all staged inventory from this browser session? Export first.")){staged=[];fileCount=0;renderStaging();}
+};
+renderStaging();
+</script></body></html>
