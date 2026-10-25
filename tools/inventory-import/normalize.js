@@ -127,7 +127,7 @@ function enrichEbayRecord(record,row,headers){
  const buyNow=read("Buy It Now price","Auction Buy It Now price");
  const listingSite=read("Listing site");
  const sold=read("Sold quantity");
- record.source_id=listingId||record.source_id;
+ record.source_id=listingId?(record.identity.sku?listingId+"#"+record.identity.sku:listingId):record.source_id;
  record.source_details={platform:"ebay",listing_id:listingId,listing_format:format,listing_site:listingSite,sold_quantity:sold,current_price:current,start_price:start,buy_it_now_price:buyNow};
  record.commercial.price_type=isAuction?"auction_live_bid_not_asking":"fixed_price_or_unspecified";
  if(isAuction){
