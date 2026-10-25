@@ -26,4 +26,19 @@ const quoted=parseDelimited('Title,Notes\n"Foo, bar","line one\nline two"');
 assert.equal(quoted.rows[0].Title,"Foo, bar");
 assert.equal(quoted.rows[0].Notes,"line one\nline two");
 
-console.log("All 6 inventory normalization checks passed.");
+
+const ebayCSV=parseDelimited('Item number,Title,Custom label (SKU),Available quantity,Format,Currency,Current price (figure),Start price,Listing site\n123456789012,PSA 10 Charizard,ED-SLAB-001,1,FixedPrice,EUR,180.00,,DE\n123456789013,ACE 10 Pikachu,ED-SLAB-002,1,Auction,GBP,42.00,10.00,GB\n123456789014,CGC graded variant 1,ED-SLAB-003,1,FixedPrice,EUR,60,,DE\n123456789014,CGC graded variant 2,ED-SLAB-004,1,FixedPrice,EUR,75,,DE');
+assert.equal(suggestedSource(ebayCSV.headers),"ebay","recognize eBay Seller Hub report");
+const ebay=normalizeRows(ebayCSV.rows,ebayCSV.headers,{source:"ebay"});
+assert.equal(ebay.length,4,"retain each distinct inventory row and variation");
+assert.equal(ebay[0].identity.sku,"ED-SLAB-001","map eBay custom label");
+assert.equal(ebay[0].source_details.listing_id,"123456789012","preserve eBay item ID");
+assert.equal(ebay[0].commercial.price,180,"fixed price kept");
+assert.equal(ebay[1].commercial.price,"","auction bid cannot become asking price");
+assert.equal(ebay[1].source_details.current_price,"42.00","retain auction bid in metadata");
+assert.equal(ebay[2].possible_duplicates.length,0,"different SKUs in same eBay variation listing are not duplicate inventory");
+assert.equal(ebay[3].possible_duplicates.length,0,"different SKUs in same eBay variation listing are not duplicate inventory");
+assert.ok(ebay[0].content.listing_url.endsWith("123456789012"),"provide a safe eBay item link");
+assert.ok(ebay[0].warnings.some(x=>x.includes("omits photos")),"flag missing listing photos");
+
+console.log("All inventory normalization checks passed, including eBay Seller Hub imports.");
