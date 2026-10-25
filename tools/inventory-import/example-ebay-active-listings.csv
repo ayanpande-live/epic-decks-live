@@ -1,0 +1,5 @@
+Item number,Title,Variation details,Custom label (SKU),Available quantity,Format,Currency,Current price (figure),Start price,Buy It Now price,Sold quantity,Listing site,Condition
+123456789012,PSA 10 Charizard ex 215/197,,ED-SLAB-001,1,FixedPrice,EUR,180.00,,,0,US,Graded
+123456789013,ACE 10 Pikachu 025/165,,ED-SLAB-002,1,Auction,GBP,42.00,10.00,90.00,0,GB,Graded
+123456789014,CGC Graded Bulk Lot,Card A,ED-SLAB-003,1,FixedPrice,EUR,60.00,,,0,DE,Graded
+123456789014,CGC Graded Bulk Lot,Card B,ED-SLAB-004,1,FixedPrice,EUR,75.00,,,0,DE,Graded
