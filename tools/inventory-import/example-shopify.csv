@@ -1,0 +1,4 @@
+Handle,Title,Body (HTML),Product Category,Variant SKU,Variant Price,Variant Inventory Qty,Image Src
+graded-charizard,Mega Charizard X ex ACE 10,English SIR slab,Graded Cards,ED-SLAB-0001,249,1,https://example.com/front.jpg
+graded-charizard,,,,,,,https://example.com/back.jpg
+sealed-box,Booster Box,Sealed stock,Sealed,ED-SEALED-0002,89,3,https://example.com/box.jpg
