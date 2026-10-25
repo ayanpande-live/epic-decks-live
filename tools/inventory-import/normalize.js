@@ -9,7 +9,7 @@ export const FIELDS = [
 ];
 const ALIASES={
  title:["item_title","title","name","product name","item name","listing title","card name","article name"],
- sku:["sku","variant sku","seller sku","stock keeping unit"],
+ sku:["sku","variant sku","seller sku","stock keeping unit","custom label (sku)","custom label","custom label sku"],
  item_type:["item_type","category","product category","product type","type"],
  description:["item_description","description","body (html)","body html","item description"],
  grader:["grade_company","grader","grading company","grading service"],
@@ -21,11 +21,11 @@ const ALIASES={
  year:["year","release year"],
  condition:["condition","card condition"],
  quantity:["available_qty","available quantity","inventory quantity","variant inventory qty","quantity","stock","amount","qty"],
- price:["target_price","variant price","selling price","sale price","price","unit price"],
+ price:["target_price","variant price","selling price","sale price","price","unit price","current price (figure)","current price","start price","buy it now price"],
  currency:["currency","currency code"],
  cost:["purchase_price","purchase cost","cost per item","acquisition cost","buy price","cost"],
  image_url:["hero_image","image src","image url","photo url","image","images"],
- external_id:["idarticle","id_product","idproduct","listing id","item id","external id","article id","variant id","id","handle"],
+ external_id:["idarticle","id_product","idproduct","listing id","item id","item number","external id","article id","variant id","id","handle"],
  listing_url:["whatnot_listing_url","listing url","product url","url","link"]
 };
 const norm=x=>String(x??"").toLowerCase().replace(/^\ufeff/,"").replace(/[^a-z0-9]+/g," ").trim();
@@ -33,6 +33,7 @@ const clean=x=>String(x??"").trim();
 export function suggestedSource(headers){
  const h=headers.map(norm);
  if(h.includes("handle") && (h.includes("variant sku")||h.includes("variant price")))return "shopify";
+ if(h.includes("item number") && (h.includes("custom label sku")||h.includes("custom label")||h.includes("listing site")||h.includes("format")))return "ebay";
  if(h.includes("idarticle")||h.includes("idproduct"))return "cardmarket";
  if(h.includes("whatnot store")||h.includes("whatnot listing url"))return "whatnot";
  if(h.includes("grade company")||h.includes("cert number"))return "spreadsheet";
@@ -115,6 +116,34 @@ function toRecord(row,mapping,ctx){
   warnings:issues,possible_duplicates:[],provenance:{source:ctx.source,file:ctx.file,row:row.__row||null},raw:row
  };
 }
+// eBay Seller Hub active listings reports contain listing state, not full product media.
+function enrichEbayRecord(record,row,headers){
+ const read=(...names)=>{for(const n of names){const key=headers.find(h=>norm(h)===norm(n));if(key&&clean(row[key]))return clean(row[key]);}return "";};
+ const listingId=read("Item number","Item ID");
+ const format=read("Format","Listing format");
+ const isAuction=/auction|bid/i.test(format);
+ const current=read("Current price (figure)","Current price","Price");
+ const start=read("Start price");
+ const buyNow=read("Buy It Now price","Auction Buy It Now price");
+ const listingSite=read("Listing site");
+ const sold=read("Sold quantity");
+ record.source_id=listingId||record.source_id;
+ record.source_details={platform:"ebay",listing_id:listingId,listing_format:format,listing_site:listingSite,sold_quantity:sold,current_price:current,start_price:start,buy_it_now_price:buyNow};
+ record.commercial.price_type=isAuction?"auction_live_bid_not_asking":"fixed_price_or_unspecified";
+ if(isAuction){
+  record.commercial.price="";
+  record.warnings.push("Auction price is a bid, not a fixed sale price. Review before pricing.");
+ }
+ if(!record.identity.sku)record.warnings.push("eBay Custom label (SKU) missing; use listing ID only as external identifier.");
+ if(!record.commercial.currency || record.commercial.currency==="EUR" && !read("Currency")){
+   record.commercial.currency=read("Currency")||"";
+   if(!record.commercial.currency)record.warnings.push("Check listing currency (not provided by export).");
+ }
+ if(!record.content.image_urls.length)record.warnings.push("Seller Hub listing report typically omits photos; add images during enrichment.");
+ if(!record.content.listing_url && /^\d{9,13}$/.test(listingId)){
+  record.content.listing_url="https://www.ebay.com/itm/"+listingId;
+ }
+}
 export function normalizeRows(rows,headers,config={}){
  if(!Array.isArray(rows)||!rows.length)return [];
  const source=config.source||suggestedSource(headers);
@@ -153,7 +182,11 @@ export function normalizeRows(rows,headers,config={}){
     flagDuplicates(records);return records;
   }
  }
- const records=rows.map(row=>toRecord(row,mapping,context));
+ const records=rows.map(row=>{
+  const record=toRecord(row,mapping,context);
+  if(source==="ebay")enrichEbayRecord(record,row,headers);
+  return record;
+ });
  flagDuplicates(records);return records;
 }
 function flagDuplicates(records){
