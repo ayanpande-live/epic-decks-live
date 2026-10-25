@@ -109,7 +109,7 @@ function toRecord(row,mapping,ctx){
   identity:{sku,title,grader,grade:get("grade"),certificate:cert,set_name:get("set_name"),card_number:get("card_number"),language:get("language"),year:get("year"),condition:get("condition"),item_type:typeOf(get("item_type")+" "+title)},
   stock:{quantity},commercial:{price,currency:get("currency")||ctx.currency||"",acquisition_cost:amount(get("cost"))},
   content:{description:get("description"),image_urls:link?[link]:[],listing_url:get("listing_url")},
-  warnings:issues,possible_duplicates:[],provenance:{source:ctx.source,file:ctx.file,row:row.__row||null},raw
+  warnings:issues,possible_duplicates:[],provenance:{source:ctx.source,file:ctx.file,row:row.__row||null},raw:row
  };
 }
 export function normalizeRows(rows,headers,config={}){
