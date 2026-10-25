@@ -93,6 +93,9 @@ function mappedValue(row,mapping,key){
 function toRecord(row,mapping,ctx){
  const get=f=>clean(mappedValue(row,mapping,f));
  const title=get("title"),sku=get("sku"),grader=get("grader"),cert=get("certificate");
+ const itemType=typeOf(get("item_type")+" "+title);
+ const rawGrade=get("grade");
+ const isConditionGrade=itemType==="single" && /^(NM|M|EX|LP|MP|HP|DMG|GOOD|POOR|NEAR MINT|LIGHTLY PLAYED|MODERATELY PLAYED)$/i.test(rawGrade);
  const issues=[];
  if(!title)issues.push("Missing product title");
  if(!sku && !cert)issues.push("Missing SKU/certificate for reliable identity");
@@ -101,12 +104,12 @@ function toRecord(row,mapping,ctx){
  const price=rawPrice?amount(rawPrice):"";
  if(rawQty && quantity==="")issues.push("Quantity needs review");
  if(rawPrice && price==="")issues.push("Price needs review");
- if(typeOf(get("item_type")+" "+title)==="unclassified")issues.push("Check product category");
+ if(itemType==="unclassified")issues.push("Check product category");
  const link=get("image_url");
  return {
   schema_version:"1.0",source:ctx.source,source_file:ctx.file,source_row:row.__row||null,
   source_account:ctx.account||"",source_id:get("external_id"),source_status:"imported_draft",review_status:"needs_review",
-  identity:{sku,title,grader,grade:get("grade"),certificate:cert,set_name:get("set_name"),card_number:get("card_number"),language:get("language"),year:get("year"),condition:get("condition"),item_type:typeOf(get("item_type")+" "+title)},
+  identity:{sku,title,grader,grade:isConditionGrade?"":rawGrade,certificate:cert,set_name:get("set_name"),card_number:get("card_number"),language:get("language"),year:get("year"),condition:get("condition")||(isConditionGrade?rawGrade:""),item_type:itemType},
   stock:{quantity},commercial:{price,currency:get("currency")||ctx.currency||"",acquisition_cost:amount(get("cost"))},
   content:{description:get("description"),image_urls:link?[link]:[],listing_url:get("listing_url")},
   warnings:issues,possible_duplicates:[],provenance:{source:ctx.source,file:ctx.file,row:row.__row||null},raw:row
