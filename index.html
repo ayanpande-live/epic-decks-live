@@ -1427,20 +1427,20 @@
 
     <div class="pledge-box fade-in">
       <div class="pledge-number">5%</div>
-      <div class="pledge-label">Of Monthly Sales · Donated Every Month</div>
-      <p class="pledge-desc">Every month, 5% of our total sales is donated to causes chosen by our community. You buy from us — you help decide where the money goes. Simple, transparent, consistent.</p>
+      <div class="pledge-label">Our Giving-Back Commitment</div>
+      <p class="pledge-desc">Supporting the collector community also means giving back. Learn about our giving commitment and ask us for the latest updates on donations and community initiatives.</p>
     </div>
 
     <div class="commitments-grid fade-in">
       <div class="commitment-card">
         <div class="commitment-icon">🗳️</div>
         <h3>Community Votes</h3>
-        <p>Every month our followers vote on which cause receives the donation. Your voice shapes our impact — not ours.</p>
+        <p>We invite our community to suggest causes and help shape future initiatives.</p>
       </div>
       <div class="commitment-card">
         <div class="commitment-icon">📊</div>
         <h3>Full Transparency</h3>
-        <p>We publish monthly donation receipts publicly. No vague pledges. You'll see exactly what was donated and to whom.</p>
+        <p>We aim to share clear updates about causes supported and funds donated.</p>
       </div>
       <div class="commitment-card">
         <div class="commitment-icon">🌱</div>
@@ -1501,15 +1501,15 @@
         <ul>
           <li><a href="https://www.whatnot.com/user/epicdecksnl" target="_blank">WhatNot NL</a></li>
           <li><a href="https://www.whatnot.com/user/epicdecksgb" target="_blank">WhatNot GB</a></li>
-          <li><a href="#" target="_blank">Cardmarket</a></li>
+          
         </ul>
       </div>
       <div class="footer-col">
         <h4>Social</h4>
         <ul>
           <li><a href="https://www.instagram.com/yourepicdecks" target="_blank">Instagram</a></li>
-          <li><a href="#" target="_blank">Facebook</a></li>
-          <li><a href="#" target="_blank">WhatsApp</a></li>
+          
+          
         </ul>
       </div>
     </div>
@@ -1523,7 +1523,7 @@
       <div class="footer-social">
         <a href="https://www.instagram.com/yourepicdecks" class="social-link" target="_blank">IG</a>
         <a href="https://www.whatnot.com/user/epicdecksnl" class="social-link" target="_blank">WN</a>
-        <a href="#" class="social-link" target="_blank">EB</a>
+        
       </div>
     </div>
   </div>
@@ -1604,7 +1604,7 @@
   fetch("/data/inventory.json",{cache:"no-store"}).then(r=>{if(!r.ok)throw new Error("Catalog unavailable");return r.json()})
     .then(data=>{
       // Existing dataset is not inventory-synced; display as examples without live pricing or availability.
-      items=(Array.isArray(data.featured_items)?data.featured_items:[]).filter(x=>x.item_type==="slab"||/slab|graded/i.test(text(x.item_title)));
+      items=(Array.isArray(data.featured_items)?data.featured_items:[]).filter(x=>text(x.item_type).toLowerCase()==="slab"||/slab|graded/i.test(text(x.item_title)));
       const graders=[...new Set(items.map(x=>text(x.grade_company).trim()).filter(Boolean))].sort();
       for(const g of graders){const opt=document.createElement("option");opt.value=g.toLowerCase();opt.textContent=g;grader.append(opt)}
       display();
