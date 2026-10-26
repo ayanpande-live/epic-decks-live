@@ -61,3 +61,18 @@ Do not commit real inventory files, credentials, purchase prices, or exported re
 
 ## No claims of API verification
 This importer performs **no paid grader lookup or automatic photo AI**, and does not imply inventory is certified, real-time synchronized, or sale-ready. All records require review.
+
+## Cross-channel reconciliation (new pilot)
+
+After importing two or more catalog files, expand **Possible matches across channels** in the staging section. The app suggests pairs based on:
+- Same internal SKU across imports;
+- Same normalized grading company plus certificate number;
+- Same external listing identifier within the same platform and account.
+
+It will **not** suggest that two slabs are the same physical item solely because card name, set, grade or images seem similar.
+
+Pairs remain review-only. A conflicting certificate/grade/card number/language is explicitly marked for attention. Quantities are **never summed** across matching listings; one physical slab may have multiple sales-channel representations. Click **Export matching report** to download the evidence for review. The report includes channel identifiers, quantities and prices, but does not include complete photographs or the cost basis. Keep exports private.
+
+Test example: import the sample Shopify CSV and the sample eBay CSV (their current sample SKUs differ, so no match is expected); to exercise an overlap, edit a COPY of the Shopify sample and change a SKU to `ED-SLAB-001` before importing both. You should see one medium-confidence matching-SKU candidate. For a high-confidence match, import two generic CSVs with the same grader and cert number but different SKUs. Review all candidates; no auto-merge button exists.
+
+**Next prerequisite before real inventory**: authenticated users and tenant isolation, a protected persistent database, and private image storage; the current importer runs in the browser and can import untrusted documents. Do not test confidential real pricing on a publicly accessible preview.
