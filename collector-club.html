@@ -1,0 +1,56 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>Collector Radar · Epic Decks</title><style>
+:root{font-family:system-ui,sans-serif;background:#0a1628;color:#f5f0e8}*{box-sizing:border-box}body{margin:0}main{max-width:980px;margin:auto;padding:24px 18px 70px}a{color:#ffa579}header{display:flex;align-items:center;justify-content:space-between;gap:12px}h1{font-size:clamp(40px,7vw,72px);letter-spacing:-.055em;line-height:.98;margin:44px 0 20px}h2{font-size:21px}.orange{color:#ff7849}.muted{color:#bdc8d5;line-height:1.6}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.panel{background:#142843;border:1px solid #344b65;border-radius:18px;padding:22px;margin:19px 0}.label{font-size:12px;font-weight:800;color:#ffae84;letter-spacing:.11em;text-transform:uppercase}label{font-weight:650;font-size:14px;display:block;margin-top:10px}input,select{width:100%;background:#091d34;color:#fff;border:1px solid #61728a;border-radius:9px;padding:12px;margin-top:7px;font:inherit;min-height:46px}button{background:#ff7849;color:#0a1628;border:0;border-radius:9px;padding:13px 19px;font-weight:800;font-size:15px;cursor:pointer}button.secondary{background:#354c65;color:#fff}button:focus-visible,a:focus-visible{outline:3px solid #ff7849;outline-offset:3px}.chips{display:flex;flex-wrap:wrap;gap:9px;margin-top:12px}.chip{background:#273e59;border:1px solid #536b85;color:#fff;border-radius:99px;padding:9px 13px;min-height:40px}.chip[aria-pressed=true]{background:#ff7849;color:#0a1628;border-color:#ff7849}.result{border:1px solid #334e69;border-radius:12px;padding:15px;margin:10px 0}.tag{display:inline-block;border:1px solid #7e6959;border-radius:99px;padding:3px 9px;font-size:12px}.row{display:flex;justify-content:space-between;align-items:center;gap:12px}.hidden{display:none}.note{background:#0a2039;border-left:3px solid #ff7849;padding:13px;border-radius:8px}.buttons{display:flex;gap:10px;flex-wrap:wrap}.subtle{font-size:13px;color:#bbc9d8}footer{margin-top:24px;color:#9db0c6;font-size:12px}@media(max-width:640px){.grid{grid-template-columns:1fr}.panel{padding:16px}}
+</style></head><body><main><header><b>EPIC <span class="orange">DECKS</span> / COLLECTOR LAB</b><a href="/">← Back to collection</a></header>
+<h1>Your grails.<br><span class="orange">On our radar.</span></h1>
+<p class="muted">Build a collecting brief in seconds. Discover matching featured pieces and express interest in future finds. An early preview of personalized collector discovery—no account, subscription, or automatic alerts yet.</p>
+<section class="panel"><div class="label">01 / Define your hunt</div><h2>What belongs in your collection?</h2>
+<label>Collector interests (pick any)</label><div class="chips" id="interests">
+<button type="button" class="chip" data-value="Charizard" aria-pressed="false">Charizard</button>
+<button type="button" class="chip" data-value="Pikachu" aria-pressed="false">Pikachu</button>
+<button type="button" class="chip" data-value="Mew" aria-pressed="false">Mew / Mewtwo</button>
+<button type="button" class="chip" data-value="Vintage" aria-pressed="false">Vintage</button>
+<button type="button" class="chip" data-value="Japanese" aria-pressed="false">Japanese</button>
+<button type="button" class="chip" data-value="Low-pop" aria-pressed="false">Low-pop discoveries</button>
+<button type="button" class="chip" data-value="Artist" aria-pressed="false">Illustrator collections</button>
+<button type="button" class="chip" data-value="Sealed" aria-pressed="false">Sealed products</button>
+</div><div class="grid"><label>Grader preference<select id="grader"><option value="">Any company</option><option>ACE</option><option>PSA</option><option>BGS</option><option>CGC</option><option>PG</option><option>AGS</option><option>PCG</option><option>TAG</option></select></label>
+<label>Minimum grade<select id="grade"><option value="">Any grade</option><option>8</option><option>9</option><option>9.5</option><option>10</option></select></label>
+<label>Budget (EUR)<select id="budget"><option value="">Flexible</option><option value="50">Up to €50</option><option value="100">Up to €100</option><option value="250">Up to €250</option><option value="500">Up to €500</option><option value="1000">Up to €1,000</option></select></label>
+<label>Custom keywords<input id="keywords" placeholder="e.g. Umbreon, Sugimori, Neo Genesis"></label></div>
+<div class="buttons" style="margin-top:20px"><button id="run">Find matching cards</button><button class="secondary" id="copy">Copy my collecting brief</button></div><p class="subtle" id="feedback" role="status"></p></section>
+<section class="panel"><div class="label">02 / Collector matches</div><div class="row"><h2>Potential discoveries</h2><span class="tag">Featured examples only</span></div><div id="results"><p class="muted">Set your preferences, then tap Find matching cards.</p></div><p class="subtle">The catalog may be outdated. Prices, availability, population and authenticity have not been reverified. Nothing here is reserved.</p></section>
+<section class="panel"><div class="label">03 / Future collector membership</div><h2>Make every drop feel personal</h2><p class="muted">Our proposed Collector Radar will eventually connect watchlists to incoming slabs, artist and rarity metadata, price thresholds and optional notifications. Every alert should say <strong>why it matched</strong>, while respecting alert frequency and privacy.</p><div class="note">This prototype processes selections in your browser only. It does not create an account, store your preferences, or send alerts. Sign-up and notifications will come only after privacy controls and inventory verification are in place.</div></section>
+<footer>Epic Decks NL · Experimental preview · No real-time inventory claims</footer></main>
+<script>
+const $=id=>document.getElementById(id);
+const selected=new Set();
+document.querySelectorAll(".chip").forEach(b=>b.addEventListener("click",()=>{if(selected.has(b.dataset.value))selected.delete(b.dataset.value);else selected.add(b.dataset.value);b.setAttribute("aria-pressed",String(selected.has(b.dataset.value)))}));
+function brief(){return {interests:[...selected],grader:$("grader").value,minimum_grade:$("grade").value,budget_eur:$("budget").value||null,keywords:$("keywords").value.trim()}}
+$("copy").onclick=async()=>{const data=brief(),description="Epic Decks Collector Radar preferences: "+JSON.stringify(data);try{await navigator.clipboard.writeText(description);$("feedback").textContent="Collecting brief copied."}catch{$("feedback").textContent="Copy is unavailable in this browser; you can manually copy your selection."}};
+$("run").onclick=async()=>{
+ const results=$("results"),config=brief();results.replaceChildren();$("feedback").textContent="Matching against featured catalogue examples.";
+ try{
+  const response=await fetch("/data/inventory.json",{cache:"no-store"});if(!response.ok)throw Error("Catalog unavailable");
+  const data=await response.json(),items=Array.isArray(data.featured_items)?data.featured_items:[];
+  const query=[...config.interests.filter(x=>!["Low-pop","Artist","Vintage"].includes(x)),config.keywords].filter(Boolean).map(x=>x.toLowerCase());
+  const matches=items.filter(item=>{
+    const searchable=[item.item_title,item.set_name,item.language,item.grade_company,item.item_type].join(" ").toLowerCase();
+    if(query.length&&!query.some(q=>searchable.includes(q)))return false;
+    if(config.grader&&String(item.grade_company||"").toLowerCase()!==config.grader.toLowerCase())return false;
+    const grade=parseFloat(item.grade_value),min=parseFloat(config.minimum_grade);
+    if(config.minimum_grade&&(!Number.isFinite(grade)||grade<min))return false;
+    // The site's target_price field is not a live price. Budget filtering is withheld to avoid false promises.
+    return true;
+  }).slice(0,12);
+  if(!matches.length){const p=document.createElement("p");p.className="muted";p.textContent="No matching featured examples yet. Try broadening your preferences. Your wishlist may be more specific than the current sample.";results.append(p)}
+  for(const item of matches){
+    const el=document.createElement("div");el.className="result";
+    const title=document.createElement("strong");title.textContent=String(item.item_title||"Collectible");el.append(title);
+    const detail=document.createElement("p");detail.className="subtle";detail.textContent=[item.set_name,item.grade_company,item.grade_value,item.item_type].filter(Boolean).join(" · ");el.append(detail);
+    const explain=document.createElement("p");explain.className="subtle";explain.textContent="Potential interest match from featured catalog data. Verify availability and details with Epic Decks.";el.append(explain);
+    results.append(el);
+  }
+  if(config.budget_eur||selected.has("Low-pop")||selected.has("Artist")||selected.has("Vintage")){$("feedback").textContent="Some interests (budget, low-pop, illustrator or era) are saved in your collecting brief but cannot yet be filtered reliably until verified metadata is connected."}
+ }catch{results.textContent="The sample catalog could not be loaded. Please try again."}
+};
+</script></body></html>
