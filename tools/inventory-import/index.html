@@ -27,7 +27,7 @@ button.ghost{background:#354d68;color:#fff}.buttons{display:flex;gap:10px;flex-w
 .scroll{overflow:auto;max-width:100%}table{border-collapse:collapse;width:100%;font-size:13px}td,th{padding:9px 10px;border-bottom:1px solid #354963;text-align:left;white-space:nowrap}th{color:#cbd9e8;font-weight:700}td{max-width:250px;overflow:hidden;text-overflow:ellipsis}
 .subtle{font-size:13px;color:#b8c8d8}.hidden{display:none!important}details summary{cursor:pointer;padding:12px 0;font-weight:700}
 .mapping{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}.mapping .field{font-size:12px;margin:0}.mapping select{font-size:13px;padding:10px}
-.record{border-bottom:1px solid #384c64;padding:11px 0;display:flex;justify-content:space-between;gap:12px}
+.match{padding:14px;border:1px solid #4b6075;border-radius:12px;margin:10px 0;background:#0b1f35}.match strong{color:#f7f3ed}.match p{margin:7px 0;font-size:13px}.record{border-bottom:1px solid #384c64;padding:11px 0;display:flex;justify-content:space-between;gap:12px}
 .record b{display:block;font-size:14px}.record small{display:block;color:#b9cddd;margin-top:4px}.tag{font-size:11px;border:1px solid #77613f;border-radius:100px;padding:5px 8px;height:fit-content;white-space:nowrap}
 footer{font-size:12px;color:#9baec1;margin-top:25px}
 @media(max-width:700px){.columns,.mapping{grid-template-columns:1fr}.stats{grid-template-columns:repeat(3,minmax(0,1fr))}.panel{padding:16px}.metric{padding:10px}.metric strong{font-size:20px}}
@@ -78,6 +78,11 @@ footer{font-size:12px;color:#9baec1;margin-top:25px}
 </div>
 <p class="subtle">Potential duplicates are flagged but <strong>never automatically merged</strong>. Importing inventory does not update stock, publish products or connect accounts.</p>
 <div id="items"><p class="subtle">Your imported records will appear here.</p></div>
+<details id="reconcile-details" open style="margin-top:24px"><summary>Possible matches across channels <span id="match-count">(0)</span></summary>
+<p class="subtle">The same physical slab may appear on multiple platforms. These are only <b>review candidates</b>; no records are merged and quantities are never added together.</p>
+<div id="match-summary" class="subtle"></div><div id="match-items"></div>
+<div class="buttons"><button id="export-matches" type="button" class="ghost" disabled>Export matching report</button></div>
+</details>
 <div class="buttons">
 <button id="download" type="button" disabled>Export review JSON</button>
 <button id="clear" type="button" class="ghost">Clear staging session</button>
@@ -87,8 +92,9 @@ footer{font-size:12px;color:#9baec1;margin-top:25px}
 </main>
 <script type="module">
 import {FIELDS,suggestedSource,suggestedMapping,parseDelimited,normalizeRows,normalizeSlabDrafts,exportPackage} from "./normalize.js";
+import {reconcileCandidates,exportReconciliation} from "./reconcile.js";
 const $=x=>document.getElementById(x), clean=x=>String(x??"").trim();
-let selectedFile=null, workbook=null, currentRows=[],headers=[],staged=[],fileCount=0,draftJSON=null;
+let selectedFile=null, workbook=null, currentRows=[],headers=[],staged=[],fileCount=0,draftJSON=null,matching={candidates:[],total:0,counts:{conflict:0,high:0,medium:0}};
 const sourceChoice=()=> $("source").value==="auto"?suggestedSource(headers):$("source").value;
 const setInfo=(message,isError=false)=>{$("file-info").textContent=message;$("file-info").className=isError?"subtle warn":"subtle"};
 function downloadFile(object,name){const b=new Blob([JSON.stringify(object,null,2)],{type:"application/json"});const url=URL.createObjectURL(b);const a=document.createElement("a");a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),10000);}
@@ -167,8 +173,29 @@ function crossDuplicateFlags(records){
  });
  return flags;
 }
+function showMatches(){
+ matching=reconcileCandidates(staged);
+ $("match-count").textContent="("+matching.total+")";
+ $("export-matches").disabled=matching.total===0;
+ $("match-summary").textContent=matching.total+" possible match pair(s); "+matching.counts.conflict+" conflict(s). Strong evidence is not confirmation of one physical item.";
+ const container=$("match-items");container.replaceChildren();
+ for(const c of matching.candidates.slice(0,20)){
+  const a=staged[c.left],b=staged[c.right],div=document.createElement("div");div.className="match";
+  const header=document.createElement("strong");
+  header.textContent=(a.identity.title||"Unnamed")+" / "+(b.identity.title||"Unnamed");div.append(header);
+  const caption=document.createElement("p");caption.textContent=
+    (a.source+" ["+(a.identity.sku||a.source_id||"no identifier")+"]")+" ↔ "+(b.source+" ["+(b.identity.sku||b.source_id||"no identifier")+"]");
+  div.append(caption);
+  const details=document.createElement("p");details.textContent=
+    "Signal: "+c.confidence+" · "+c.reasons.join(", ")+(c.conflicts.length?" · Conflicts: "+c.conflicts.join(", "):"")+
+    " · Review manually; never sum quantities.";details.className=c.conflicts.length?"warn":"subtle";div.append(details);container.append(div);
+ }
+ if(matching.total>20){const p=document.createElement("p");p.className="subtle";p.textContent="First 20 candidates shown. Export the report for all displayed candidate details.";container.append(p)}
+}
+$("export-matches").onclick=()=>{if(matching.total)downloadFile(exportReconciliation(staged,matching),"epic-decks-match-review.json");};
 function renderStaging(){
  const duplicates=crossDuplicateFlags(staged),warnings=staged.filter((r,i)=>r.warnings.length||duplicates.has(i));
+ showMatches();
  $("total").textContent=staged.length;$("issues").textContent=warnings.length;$("sources").textContent=fileCount;$("download").disabled=!staged.length;
  const container=$("items");container.replaceChildren();
  if(!staged.length){const p=document.createElement("p");p.className="subtle";p.textContent="Your imported records will appear here.";container.append(p);return}
