@@ -31,6 +31,22 @@
 3. For actual agentic messaging, set up a Meta business portfolio, WhatsApp Business Account, and compatible business phone number, then connect **WhatsApp Cloud API** with webhooks, explicit customer opt-ins for proactive alerts, approved templates outside open service windows, and appropriately secured secrets. The phone number can be separate from the click-to-chat number if needed.
 4. Separate human-operated customer service, agentic suggestions, and transaction-authorized actions. Never have an unrestricted agent initiate payment, purchase, refunds, or inventory commitment.
 
+
+## Outlook-first channel: delivery, costs, and rollout
+
+We have confirmed via the connected Outlook account that \`welcome@epic-decks.com\` is the correct business mailbox. **The ChatGPT Outlook connection does not supply Vercel with an API credential.** For secure unattended sends, a Microsoft 365 Exchange Online admin must configure an appropriately scoped Graph application and server-side credentials separately.
+
+The development site supports:
+- **Ready now**: client-generated, prefilled email draft addressed to the Epic Decks mailbox. The customer must send it themselves.
+- **Implemented but disabled by default**: \`/api/sourcing-request.js\`, which would securely forward a website enquiry via Microsoft Graph from the Epic Decks mailbox after CAPTCHA, consent, origin and input validation. This does not yet send any messages because the environment permissions/security gates are not configured.
+- **Not yet implemented**: idempotent persistent request tracking, automated customer acknowledgements, quote generation, order tracking, database retention and full WhatsApp conversation service.
+
+**Mandatory before enabling**: Exchange RBAC mail.Send scope restricted to the business mailbox, Cloudflare Turnstile, verified edge rate limiting, true flags \`SOURCING_GRAPH_SCOPE_VERIFIED\` and \`SOURCING_RATE_LIMIT_READY\`, then \`SOURCING_EMAIL_RELAY_ENABLED\`, plus \`MS_TENANT_ID\`, \`MS_CLIENT_ID\`, \`MS_CLIENT_SECRET\`, \`TURNSTILE_SITE_KEY\`, \`TURNSTILE_SECRET_KEY\`, \`TURNSTILE_ALLOWED_HOSTNAMES\` set securely on Vercel. Configure **Preview only**, test, monitor and review privacy policy/consent text before production. Do not share credentials in chat or GitHub.
+
+Microsoft Graph returning HTTP 202 does not guarantee inbox delivery. An operator must check \`welcome@epic-decks.com\`. The site still has a click-to-compose fallback.
+
+**Pricing and P&L document:** \`docs/pokebro-cost-register-20261027.md\` lists existing subscriptions, potentially paid services, vendor prices as of 27 Oct 2026, unit-cost assumptions, profitability tests, and explicit purchase/activation checkpoints. Do not add paid plans or enable direct transactions until approved.
+
 ## Suggested request workflow and state machine
 `draft → received → needs_clarification → sourcing → options_ready → quote_issued → buyer_approved → payment_pending → purchased → shipping → [optional inspection] → delivered → closed`.
 
