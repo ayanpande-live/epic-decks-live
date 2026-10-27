@@ -26,7 +26,7 @@
 <section class="panel"><h2>1. Upload slab photos</h2><p class="hint">Uploading several slabs? Start with the ordered batch uploader below. You only need to select your images once.</p>
 <div class="panel" style="background:#0c2038;margin-top:16px">
 <h2>Batch import</h2><p class="hint">Select your slab images in alternating order: <strong>FRONT 1 → BACK 1 → FRONT 2 → BACK 2</strong>. We show every pair for review before saving. Phone photo pickers may reorder selections; always confirm the thumbnails.</p>
-<input id="batch-files" type="file" accept="image/*" multiple aria-label="Select multiple slab photos" style="max-width:100%">
+<label id="batch-upload-target" for="batch-files" style="display:block;cursor:pointer;border:2px dashed #6887a8;border-radius:14px;padding:24px 18px;text-align:center;margin-top:14px;background:#122c48"><strong style="display:block;font-size:19px">＋ Tap anywhere here to select slab photos</strong><span style="display:block;margin-top:8px;color:#c8d6e8">Choose multiple images from your photo library</span></label><input id="batch-files" type="file" accept="image/*" multiple aria-label="Select multiple slab photos" style="position:absolute;width:1px;height:1px;opacity:0;overflow:hidden">
 <p id="batch-message" class="status" aria-live="polite"></p><div id="batch-review" class="hidden">
 <p id="batch-progress" class="hint"></p>
 <div id="batch-overview" class="batch-pairs" aria-label="All proposed slab photo pairs"></div>
@@ -293,7 +293,7 @@ el("ai-analyze").onclick=async()=>{
   }
   const needsCheck=review.status!=="consistent";
   el("ai-confirm-row").hidden=!needsCheck;
-  if(needsCheck){
+  if(needsCheck && photos.back){
    el("ai-message").textContent="⚠️ AI photo review: "+(review.reasons||[]).join(" ")+
     " Review the images manually and confirm before saving. No suggested fields were filled because of the warning.";
    return;
@@ -303,7 +303,7 @@ el("ai-analyze").onclick=async()=>{
    if(!el("f-"+key).value.trim()&&values[key])el("f-"+key).value=values[key];
   }
   el("notes").value=[el("notes").value,values.notes||""].filter(Boolean).join("\n");
-  el("ai-message").textContent="No obvious mismatch detected. Suggestions inserted into empty fields. Verify card, grade and certificate yourself. Uncertain: "+
+  el("ai-message").textContent=(photos.back?"No obvious mismatch detected. ":"Front-only extraction completed; back photo and pairing not verified. ")+"Suggestions inserted into empty fields. Verify card, grade and certificate yourself. Uncertain: "+
    ((values.uncertain_fields||[]).join(", ")||"none flagged")+". Certification remains unverified.";
  }catch(err){el("ai-message").textContent="AI review failed: "+err.message}
  finally{btn.disabled=false}
