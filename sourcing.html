@@ -164,6 +164,7 @@ fetch("/api/sourcing-request",{cache:"no-store"})
   if(!window.turnstile)return;
   window.turnstile.render("#captcha-widget",{
    sitekey:config.siteKey,
+   action:"pokebro_sourcing",
    callback:token=>{captchaToken=token;setActions(Boolean(prepared))},
    "expired-callback":()=>{captchaToken="";setActions(Boolean(prepared))},
    "error-callback":()=>{captchaToken="";setActions(Boolean(prepared))}
