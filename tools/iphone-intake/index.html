@@ -48,21 +48,21 @@
 </div>
 </div></div>
 <p class="hint">Single slab: upload front and back above. Multiple slabs: use Batch import and review each suggested pair. Back photos help AI detect mix-ups; they are strongly recommended.</p><button id="continue" type="button">Continue to details</button><p id="photo-message" class="status" aria-live="polite"></p></section>
-<section id="details" class="panel hidden"><h2>2. Review details</h2><p class="hint">AI may suggest the card and grade after setup. It may also flag reversed or mismatched images; these are warnings, not proof. Always compare against the original slab label; certification is not verified.</p><div class="panel" style="background:#0b2034"><label class="field">Private AI access code <input id="ai-access" type="password" autocomplete="off" placeholder="Set in Vercel (not saved)"></label><p class="hint">Only enter this if the server-side AI integration has been configured. Photos are sent to the AI provider only when you choose Analyze.</p><button id="ai-analyze" type="button" class="secondary">✨ Analyze current photos</button><p id="ai-message" class="status" aria-live="polite"></p></div><form id="draft-form"><div id="fields" class="fields"></div><label class="field full">Internal notes<textarea id="notes" maxlength="1000"></textarea></label><div class="actions"><button type="submit">Save private draft</button><button id="export-current" type="button" class="secondary">Export draft</button></div></form><p id="save-message" class="status" aria-live="polite"></p></section>
+<section id="details" class="panel hidden"><h2>2. Review details</h2><p class="hint">AI may suggest the card and grade after setup. It may also flag reversed or mismatched images; these are warnings, not proof. Always compare against the original slab label; certification is not verified.</p><div class="panel" style="background:#0b2034"><label class="field">Private AI access code <input id="ai-access" type="password" autocomplete="off" placeholder="Set in Vercel (not saved)"></label><p class="hint">Only enter this if the server-side AI integration has been configured. Photos are sent to the AI provider only when you choose Analyze.</p><button id="ai-analyze" type="button" class="secondary">✨ Analyze current photos</button><p id="ai-message" class="status" aria-live="polite"></p><label id="ai-confirm-row" class="confirm-line" hidden><input type="checkbox" id="ai-confirm"><span>I checked the flagged photos myself and confirm this is the correct slab.</span></label></div><form id="draft-form"><div id="fields" class="fields"></div><label class="field full">Internal notes<textarea id="notes" maxlength="1000"></textarea></label><div class="actions"><button type="submit">Save private draft</button><button id="export-current" type="button" class="secondary">Export draft</button></div></form><p id="save-message" class="status" aria-live="polite"></p></section>
 <section class="panel"><h2>Saved drafts <span id="count">(0)</span></h2><div id="draft-list"><p class="hint">No saved drafts yet.</p></div><div class="actions"><button id="export-all" type="button" class="secondary">Export all JSON</button><button id="delete-all" type="button" class="secondary">Delete drafts</button></div><p class="hint">Drafts are saved only in this browser's local storage. Export them regularly; clearing Safari website data can erase them.</p></section>
 <footer>Private manual test only. No authentication or cloud sync; do not use as a shared production admin system or your sole inventory record.</footer></main>
 <script>
 "use strict";
 const el=id=>document.getElementById(id);
 const schema=[["card_name","Card name"],["set_name","Set"],["card_number","Card number"],["language","Language"],["year","Year"],["rarity","Rarity"],["grade_company","Grading company"],["grade_value","Grade"],["cert_number","Certificate number"],["label_variant","Label variant"],["sku","Internal SKU"],["price_eur","Selling price (€)"],["purchase_cost_eur","Private purchase cost (€)"]];
-let photos={},currentId=null,dbP,batch=[],pairIndex=0,batchBusy=false,selectNext="front",batchPairs=[],pairReviews=[],pairOverrides=[],batchReviewBusy=false,loadedBatchIndex=null;
+let photos={},currentId=null,dbP,batch=[],pairIndex=0,batchBusy=false,selectNext="front",batchPairs=[],pairReviews=[],pairOverrides=[],batchReviewBusy=false,loadedBatchIndex=null,singlePairReview=null;
 for(const [name,label] of schema){const wrap=document.createElement("label");wrap.className="field"+(name==="card_name"?" full":"");wrap.textContent=label;const input=document.createElement("input");input.type="text";input.id="f-"+name;input.required=name==="card_name";input.autocomplete="off";wrap.append(input);el("fields").append(wrap);}
 function db(){return dbP||(dbP=new Promise((yes,no)=>{const r=indexedDB.open("epic-decks-slab-intake-v1",1);r.onupgradeneeded=()=>r.result.createObjectStore("drafts",{keyPath:"id"});r.onsuccess=()=>yes(r.result);r.onerror=()=>no(r.error)}))}
 async function save(item){const d=await db();return new Promise((ok,no)=>{const t=d.transaction("drafts","readwrite");t.objectStore("drafts").put(item);t.oncomplete=ok;t.onerror=()=>no(t.error)})}
 async function readAll(){const d=await db();return new Promise((ok,no)=>{const r=d.transaction("drafts").objectStore("drafts").getAll();r.onsuccess=()=>ok(r.result);r.onerror=()=>no(r.error)})}
 async function clear(){const d=await db();return new Promise((ok,no)=>{const t=d.transaction("drafts","readwrite");t.objectStore("drafts").clear();t.oncomplete=ok;t.onerror=()=>no(t.error)})}
 async function shrink(file){if(!file||!file.type.startsWith("image/"))throw Error("Choose an image");if(file.size>24*1024*1024)throw Error("Image over 24 MB");const url=URL.createObjectURL(file);try{const pic=new Image();await new Promise((ok,no)=>{pic.onload=ok;pic.onerror=()=>no(Error("Cannot read image; use JPG or PNG"));pic.src=url});const ratio=Math.min(1,1300/Math.max(pic.width,pic.height));const can=document.createElement("canvas");can.width=Math.max(1,Math.round(pic.width*ratio));can.height=Math.max(1,Math.round(pic.height*ratio));can.getContext("2d").drawImage(pic,0,0,can.width,can.height);return can.toDataURL("image/jpeg",.78)}finally{URL.revokeObjectURL(url)}}
-for(const side of ["front","back"]){el(side).addEventListener("change",async e=>{try{photos[side]=await shrink(e.target.files[0]);el(side+"-preview").src=photos[side];el(side+"-preview").hidden=false;el("photo-message").textContent=""}catch(err){el("photo-message").textContent=err.message}})}
+for(const side of ["front","back"]){el(side).addEventListener("change",async e=>{try{photos[side]=await shrink(e.target.files[0]);singlePairReview=null;el("ai-confirm").checked=false;el("ai-confirm-row").hidden=true;loadedBatchIndex=null;el(side+"-preview").src=photos[side];el(side+"-preview").hidden=false;el("photo-message").textContent=""}catch(err){el("photo-message").textContent=err.message}})}
 
 
 function pairsFromOrderedPhotos(count){
@@ -254,7 +254,7 @@ function loadBatchPair(){
  else el("back-preview").hidden=true;
  for(const [k] of schema)el("f-"+k).value="";
  el("notes").value="";
- currentId=crypto.randomUUID();loadedBatchIndex=pairIndex;
+ currentId=crypto.randomUUID();loadedBatchIndex=pairIndex;singlePairReview=null;el("ai-confirm-row").hidden=true;el("ai-confirm").checked=false;el("ai-message").textContent="";
  el("details").classList.remove("hidden");el("save-message").textContent="";
  el("details").scrollIntoView({behavior:"smooth"});
  el("batch-message").textContent="Pair loaded. Review the slab label and enter details before saving.";
@@ -262,10 +262,69 @@ function loadBatchPair(){
 function nextPair(){pairIndex++;loadedBatchIndex=null;showPair()}
 el("use-batch").onclick=loadBatchPair;
 el("skip-batch").onclick=()=>{nextPair();el("details").classList.add("hidden");};
-el("continue").onclick=()=>{if(!photos.front){el("photo-message").textContent="Please add a front image.";return}el("details").classList.remove("hidden");el("details").scrollIntoView({behavior:"smooth"});currentId=crypto.randomUUID()};
-function record(){const values={};for(const [key] of schema)values[key]=el("f-"+key).value.trim();return {id:currentId||crypto.randomUUID(),created_at:new Date().toISOString(),status:"local-draft",fields:values,notes:el("notes").value.trim(),front_photo:photos.front||"",back_photo:photos.back||"",ai_verified:false,published:false}}
+
+el("ai-analyze").onclick=async()=>{
+ if(!photos.front){el("ai-message").textContent="Add at least one front photo.";return}
+ const token=el("ai-access").value.trim()||el("batch-ai-access").value.trim();
+ if(!token){el("ai-message").textContent="Enter your private AI access code first.";return}
+ const btn=el("ai-analyze");btn.disabled=true;
+ el("ai-message").textContent="AI is reviewing the current photos. No card details will be published.";
+ try{
+  const result=await analyzeImages(photos.front,photos.back,token);
+  const review=result.pair_review||{status:"insufficient_evidence",reasons:[]};
+  if(loadedBatchIndex!==null){
+   pairReviews[loadedBatchIndex]=review;pairOverrides[loadedBatchIndex]=false;
+   el("pair-confirm").checked=false;renderBatchOverview();renderPairAudit();
+  }else{
+   singlePairReview=review;el("ai-confirm").checked=false;
+  }
+  const needsCheck=review.status!=="consistent";
+  el("ai-confirm-row").hidden=!needsCheck;
+  if(needsCheck){
+   el("ai-message").textContent="⚠️ AI photo review: "+(review.reasons||[]).join(" ")+
+    " Review the images manually and confirm before saving. No suggested fields were filled because of the warning.";
+   return;
+  }
+  const values=result.fields||{};
+  for(const [key] of schema){
+   if(!el("f-"+key).value.trim()&&values[key])el("f-"+key).value=values[key];
+  }
+  el("notes").value=[el("notes").value,values.notes||""].filter(Boolean).join("\n");
+  el("ai-message").textContent="No obvious mismatch detected. Suggestions inserted into empty fields. Verify card, grade and certificate yourself. Uncertain: "+
+   ((values.uncertain_fields||[]).join(", ")||"none flagged")+". Certification remains unverified.";
+ }catch(err){el("ai-message").textContent="AI review failed: "+err.message}
+ finally{btn.disabled=false}
+};
+el("ai-confirm").addEventListener("change",()=>{
+ if(loadedBatchIndex!==null){
+  pairOverrides[loadedBatchIndex]=el("ai-confirm").checked;
+  el("pair-confirm").checked=el("ai-confirm").checked;
+ }else if(singlePairReview)singlePairReview.acknowledged=el("ai-confirm").checked;
+});
+el("continue").onclick=()=>{if(!photos.front){el("photo-message").textContent="Please add a front image.";return}loadedBatchIndex=null;singlePairReview=null;el("ai-confirm-row").hidden=true;el("ai-confirm").checked=false;el("details").classList.remove("hidden");el("details").scrollIntoView({behavior:"smooth"});currentId=crypto.randomUUID()};
+function record(){const values={};for(const [key] of schema)values[key]=el("f-"+key).value.trim();return {id:currentId||crypto.randomUUID(),created_at:new Date().toISOString(),status:"local-draft",fields:values,notes:el("notes").value.trim(),front_photo:photos.front||"",back_photo:photos.back||"",photo_pair_review:loadedBatchIndex!==null?(pairReviews[loadedBatchIndex]||{status:"not_checked"}):(singlePairReview||{status:"not_checked"}),ai_verified:false,published:false}}
 function download(obj,name){const blob=new Blob([JSON.stringify(obj,null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),7000)}
-el("draft-form").onsubmit=async e=>{e.preventDefault();try{await save(record());if(batch.length && pairIndex*2<batch.length){nextPair();el("details").classList.add("hidden");if(pairIndex*2<batch.length){el("batch-message").textContent="Draft saved. Select the next pair.";el("batch-review").scrollIntoView({behavior:"smooth"});}else{el("batch-message").textContent="Batch complete. Draft saved. Export saved drafts to back up your work.";}}currentId=crypto.randomUUID();el("save-message").textContent="Saved locally. Nothing was published.";el("save-message").className="status success";await refresh()}catch(err){el("save-message").textContent="Save failed: "+err.message+". Export this draft instead."}};
+el("draft-form").onsubmit=async e=>{
+ e.preventDefault();
+ const review=loadedBatchIndex!==null?pairReviews[loadedBatchIndex]:singlePairReview;
+ const confirmed=loadedBatchIndex!==null?Boolean(pairOverrides[loadedBatchIndex]):Boolean(review?.acknowledged);
+ if(review&&review.status!=="consistent"&&!confirmed){
+  el("save-message").textContent="Review the AI photo warning and acknowledge it before saving this draft.";return;
+ }
+ try{
+  await save(record());
+  if(loadedBatchIndex!==null){
+   nextPair();el("details").classList.add("hidden");
+   if(pairIndex<batchPairs.length){
+    el("batch-message").textContent="Draft saved. Review the next suggested pair.";
+    el("batch-review").scrollIntoView({behavior:"smooth"});
+   }else el("batch-message").textContent="Batch complete. Export your saved drafts as a backup.";
+  }
+  currentId=crypto.randomUUID();
+  el("save-message").textContent="Saved locally. Nothing was published.";
+  el("save-message").className="status success";await refresh();
+ }catch(err){el("save-message").textContent="Save failed: "+err.message+". Export this draft instead."}
+};
 el("export-current").onclick=()=>{if(photos.front)download(record(),"epic-decks-slab-draft.json")};
 el("export-all").onclick=async()=>{try{const items=await readAll();if(items.length)download({exported_at:new Date().toISOString(),drafts:items},"epic-decks-slab-drafts.json");else alert("No drafts yet")}catch(err){alert(err.message)}};
 el("delete-all").onclick=async()=>{if(confirm("Delete all locally stored drafts? Export first!")){await clear();await refresh()}};
