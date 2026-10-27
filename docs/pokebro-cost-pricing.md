@@ -1,3 +1,5 @@
+> **27 October 2026 update:** AWS SES is selected for outbound website email; existing Outlook remains the inbox. The Microsoft Graph implementation and its setup costs below are superseded alternatives, not the current launch plan. See [AWS SES handover](./aws-ses-handover.md) for the confirmed architecture and 2026 SES pricing (Essentials **$0.16/1,000**, à la carte **$0.10/1,000**, sending only). At 100 enquiries with two outbound emails each: approximately **$0.032** or **$0.020** SES usage, **excluding AWS hosting, API/security, taxes and labor**.
+
 # Epic Decks / Pokébro: cost register and pilot unit economics
 **Prepared:** 27 October 2026 · **Status:** planning estimates, not an approved budget
 
@@ -24,7 +26,7 @@ Every tool has an explicit cost state: **Already paid**, **Free with constraints
 ### Recommended release sequence by cost
 **Stage 0 (now):** client-side sourcing form → user opens their own email app → `welcome@epic-decks.com`. Incremental delivery tech cost **€0** if a functioning mailbox and hosting are already paid for; requires manual sending by the visitor.
 
-**Stage 1 (after verification):** Serverless `/api/sourcing-request` → Cloudflare Turnstile → server-restricted Microsoft Graph Mail.Send → same Outlook inbox. Requires tenant/admin setup, application scope restriction and durable abuse rate-limiting. Additional Graph message charge typically none; hosting/licensing still apply. Backend is **disabled by default**.
+**Stage 1 (after verification):** AWS-backed `/api/sourcing-request` → Cloudflare Turnstile + API rate limiting → Amazon SES outbound → same Outlook inbox. Requires SES domain verification, sandbox removal for email to unverified customers, least-privilege IAM and the privacy/retention review. Backend is **disabled by default**.
 
 **Stage 2:** Outlook Inbox → standard Power Automate rules for foldering/tagging notifications and human reviews. Add AI only for worthwhile incoming requests, with a cost ledger for model tokens/time; do not auto-send offers or commit purchases.
 
