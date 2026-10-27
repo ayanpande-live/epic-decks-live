@@ -1,3 +1,5 @@
+> **Decision update — 27 October 2026:** AWS SES is selected for outbound email, with `welcome@epic-decks.com` on Microsoft 365 / Exchange Online as the existing incoming mailbox. **The Vercel Graph endpoint has been replaced with a disabled compatibility stub**, and website automatic submission remains offline. The prior Microsoft Graph instructions below are historical, superseded options. **Use [AWS SES handover](./aws-ses-handover.md) for current setup guidance.** Nothing has been deployed to AWS and no DNS records have changed.
+
 # Pokébro Sourcing Concierge — Release 1 preview
 
 **Branch:** `feature/pokebro-sourcing-concierge-20261027` (based on the unmerged storefront preview). Production remains unchanged.
@@ -14,7 +16,7 @@
 2. A reviewable brief is prepared **locally in the browser**.
 3. The collector can copy the brief or open an email draft to the published Epic Decks contact mailbox (`welcome@epic-decks.com`). Opening a draft does not send it; confirm the inbox receives and is monitored before launch.
 4. The direct WhatsApp button is automatically **disabled** unless `whatsapp_phone_digits` is configured with a real, verified business number in international digits (no `+`). Once configured, the button opens a user-editable chat through an official `wa.me` link. The user must explicitly press Send in WhatsApp.
-5. A disabled-by-default Microsoft 365 Graph email relay has been scaffolded at `/api/sourcing-request.js`, behind Turnstile, same-origin checks and explicit consent. It requires a verified mailbox, server environment secrets, secure mailbox-restricted Graph application permission, abuse rate limiting and privacy/retention checks. Until activated it returns a not-configured response and customers use email drafts. No marketplace search, quote, or transaction is initiated.
+5. The website's `/api/sourcing-request.js` route is disabled while the actual secure submission backend is moved to AWS SES. The AWS service is **not yet deployed**. Customers can still prepare, copy, or email a draft; no purchase or marketplace search takes place.
 
 ## Outlook-first relay setup and financial review
 
