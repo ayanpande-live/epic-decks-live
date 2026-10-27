@@ -1,0 +1,18 @@
+import assert from "node:assert/strict";
+import {normalizeRequest,validateRequest,requestSummary,whatsappLink,emailLink} from "./sourcing-request.mjs";
+const base={category:"slab",search_type:"exact",card:"Umbreon VMAX 215/203",set:"Evolving Skies",language:"Japanese",grader:"PSA",grade:"10",budget:"250",delivery_country:"Netherlands",shipping:"compare"};
+const r=normalizeRequest(base);
+assert.equal(r.max_budget_eur,250);
+assert.deepEqual(validateRequest(r),[]);
+assert.ok(requestSummary(r).includes("Maximum ALL-IN budget: €250.00"));
+assert.ok(requestSummary(r).includes("No purchase is authorized"));
+assert.ok(!requestSummary(r).includes("undefined"));
+assert.equal(whatsappLink("",requestSummary(r)),null,"no business number means no WhatsApp route");
+assert.equal(whatsappLink("+31600000000","abc"),null,"international digits only");
+assert.ok(whatsappLink("31612345678","Charizard & Mew").includes("Charizard%20%26%20Mew"));
+assert.ok(emailLink("info@epic-decks.com",requestSummary(r)).startsWith("mailto:"));
+assert.ok(validateRequest(normalizeRequest({...base,budget:"",card:""})).length>=2);
+assert.ok(validateRequest(normalizeRequest({...base,reference_url:"javascript:alert(1)"})).length===1);
+assert.equal(normalizeRequest({...base,shipping:"purchase"}).shipping,"compare");
+assert.equal(normalizeRequest({...base,notes:"x".repeat(2000)}).notes.length,600);
+console.log("Sourcing request normalization, validation and handoff tests passed.");
