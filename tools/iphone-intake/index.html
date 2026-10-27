@@ -40,7 +40,7 @@
 <h2 style="font-size:16px;margin:8px 0">Optional batch AI pairing review</h2>
 <p class="hint">Press Review to check photo roles and possible mismatches, one slab pair at a time. Your images are sent to the configured AI service only after you press the button. AI checks can miss mistakes and may flag correct pairs. Review all warnings yourself.</p>
 <label>Private AI access code <input id="batch-ai-access" type="password" autocomplete="off" placeholder="Same code as individual slab review"></label>
-<button id="batch-audit" type="button" class="secondary">Review photo pairs with AI</button>
+<button id="batch-audit" type="button" class="secondary">Review photo pairs with AI</button><button id="batch-stop" type="button" class="secondary" hidden>Stop after current pair</button>
 <p id="batch-audit-message" class="status" role="status" aria-live="polite">No AI calls have been made for this batch.</p>
 </div>
 </div></div>
@@ -58,14 +58,14 @@
 "use strict";
 const el=id=>document.getElementById(id);
 const schema=[["card_name","Card name"],["set_name","Set"],["card_number","Card number"],["language","Language"],["year","Year"],["rarity","Rarity"],["grade_company","Grading company"],["grade_value","Grade"],["cert_number","Certificate number"],["label_variant","Label variant"],["sku","Internal SKU"],["price_eur","Selling price (€)"],["purchase_cost_eur","Private purchase cost (€)"]];
-let photos={},currentId=null,dbP,batch=[],pairIndex=0,batchBusy=false,selectNext="front",batchPairs=[],pairReviews=[],pairOverrides=[],batchReviewBusy=false,loadedBatchIndex=null,singlePairReview=null,batchDraftIds=[];
+let photos={},currentId=null,dbP,batch=[],pairIndex=0,batchBusy=false,selectNext="front",batchPairs=[],pairReviews=[],pairOverrides=[],batchReviewBusy=false,loadedBatchIndex=null,singlePairReview=null,batchDraftIds=[],stopBatchReview=false;
 for(const [name,label] of schema){const wrap=document.createElement("label");wrap.className="field"+(name==="card_name"?" full":"");wrap.textContent=label;const input=document.createElement("input");input.type="text";input.id="f-"+name;input.required=name==="card_name";input.autocomplete="off";wrap.append(input);el("fields").append(wrap);}
 function db(){return dbP||(dbP=new Promise((yes,no)=>{const r=indexedDB.open("epic-decks-slab-intake-v1",1);r.onupgradeneeded=()=>r.result.createObjectStore("drafts",{keyPath:"id"});r.onsuccess=()=>yes(r.result);r.onerror=()=>no(r.error)}))}
 async function save(item){const d=await db();return new Promise((ok,no)=>{const t=d.transaction("drafts","readwrite");t.objectStore("drafts").put(item);t.oncomplete=ok;t.onerror=()=>no(t.error)})}
 async function readAll(){const d=await db();return new Promise((ok,no)=>{const r=d.transaction("drafts").objectStore("drafts").getAll();r.onsuccess=()=>ok(r.result);r.onerror=()=>no(r.error)})}
 async function clear(){const d=await db();return new Promise((ok,no)=>{const t=d.transaction("drafts","readwrite");t.objectStore("drafts").clear();t.oncomplete=ok;t.onerror=()=>no(t.error)})}
 async function shrink(file){if(!file||!file.type.startsWith("image/"))throw Error("Choose an image");if(file.size>24*1024*1024)throw Error("Image over 24 MB");const url=URL.createObjectURL(file);try{const pic=new Image();await new Promise((ok,no)=>{pic.onload=ok;pic.onerror=()=>no(Error("Cannot read image; use JPG or PNG"));pic.src=url});const ratio=Math.min(1,1300/Math.max(pic.width,pic.height));const can=document.createElement("canvas");can.width=Math.max(1,Math.round(pic.width*ratio));can.height=Math.max(1,Math.round(pic.height*ratio));can.getContext("2d").drawImage(pic,0,0,can.width,can.height);return can.toDataURL("image/jpeg",.78)}finally{URL.revokeObjectURL(url)}}
-for(const side of ["front","back"]){el(side).addEventListener("change",async e=>{try{photos[side]=await shrink(e.target.files[0]);singlePairReview=null;el("ai-confirm").checked=false;el("ai-confirm-row").hidden=true;loadedBatchIndex=null;el(side+"-preview").src=photos[side];el(side+"-preview").hidden=false;el("photo-message").textContent=""}catch(err){el("photo-message").textContent=err.message}})}
+for(const side of ["front","back"]){el(side).addEventListener("change",async e=>{try{photos[side]=await shrink(e.target.files[0]);if(side==="front"){delete photos.back;el("back-preview").hidden=true;}singlePairReview=null;el("ai-confirm").checked=false;el("ai-confirm-row").hidden=true;loadedBatchIndex=null;el(side+"-preview").src=photos[side];el(side+"-preview").hidden=false;el("photo-message").textContent=""}catch(err){el("photo-message").textContent=err.message}})}
 
 
 function pairsFromOrderedPhotos(count){
@@ -200,6 +200,7 @@ async function analyzeImages(front,back,token){
  if(!response.ok)throw Error(result.error||"AI analysis failed");
  return result;
 }
+el("batch-stop").onclick=()=>{stopBatchReview=true;el("batch-audit-message").textContent="Stopping after the current AI request completes…";};
 el("batch-audit").onclick=async()=>{
  if(!batch.length||batchReviewBusy)return;
  const token=el("batch-ai-access").value.trim()||el("ai-access").value.trim();
@@ -208,9 +209,10 @@ el("batch-audit").onclick=async()=>{
  if(problems.some(a=>a.some(x=>/already assigned|also assigned|cannot be both|select a valid/i.test(x)))){
   el("batch-audit-message").textContent="Correct repeated or invalid photo assignments before running AI.";return;
  }
- batchReviewBusy=true;el("batch-audit").disabled=true;el("use-batch").disabled=true;
+ batchReviewBusy=true;stopBatchReview=false;el("batch-audit").disabled=true;el("batch-stop").hidden=false;el("use-batch").disabled=true;
  try{
   for(let i=0;i<batchPairs.length;i++){
+   if(stopBatchReview)break;
    const p=batchPairs[i];
    el("batch-audit-message").textContent="AI checking pair "+(i+1)+"/"+batchPairs.length+
      " (one paid AI request per pair with photos). Do not close the page.";
@@ -236,7 +238,7 @@ el("batch-audit").onclick=async()=>{
   el("batch-audit-message").textContent="AI reviewed "+checked+"/"+batchPairs.length+
     " slab pairs; "+flagged+" need special attention or could not be confirmed. Review the visual pairs and warnings before saving.";
  }finally{
-  batchReviewBusy=false;el("batch-audit").disabled=false;renderPairAudit();renderBatchOverview();
+  batchReviewBusy=false;el("batch-audit").disabled=false;el("batch-stop").hidden=true;renderPairAudit();renderBatchOverview();
  }
 };
 function loadBatchPair(){
