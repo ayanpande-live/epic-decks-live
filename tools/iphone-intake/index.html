@@ -23,10 +23,7 @@
 @media(max-width:385px){.fields{grid-template-columns:1fr}} 
 </style></head><body><main><header><span>EPIC <b>DECKS NL</b></span><span class="tag">iPHONE PILOT</span></header>
 <h1>Photo in.<br>Draft ready.</h1><p><a href="../inventory-import/index.html" style="color:#ffb381">Have an Excel, Shopify or marketplace inventory instead? Import it here.</a></p><p>Photograph a slab or use photos from your iPhone. Review and save a local draft. Nothing is published or uploaded.</p>
-<section class="panel"><h2>1. Add slab photos</h2><div class="photo-grid">
-<label class="photo">FRONT <img id="front-preview" alt="Front photo preview" hidden><input id="front" type="file" accept="image/*" aria-label="Front image"></label>
-<label class="photo">BACK <img id="back-preview" alt="Back photo preview" hidden><input id="back" type="file" accept="image/*" aria-label="Back image"></label>
-</div>
+<section class="panel"><h2>1. Upload slab photos</h2><p class="hint">Uploading several slabs? Start with the ordered batch uploader below. You only need to select your images once.</p>
 <div class="panel" style="background:#0c2038;margin-top:16px">
 <h2>Batch import</h2><p class="hint">Select your slab images in alternating order: <strong>FRONT 1 → BACK 1 → FRONT 2 → BACK 2</strong>. We show every pair for review before saving. Phone photo pickers may reorder selections; always confirm the thumbnails.</p>
 <input id="batch-files" type="file" accept="image/*" multiple aria-label="Select multiple slab photos" style="max-width:100%">
@@ -47,8 +44,14 @@
 <p id="batch-audit-message" class="status" role="status" aria-live="polite">No AI calls have been made for this batch.</p>
 </div>
 </div></div>
-<p class="hint">Single slab: upload front and back above. Multiple slabs: use Batch import and review each suggested pair. Back photos help AI detect mix-ups; they are strongly recommended.</p><button id="continue" type="button">Continue to details</button><p id="photo-message" class="status" aria-live="polite"></p></section>
-<section id="details" class="panel hidden"><h2>2. Review details</h2><p class="hint">AI may suggest the card and grade after setup. It may also flag reversed or mismatched images; these are warnings, not proof. Always compare against the original slab label; certification is not verified.</p><div class="panel" style="background:#0b2034"><label class="field">Private AI access code <input id="ai-access" type="password" autocomplete="off" placeholder="Set in Vercel (not saved)"></label><p class="hint">Only enter this if the server-side AI integration has been configured. Photos are sent to the AI provider only when you choose Analyze.</p><button id="ai-analyze" type="button" class="secondary">✨ Analyze current photos</button><p id="ai-message" class="status" aria-live="polite"></p><label id="ai-confirm-row" class="confirm-line" hidden><input type="checkbox" id="ai-confirm"><span>I checked the flagged photos myself and confirm this is the correct slab.</span></label></div><form id="draft-form"><div id="fields" class="fields"></div><label class="field full">Internal notes<textarea id="notes" maxlength="1000"></textarea></label><div class="actions"><button type="submit">Save private draft</button><button id="export-current" type="button" class="secondary">Export draft</button></div></form><p id="save-message" class="status" aria-live="polite"></p></section>
+<details id="single-upload" style="margin-top:18px"><summary style="cursor:pointer;font-weight:800;padding:12px 0">Taking photos of one slab? Open individual upload</summary>
+<div class="photo-grid">
+<label class="photo">FRONT <img id="front-preview" alt="Front photo preview" hidden><input id="front" type="file" accept="image/*" aria-label="Front image"></label>
+<label class="photo">BACK <img id="back-preview" alt="Back photo preview" hidden><input id="back" type="file" accept="image/*" aria-label="Back image"></label>
+</div>
+<p class="hint">Single slab: upload front and back above. Multiple slabs: use Batch import and review each suggested pair. Back photos help AI detect mix-ups; they are strongly recommended.</p><button id="continue" type="button">Continue to details</button><p id="photo-message" class="status" aria-live="polite"></p></details>
+</section>
+<section id="details" class="panel hidden"><h2>2. Review details</h2><div id="detail-photo-review" class="photo-grid hidden" style="margin:10px 0 18px"><div class="photo"><small>FRONT</small><img id="detail-front" alt="Current slab front photo" style="width:100%;max-height:240px;object-fit:contain"></div><div class="photo"><small>BACK</small><img id="detail-back" alt="Current slab back photo" style="width:100%;max-height:240px;object-fit:contain" hidden><small id="detail-back-missing" hidden>Back photo not provided</small></div></div><p class="hint">AI may suggest the card and grade after setup. It may also flag reversed or mismatched images; these are warnings, not proof. Always compare against the original slab label; certification is not verified.</p><div class="panel" style="background:#0b2034"><label class="field">Private AI access code <input id="ai-access" type="password" autocomplete="off" placeholder="Set in Vercel (not saved)"></label><p class="hint">Only enter this if the server-side AI integration has been configured. Photos are sent to the AI provider only when you choose Analyze.</p><button id="ai-analyze" type="button" class="secondary">✨ Analyze current photos</button><p id="ai-message" class="status" aria-live="polite"></p><label id="ai-confirm-row" class="confirm-line" hidden><input type="checkbox" id="ai-confirm"><span>I checked the flagged photos myself and confirm this is the correct slab.</span></label></div><form id="draft-form"><div id="fields" class="fields"></div><label class="field full">Internal notes<textarea id="notes" maxlength="1000"></textarea></label><div class="actions"><button type="submit">Save private draft</button><button id="export-current" type="button" class="secondary">Export draft</button></div></form><p id="save-message" class="status" aria-live="polite"></p></section>
 <section class="panel"><h2>Saved drafts <span id="count">(0)</span></h2><div id="draft-list"><p class="hint">No saved drafts yet.</p></div><div class="actions"><button id="export-all" type="button" class="secondary">Export all JSON</button><button id="delete-all" type="button" class="secondary">Delete drafts</button></div><p class="hint">Drafts are saved only in this browser's local storage. Export them regularly; clearing Safari website data can erase them.</p></section>
 <footer>Private manual test only. No authentication or cloud sync; do not use as a shared production admin system or your sole inventory record.</footer></main>
 <script>
@@ -249,6 +252,7 @@ function loadBatchPair(){
   return;
  }
  photos={front:batch[p.front].data,back:p.back>=0?batch[p.back].data:""};
+ updateDetailPhotos();
  el("front-preview").src=photos.front;el("front-preview").hidden=false;
  if(photos.back){el("back-preview").src=photos.back;el("back-preview").hidden=false}
  else el("back-preview").hidden=true;
@@ -258,6 +262,13 @@ function loadBatchPair(){
  el("details").classList.remove("hidden");el("save-message").textContent="";
  el("details").scrollIntoView({behavior:"smooth"});
  el("batch-message").textContent="Pair loaded. Review the slab label and enter details before saving.";
+}
+function updateDetailPhotos(){
+ el("detail-photo-review").classList.toggle("hidden",!photos.front);
+ if(photos.front)el("detail-front").src=photos.front;
+ el("detail-back").hidden=!photos.back;
+ el("detail-back-missing").hidden=Boolean(photos.back);
+ if(photos.back)el("detail-back").src=photos.back;
 }
 function nextPair(){pairIndex++;loadedBatchIndex=null;showPair()}
 el("use-batch").onclick=loadBatchPair;
@@ -301,7 +312,7 @@ el("ai-confirm").addEventListener("change",()=>{
   el("pair-confirm").checked=el("ai-confirm").checked;
  }else if(singlePairReview)singlePairReview.acknowledged=el("ai-confirm").checked;
 });
-el("continue").onclick=()=>{if(!photos.front){el("photo-message").textContent="Please add a front image.";return}loadedBatchIndex=null;singlePairReview=null;el("ai-confirm-row").hidden=true;el("ai-confirm").checked=false;el("details").classList.remove("hidden");el("details").scrollIntoView({behavior:"smooth"});currentId=crypto.randomUUID()};
+el("continue").onclick=()=>{if(!photos.front){el("photo-message").textContent="Please add a front image.";return}updateDetailPhotos();loadedBatchIndex=null;singlePairReview=null;el("ai-confirm-row").hidden=true;el("ai-confirm").checked=false;el("details").classList.remove("hidden");el("details").scrollIntoView({behavior:"smooth"});currentId=crypto.randomUUID()};
 function record(){const values={};for(const [key] of schema)values[key]=el("f-"+key).value.trim();return {id:currentId||crypto.randomUUID(),created_at:new Date().toISOString(),status:"local-draft",fields:values,notes:el("notes").value.trim(),front_photo:photos.front||"",back_photo:photos.back||"",batch_source:loadedBatchIndex!==null?{pair_number:loadedBatchIndex+1,front_file:batch[batchPairs[loadedBatchIndex].front]?.name||"",back_file:batchPairs[loadedBatchIndex].back>=0?batch[batchPairs[loadedBatchIndex].back]?.name||"":""}:null,photo_pair_review:loadedBatchIndex!==null?(pairReviews[loadedBatchIndex]||{status:"not_checked"}):(singlePairReview||{status:"not_checked"}),ai_verified:false,published:false}}
 function download(obj,name){const blob=new Blob([JSON.stringify(obj,null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),7000)}
 el("draft-form").onsubmit=async e=>{
