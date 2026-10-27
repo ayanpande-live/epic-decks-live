@@ -55,7 +55,7 @@
 "use strict";
 const el=id=>document.getElementById(id);
 const schema=[["card_name","Card name"],["set_name","Set"],["card_number","Card number"],["language","Language"],["year","Year"],["rarity","Rarity"],["grade_company","Grading company"],["grade_value","Grade"],["cert_number","Certificate number"],["label_variant","Label variant"],["sku","Internal SKU"],["price_eur","Selling price (€)"],["purchase_cost_eur","Private purchase cost (€)"]];
-let photos={},currentId=null,dbP,batch=[],pairIndex=0,batchBusy=false,selectNext="front";
+let photos={},currentId=null,dbP,batch=[],pairIndex=0,batchBusy=false,selectNext="front",batchPairs=[],pairReviews=[],pairOverrides=[],batchReviewBusy=false,loadedBatchIndex=null;
 for(const [name,label] of schema){const wrap=document.createElement("label");wrap.className="field"+(name==="card_name"?" full":"");wrap.textContent=label;const input=document.createElement("input");input.type="text";input.id="f-"+name;input.required=name==="card_name";input.autocomplete="off";wrap.append(input);el("fields").append(wrap);}
 function db(){return dbP||(dbP=new Promise((yes,no)=>{const r=indexedDB.open("epic-decks-slab-intake-v1",1);r.onupgradeneeded=()=>r.result.createObjectStore("drafts",{keyPath:"id"});r.onsuccess=()=>yes(r.result);r.onerror=()=>no(r.error)}))}
 async function save(item){const d=await db();return new Promise((ok,no)=>{const t=d.transaction("drafts","readwrite");t.objectStore("drafts").put(item);t.oncomplete=ok;t.onerror=()=>no(t.error)})}
@@ -64,16 +64,204 @@ async function clear(){const d=await db();return new Promise((ok,no)=>{const t=d
 async function shrink(file){if(!file||!file.type.startsWith("image/"))throw Error("Choose an image");if(file.size>24*1024*1024)throw Error("Image over 24 MB");const url=URL.createObjectURL(file);try{const pic=new Image();await new Promise((ok,no)=>{pic.onload=ok;pic.onerror=()=>no(Error("Cannot read image; use JPG or PNG"));pic.src=url});const ratio=Math.min(1,1300/Math.max(pic.width,pic.height));const can=document.createElement("canvas");can.width=Math.max(1,Math.round(pic.width*ratio));can.height=Math.max(1,Math.round(pic.height*ratio));can.getContext("2d").drawImage(pic,0,0,can.width,can.height);return can.toDataURL("image/jpeg",.78)}finally{URL.revokeObjectURL(url)}}
 for(const side of ["front","back"]){el(side).addEventListener("change",async e=>{try{photos[side]=await shrink(e.target.files[0]);el(side+"-preview").src=photos[side];el(side+"-preview").hidden=false;el("photo-message").textContent=""}catch(err){el("photo-message").textContent=err.message}})}
 
-function showPair(){const i=pairIndex*2;const box=el("batch-review");if(i>=batch.length){box.classList.add("hidden");el("batch-message").textContent=batch.length?"All suggested pairs reviewed. Upload more photos, or export your saved drafts.":"";return;}box.classList.remove("hidden");el("batch-progress").textContent="Suggested pair "+(pairIndex+1)+" of "+Math.ceil(batch.length/2)+". Verify the pictures belong to the same slab.";for(const [which,suggested] of [["front",i],["back",i+1]]){const select=el("batch-"+which);select.replaceChildren();if(which==="back"){const empty=document.createElement("option");empty.value="-1";empty.textContent="No back photo";select.append(empty)}for(let j=0;j<batch.length;j++){const opt=document.createElement("option");opt.value=String(j);opt.textContent=(j+1)+". "+batch[j].name;select.append(opt)}select.value=String(suggested<batch.length?suggested:-1)}renderGallery();}
-function renderGallery(){const gallery=el("batch-gallery");gallery.replaceChildren();batch.forEach((pic,j)=>{const button=document.createElement("button");button.type="button";button.className="thumb"+(j===Number(el("batch-front").value)||j===Number(el("batch-back").value)?" selected":"");const im=document.createElement("img");im.src=pic.data;im.alt="Photo "+(j+1);const cap=document.createElement("small");cap.textContent=(j+1)+". "+pic.name;button.append(im,cap);button.onclick=()=>{el("batch-"+selectNext).value=String(j);selectNext=selectNext==="front"?"back":"front";renderGallery()};gallery.append(button)});}
-for(const side of ["front","back"])el("batch-"+side).addEventListener("change",renderGallery);
-el("ai-analyze").onclick=async()=>{if(!photos.front){el("ai-message").textContent="Add at least one front photo.";return;}const token=el("ai-access").value.trim();if(!token){el("ai-message").textContent="Enter your private AI access code first.";return;}const btn=el("ai-analyze");btn.disabled=true;el("ai-message").textContent="Analyzing photos. Nothing will be published…";try{const response=await fetch("/api/slab-analyze",{method:"POST",headers:{"Content-Type":"application/json","X-Intake-Token":token},body:JSON.stringify({front:photos.front,back:photos.back||null})});const result=await response.json();if(!response.ok)throw Error(result.error||"AI extraction failed");const values=result.fields||{};for(const [key] of schema){if(!el("f-"+key).value.trim() && values[key])el("f-"+key).value=values[key];}el("notes").value=[el("notes").value,values.notes||""].filter(Boolean).join("\n");el("ai-message").textContent="AI suggestions inserted into empty fields. Verify card, grade and cert number manually. Uncertain: "+((values.uncertain_fields||[]).join(", ")||"none flagged")+". No certification verified."; }catch(err){el("ai-message").textContent=err.message}finally{btn.disabled=false}};
-function nextPair(){pairIndex++;showPair()}
-el("batch-files").addEventListener("change",async e=>{if(batchBusy)return;const selected=Array.from(e.target.files||[]);if(!selected.length)return;if(selected.length>30){el("batch-message").textContent="Please select up to 30 photos per batch.";return}batchBusy=true;el("batch-message").textContent="Processing "+selected.length+" photos on this device…";batch=[];pairIndex=0;try{for(const f of selected){const data=await shrink(f);batch.push({name:f.name,data})}el("batch-message").textContent="Ready: "+batch.length+" photo"+(batch.length===1?"":"s")+". Review the images before saving.";showPair();if(batch.length===1){loadBatchPair();el("batch-message").textContent="Single photo loaded as FRONT. Add a back photo later if needed; enter details below.";}}catch(err){batch=[];el("batch-review").classList.add("hidden");el("batch-message").textContent="Import failed: "+err.message}finally{batchBusy=false}});
-function loadBatchPair(){const fi=Number(el("batch-front").value),bi=Number(el("batch-back").value);if(!Number.isInteger(fi)||fi<0||fi>=batch.length||!Number.isInteger(bi)||bi>=batch.length||bi< -1||fi===bi){el("batch-message").textContent="Choose a valid front photo and a different back photo (or No back photo).";return}photos={front:batch[fi].data,back:bi>=0?batch[bi].data:""};el("front-preview").src=photos.front;el("front-preview").hidden=false;if(photos.back){el("back-preview").src=photos.back;el("back-preview").hidden=false}else el("back-preview").hidden=true;for(const [k] of schema)el("f-"+k).value="";el("notes").value="";currentId=crypto.randomUUID();el("details").classList.remove("hidden");el("save-message").textContent="";el("details").scrollIntoView({behavior:"smooth"});el("batch-message").textContent="Photos loaded. Review card details, then save this draft.";}
+
+function pairsFromOrderedPhotos(count){
+ return Array.from({length:Math.ceil(count/2)},(_,i)=>({front:i*2,back:i*2+1<count?i*2+1:-1}));
+}
+function pairingProblems(pairs,photoCount){
+ const used=new Map(),issues=pairs.map(()=>[]);
+ pairs.forEach((pair,i)=>{
+  const indexes=[pair.front,pair.back].filter(n=>n>=0);
+  if(!Number.isInteger(pair.front)||pair.front<0||pair.front>=photoCount)issues[i].push("Select a valid front photo.");
+  if(!Number.isInteger(pair.back)||pair.back< -1||pair.back>=photoCount)issues[i].push("Select a valid back or No back.");
+  if(pair.back===-1)issues[i].push("Back image missing; this pair cannot be fully checked.");
+  if(pair.front===pair.back)issues[i].push("A photo cannot be both front and back.");
+  for(const index of indexes){
+   if(used.has(index)){
+    issues[i].push("Photo "+(index+1)+" is already assigned to pair "+(used.get(index)+1)+".");
+    issues[used.get(index)].push("Photo "+(index+1)+" is also assigned to pair "+(i+1)+".");
+   }else used.set(index,i);
+  }
+ });
+ return issues;
+}
+function aiReviewStatus(i){
+ const p=pairReviews[i];
+ if(!p)return "Not checked by AI; check that front and back show the same slab.";
+ const explanation=(p.reasons||[]).join(" ");
+ if(p.status==="consistent")return "AI found no obvious photo mismatch. This is not verification. "+explanation;
+ if(p.status==="possible_mismatch")return "⚠️ AI detected a possible photo mismatch. "+explanation;
+ if(p.status==="error")return "⚠️ AI review failed. Check the pair yourself. "+explanation;
+ return "⚠️ AI could not confirm the pair. "+explanation;
+}
+function reviewNeedsConfirmation(i){
+ const p=pairReviews[i];
+ return p && p.status!=="consistent";
+}
+function renderBatchOverview(){
+ const box=el("batch-overview");box.replaceChildren();
+ const errors=pairingProblems(batchPairs,batch.length);
+ batchPairs.forEach((pair,i)=>{
+  const b=document.createElement("button");b.type="button";b.className="batch-pair"+(i===pairIndex?" selected":"");
+  b.setAttribute("aria-label","Inspect proposed slab pair "+(i+1));
+  const photosWrap=document.createElement("span");photosWrap.className="twophotos";
+  for(const idx of [pair.front,pair.back]){
+   if(idx>=0&&batch[idx]){const pic=document.createElement("img");pic.src=batch[idx].data;pic.alt=(idx===pair.front?"Front":"Back")+" image for pair "+(i+1);photosWrap.append(pic);}
+  }
+  const label=document.createElement("span");label.className="pair-label";
+  const caption=document.createElement("strong");caption.textContent="Slab "+(i+1);label.append(caption);
+  const detail=document.createElement("small");
+  detail.textContent=errors[i].length?"Needs attention":pairReviews[i]?.status==="consistent"?"AI checked — review manually":reviewNeedsConfirmation(i)?"AI warning — review":pairReviews[i]?"Review manually":"Awaiting your review";
+  label.append(detail);b.append(photosWrap,label);
+  b.onclick=()=>{pairIndex=i;el("details").classList.add("hidden");loadedBatchIndex=null;showPair();};
+  box.append(b);
+ });
+}
+function showPair(){
+ const box=el("batch-review");
+ if(pairIndex>=batchPairs.length){
+  box.classList.add("hidden");
+  el("batch-message").textContent=batch.length?"All pairs completed. Export your drafts as a backup.":"";
+  return;
+ }
+ box.classList.remove("hidden");
+ el("batch-progress").textContent="Slab "+(pairIndex+1)+" of "+batchPairs.length+
+  ". Review the two photos before saving. Use the dropdowns to correct the pair if needed.";
+ const pair=batchPairs[pairIndex];
+ for(const side of ["front","back"]){
+  const select=el("batch-"+side);select.replaceChildren();
+  if(side==="back")select.append(new Option("No back photo","-1"));
+  for(let j=0;j<batch.length;j++)select.append(new Option((j+1)+". "+batch[j].name,String(j)));
+  select.value=String(pair[side]);selectNext="front";
+ }
+ el("pair-confirm").checked=Boolean(pairOverrides[pairIndex]);
+ renderGallery();renderBatchOverview();renderPairAudit();
+}
+function renderPairAudit(){
+ const problems=pairingProblems(batchPairs,batch.length)[pairIndex]||[];
+ const p=pairReviews[pairIndex],warnings=[...problems,...(p?.status&&p.status!=="consistent"?[aiReviewStatus(pairIndex)]:[])];
+ const severe=problems.some(x=>/already assigned|also assigned|cannot be both|select a valid/i.test(x));
+ el("pair-audit-status").textContent=warnings.length?warnings.join(" ") : aiReviewStatus(pairIndex);
+ el("pair-audit-status").className=warnings.length?"audit-warning":"status audit-clear";
+ el("pair-confirm-row").hidden=!(p&&p.status!=="consistent")&&!(pairIndex===batchPairs.length-1&&batchPairs[pairIndex]?.back===-1);
+ el("use-batch").disabled=severe||batchReviewBusy;
+}
+function renderGallery(){
+ const gallery=el("batch-gallery");gallery.replaceChildren();
+ batch.forEach((pic,j)=>{
+  const button=document.createElement("button");button.type="button";
+  button.className="thumb"+(j===Number(el("batch-front").value)||j===Number(el("batch-back").value)?" selected":"");
+  const im=document.createElement("img");im.src=pic.data;im.alt="Photo "+(j+1);
+  const cap=document.createElement("small");cap.textContent=(j+1)+". "+pic.name;
+  button.append(im,cap);
+  button.onclick=()=>{el("batch-"+selectNext).value=String(j);updatePairSelection();selectNext=selectNext==="front"?"back":"front";};
+  gallery.append(button);
+ });
+}
+function updatePairSelection(){
+ if(!batchPairs.length)return;
+ const p=batchPairs[pairIndex];
+ p.front=Number(el("batch-front").value);p.back=Number(el("batch-back").value);
+ // Any reassignment invalidates the old AI verdict and explicit human acknowledgement.
+ pairReviews[pairIndex]=null;pairOverrides[pairIndex]=false;
+ el("pair-confirm").checked=false;renderGallery();renderBatchOverview();renderPairAudit();
+ el("batch-audit-message").textContent="Pair selection changed. Any previous AI verdict on this pair was cleared; re-check after correction.";
+}
+for(const side of ["front","back"])el("batch-"+side).addEventListener("change",updatePairSelection);
+el("pair-confirm").addEventListener("change",()=>{pairOverrides[pairIndex]=el("pair-confirm").checked;});
+el("batch-files").addEventListener("change",async e=>{
+ if(batchBusy||batchReviewBusy)return;
+ const selected=Array.from(e.target.files||[]);if(!selected.length)return;
+ if(selected.length>30){el("batch-message").textContent="Select up to 30 images (15 pairs) at a time.";return}
+ batchBusy=true;
+ el("batch-message").textContent="Preparing "+selected.length+" images locally. Please review the selected order…";
+ batch=[];batchPairs=[];pairReviews=[];pairOverrides=[];pairIndex=0;loadedBatchIndex=null;
+ el("details").classList.add("hidden");
+ try{
+  for(const f of selected){const data=await shrink(f);batch.push({name:f.name,data})}
+  batchPairs=pairsFromOrderedPhotos(batch.length);
+  pairReviews=batchPairs.map(()=>null);pairOverrides=batchPairs.map(()=>false);
+  el("batch-message").textContent=batch.length+" photos → "+batchPairs.length+" proposed slab"+
+    (batchPairs.length===1?"":"s")+". No photos sent to AI yet."+
+    (batch.length%2?" ⚠️ Last slab has no back photo; please add or confirm manually.":"");
+  showPair();
+ }catch(err){batch=[];batchPairs=[];el("batch-review").classList.add("hidden");el("batch-message").textContent="Import failed: "+err.message}
+ finally{batchBusy=false;}
+});
+async function analyzeImages(front,back,token){
+ const response=await fetch("/api/slab-analyze",{
+  method:"POST",headers:{"Content-Type":"application/json","X-Intake-Token":token},
+  body:JSON.stringify({front,back:back||null})
+ });
+ const result=await response.json();
+ if(!response.ok)throw Error(result.error||"AI analysis failed");
+ return result;
+}
+el("batch-audit").onclick=async()=>{
+ if(!batch.length||batchReviewBusy)return;
+ const token=el("batch-ai-access").value.trim()||el("ai-access").value.trim();
+ if(!token){el("batch-audit-message").textContent="Enter your existing private AI access code.";return}
+ const problems=pairingProblems(batchPairs,batch.length);
+ if(problems.some(a=>a.some(x=>/already assigned|also assigned|cannot be both|select a valid/i.test(x)))){
+  el("batch-audit-message").textContent="Correct repeated or invalid photo assignments before running AI.";return;
+ }
+ batchReviewBusy=true;el("batch-audit").disabled=true;el("use-batch").disabled=true;
+ try{
+  for(let i=0;i<batchPairs.length;i++){
+   const p=batchPairs[i];
+   el("batch-audit-message").textContent="AI checking pair "+(i+1)+"/"+batchPairs.length+
+     " (one paid AI request per pair with photos). Do not close the page.";
+   try{
+    const result=await analyzeImages(batch[p.front].data,p.back>=0?batch[p.back].data:null,token);
+    const r=result.pair_review||{};
+    pairReviews[i]={
+     status:["consistent","possible_mismatch","insufficient_evidence"].includes(r.status)?r.status:"insufficient_evidence",
+     reasons:Array.isArray(r.reasons)?r.reasons.filter(x=>typeof x==="string").slice(0,5):[],
+     roles:Array.isArray(result.fields?.image_roles)?result.fields.image_roles:[]
+    };
+    pairOverrides[i]=false;
+   }catch(err){
+    pairReviews[i]={status:"error",reasons:[err.message||"AI service unavailable."]};
+    pairOverrides[i]=false;
+    // Stop on authorization and service errors instead of wasting additional calls.
+    if(/access code|unauthorized|invalid|not configured|unavailable|401|503/i.test(err.message||""))break;
+   }
+   renderBatchOverview();if(pairIndex===i)renderPairAudit();
+  }
+  const flagged=pairReviews.filter(r=>r&&r.status!=="consistent").length;
+  const checked=pairReviews.filter(Boolean).length;
+  el("batch-audit-message").textContent="AI reviewed "+checked+"/"+batchPairs.length+
+    " slab pairs; "+flagged+" need special attention or could not be confirmed. Review the visual pairs and warnings before saving.";
+ }finally{
+  batchReviewBusy=false;el("batch-audit").disabled=false;renderPairAudit();renderBatchOverview();
+ }
+};
+function loadBatchPair(){
+ const p=batchPairs[pairIndex];if(!p)return;
+ const problems=pairingProblems(batchPairs,batch.length)[pairIndex]||[];
+ if(problems.some(x=>/already assigned|also assigned|cannot be both|select a valid/i.test(x))){
+  el("batch-message").textContent="Correct photo reuse or invalid assignments before continuing.";return;
+ }
+ const needHuman=reviewNeedsConfirmation(pairIndex)||p.back<0;
+ if(needHuman&&!pairOverrides[pairIndex]){
+  el("pair-confirm-row").hidden=false;
+  el("batch-message").textContent="Please inspect both photos and tick the acknowledgement before continuing with this flagged pair.";
+  return;
+ }
+ photos={front:batch[p.front].data,back:p.back>=0?batch[p.back].data:""};
+ el("front-preview").src=photos.front;el("front-preview").hidden=false;
+ if(photos.back){el("back-preview").src=photos.back;el("back-preview").hidden=false}
+ else el("back-preview").hidden=true;
+ for(const [k] of schema)el("f-"+k).value="";
+ el("notes").value="";
+ currentId=crypto.randomUUID();loadedBatchIndex=pairIndex;
+ el("details").classList.remove("hidden");el("save-message").textContent="";
+ el("details").scrollIntoView({behavior:"smooth"});
+ el("batch-message").textContent="Pair loaded. Review the slab label and enter details before saving.";
+}
+function nextPair(){pairIndex++;loadedBatchIndex=null;showPair()}
 el("use-batch").onclick=loadBatchPair;
 el("skip-batch").onclick=()=>{nextPair();el("details").classList.add("hidden");};
-
 el("continue").onclick=()=>{if(!photos.front){el("photo-message").textContent="Please add a front image.";return}el("details").classList.remove("hidden");el("details").scrollIntoView({behavior:"smooth"});currentId=crypto.randomUUID()};
 function record(){const values={};for(const [key] of schema)values[key]=el("f-"+key).value.trim();return {id:currentId||crypto.randomUUID(),created_at:new Date().toISOString(),status:"local-draft",fields:values,notes:el("notes").value.trim(),front_photo:photos.front||"",back_photo:photos.back||"",ai_verified:false,published:false}}
 function download(obj,name){const blob=new Blob([JSON.stringify(obj,null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),7000)}
