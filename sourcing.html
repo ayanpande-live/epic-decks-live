@@ -116,6 +116,23 @@ const $=id=>document.getElementById(id);
 const COMPANY_EMAIL="info@epic-decks.com"; // From published Epic Decks legal contact details; confirm mailbox monitoring before launch.
 let businessPhone="",prepared=null,summary="";
 const form=$("request-form");
+try {
+ const transferred=sessionStorage.getItem("epic_sourcing_handoff_v1");
+ if(transferred){
+  sessionStorage.removeItem("epic_sourcing_handoff_v1");
+  const x=JSON.parse(transferred);
+  for(const field of ["card","budget","grader","grade","language","category","notes"]){
+   const element=$(field);
+   if(element && typeof x[field]==="string"){
+     if(element.tagName==="SELECT" && ![...element.options].some(o=>o.value===x[field]))continue;
+     element.value=x[field].slice(0,element.maxLength>0?element.maxLength:250);
+   }
+  }
+  $("form-status").textContent="Your Collector Radar preferences are ready. Add a delivery country and review the details.";
+ }
+}
+catch { /* No transferable local preferences. */ }
+
 const values=()=>({
  category:$("category").value,search_type:$("search_type").value,card:$("card").value,
  set:$("set").value,number:$("number").value,language:$("language").value,grader:$("grader").value,
@@ -125,7 +142,7 @@ const values=()=>({
 });
 fetch("/data/concierge-config.json",{cache:"no-store"})
 .then(r=>r.ok?r.json():{}).then(config=>{const candidate=String(config.whatsapp_phone_digits||"");
- if(/^[1-9]\d{7,14}$/.test(candidate)){businessPhone=candidate;$("wa-disclosure").textContent="WhatsApp opens an editable draft addressed to Epic Decks. The message isn't sent until you tap Send.";}
+ if(/^[1-9]\d{7,14}$/.test(candidate)){businessPhone=candidate;$("wa-disclosure").textContent="WhatsApp opens an editable draft addressed to Epic Decks. The message isn\'t sent until you tap Send.";setActions(Boolean(prepared));}
 }).catch(()=>{});
 function setActions(valid){$("copy").disabled=!valid;$("email").disabled=!valid;$("wa").disabled=!valid||!businessPhone;}
 form.addEventListener("submit",e=>{
