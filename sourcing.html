@@ -157,7 +157,7 @@ fetch("/api/sourcing-request",{cache:"no-store"})
 .then(r=>r.ok?r.json():{}).then(config=>{
  if(!config.enabled||!config.siteKey)return;
  relayEnabled=true;
- $("email-relay-disclosure").textContent="Direct email relay is available via the Epic Decks Microsoft 365 mailbox. Complete human verification and provide consent before sending.";
+ $("email-relay-disclosure").textContent="Secure submission is enabled on the AWS email service. Complete human verification and provide consent before sending.";
  const script=document.createElement("script");
  script.src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";script.async=true;script.defer=true;
  script.onload=()=>{
@@ -189,7 +189,7 @@ $("submit-email").onclick=async()=>{
  const email=$("contactEmail").value.trim();
  if(!email||!$("privacyConsent").checked)return;
  $("submit-email").disabled=true;
- $("handoff-status").textContent="Sending the request to our Outlook inbox…";
+ $("handoff-status").textContent="Submitting the request to Epic Decks…";
  try{
    const response=await fetch("/api/sourcing-request",{
     method:"POST",headers:{"Content-Type":"application/json"},
@@ -198,7 +198,7 @@ $("submit-email").onclick=async()=>{
    const result=await response.json().catch(()=>({}));
    if(!response.ok||!result.accepted)throw Error(result.error||"Email relay unavailable");
    sent=true;
-   $("handoff-status").textContent="Microsoft accepted your request for email delivery. Reference: "+result.reference+". This does not confirm inbox delivery. No card has been purchased.";
+   $("handoff-status").textContent="Our email service accepted the request for processing. Reference: "+result.reference+". This does not confirm inbox delivery. No card has been purchased.";
  }catch(err){
    $("handoff-status").textContent="Automatic delivery couldn't be completed: "+err.message+" Use Draft email instead.";
  }finally{
