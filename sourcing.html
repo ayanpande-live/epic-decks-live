@@ -35,7 +35,7 @@ button.secondary{background:#304b66;color:#f7f7f7}button:disabled{opacity:.5;cur
 .actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
 .notice{background:#0a2035;border-left:3px solid #ff974f;border-radius:8px;padding:13px;margin-top:16px;font-size:13px;line-height:1.5;color:#d1dce8}
 .preview{white-space:pre-wrap;word-break:break-word;font:13px/1.65 ui-monospace,Consolas,monospace;color:#e5eff7}
-.status{font-size:13px;min-height:20px;margin:10px 0;color:#ffd3af}
+.status{font-size:13px;min-height:20px;margin:10px 0;color:#ffd3af}.honeypot{position:absolute;left:-10000px;opacity:0;pointer-events:none}.consent{display:flex;gap:10px;align-items:flex-start}.consent input{width:18px;height:18px;min-height:18px;flex-shrink:0;margin:2px 0 0}
 .bad{color:#ffb3a1}.good{color:#adf1c8}
 .separator{height:1px;background:#364c66;margin:18px 0}
 dl{display:grid;grid-template-columns:1fr 1fr;gap:6px 14px;font-size:13px}dt{color:#bacbdd}dd{margin:0;text-align:right}
@@ -80,6 +80,10 @@ footer{color:#9db2c6;font-size:12px;margin-top:30px}
 </div>
 <label>Example listing URL (optional)<input id="reference_url" type="url" inputmode="url" maxlength="500" placeholder="https://www.ebay.com/itm/..."></label>
 <label>Anything else we should know?<textarea id="notes" maxlength="600" placeholder="Preferred labels, set variant, reasonable substitutions, target condition, etc."></textarea></label>
+<label>Your email for replies<input id="contactEmail" type="email" autocomplete="email" maxlength="254" placeholder="you@example.com"></label>
+<label class="consent"><input type="checkbox" id="privacyConsent"><span>I agree to Epic Decks processing these enquiry details to contact me about this sourcing request. See the <a href="/legal/privacy-policy.html" target="_blank" rel="noopener noreferrer">privacy policy</a>. This is not consent to marketing alerts.</span></label>
+<label class="honeypot" aria-hidden="true">Website<input id="website" type="text" tabindex="-1" autocomplete="off"></label>
+<div id="captcha-widget"></div>
 <div class="separator"></div>
 <h3>Preferred delivery route</h3>
 <div class="radio-row" role="group" aria-label="Delivery route">
@@ -95,9 +99,9 @@ footer{color:#9db2c6;font-size:12px;margin-top:30px}
 <div class="eyebrow">YOUR COLLECTOR BRIEF</div><h2>Ready when you are.</h2>
 <p class="small">This request stays in your browser until you choose to copy or send it. Refreshing clears it.</p>
 <div class="box preview" id="brief">Fill out your request and select “Prepare my request” to see it here.</div>
-<div class="actions"><button id="copy" class="secondary" type="button" disabled>Copy request</button><button id="wa" type="button" disabled>Continue on WhatsApp</button><button id="email" type="button" class="secondary" disabled>Draft email</button></div>
+<div class="actions"><button id="submit-email" type="button" disabled>Send directly to Epic Decks</button><button id="copy" class="secondary" type="button" disabled>Copy request</button><button id="wa" type="button" disabled>Continue on WhatsApp</button><button id="email" type="button" class="secondary" disabled>Draft email</button></div>
 <p id="handoff-status" class="status" role="status" aria-live="polite"></p>
-<div class="notice" id="wa-disclosure">The Epic Decks WhatsApp number hasn't been connected to this preview. Use the email draft or copy your request; we'll enable direct WhatsApp handoff after verifying our business number.</div>
+<p class="small muted" id="email-relay-disclosure">Automatic website submission is not yet enabled. The email-draft option works without a server connection; you must press Send in your email app.</p><div class="notice" id="wa-disclosure">The Epic Decks WhatsApp number hasn't been connected to this preview. Use the email draft or copy your request; we'll enable direct WhatsApp handoff after verifying our business number.</div>
 <div class="separator"></div>
 <h3>What happens after your request?</h3>
 <dl>
@@ -114,7 +118,7 @@ footer{color:#9db2c6;font-size:12px;margin-top:30px}
 import {normalizeRequest,validateRequest,requestSummary,whatsappLink,emailLink} from "./assets/sourcing-request.mjs";
 const $=id=>document.getElementById(id);
 const COMPANY_EMAIL="info@epic-decks.com"; // From published Epic Decks legal contact details; confirm mailbox monitoring before launch.
-let businessPhone="",prepared=null,summary="";
+let businessPhone="",prepared=null,summary="",relayEnabled=false,captchaToken="",sent=false;
 const form=$("request-form");
 try {
  const transferred=sessionStorage.getItem("epic_sourcing_handoff_v1");
@@ -144,18 +148,63 @@ fetch("/data/concierge-config.json",{cache:"no-store"})
 .then(r=>r.ok?r.json():{}).then(config=>{const candidate=String(config.whatsapp_phone_digits||"");
  if(/^[1-9]\d{7,14}$/.test(candidate)){businessPhone=candidate;$("wa-disclosure").textContent="WhatsApp opens an editable draft addressed to Epic Decks. The message isn\'t sent until you tap Send.";setActions(Boolean(prepared));}
 }).catch(()=>{});
-function setActions(valid){$("copy").disabled=!valid;$("email").disabled=!valid;$("wa").disabled=!valid||!businessPhone;}
+function setActions(valid){
+ $("copy").disabled=!valid;$("email").disabled=!valid;$("wa").disabled=!valid||!businessPhone;
+ const email=$("contactEmail").value.trim();
+ $("submit-email").disabled=!valid||!relayEnabled||!captchaToken||sent||!$("privacyConsent").checked||!email||!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email);
+}
+fetch("/api/sourcing-request",{cache:"no-store"})
+.then(r=>r.ok?r.json():{}).then(config=>{
+ if(!config.enabled||!config.siteKey)return;
+ relayEnabled=true;
+ $("email-relay-disclosure").textContent="Direct email relay is available via the Epic Decks Microsoft 365 mailbox. Complete human verification and provide consent before sending.";
+ const script=document.createElement("script");
+ script.src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";script.async=true;script.defer=true;
+ script.onload=()=>{
+  if(!window.turnstile)return;
+  window.turnstile.render("#captcha-widget",{
+   sitekey:config.siteKey,
+   callback:token=>{captchaToken=token;setActions(Boolean(prepared))},
+   "expired-callback":()=>{captchaToken="";setActions(Boolean(prepared))},
+   "error-callback":()=>{captchaToken="";setActions(Boolean(prepared))}
+  });
+ };
+ document.head.append(script);
+}).catch(()=>{});
+
 form.addEventListener("submit",e=>{
  e.preventDefault();const r=normalizeRequest(values()),issues=validateRequest(r);
  if(issues.length){prepared=null;summary="";setActions(false);$("form-status").textContent=issues.join(" ");$("form-status").className="status bad";$("brief").textContent="Correct the highlighted request details and try again.";return}
- prepared=r;summary=requestSummary(r);
+ prepared=r;summary=requestSummary(r);sent=false;
  $("brief").textContent=summary;setActions(true);
  $("form-status").className="status good";$("form-status").textContent="Ready to share. Preparing this brief does not send anything.";
  $("handoff-status").textContent=businessPhone?"WhatsApp and email drafts are available.":"Epic Decks WhatsApp handoff is not yet configured. Use the draft email or copy the brief.";
 });
-form.addEventListener("reset",()=>{prepared=null;summary="";setActions(false);$("brief").textContent="Fill out your request and select “Prepare my request” to see it here.";$("form-status").textContent="";$("handoff-status").textContent="";});
+form.addEventListener("reset",()=>{prepared=null;summary="";sent=false;setActions(false);$("brief").textContent="Fill out your request and select “Prepare my request” to see it here.";$("form-status").textContent="";$("handoff-status").textContent="";});
 form.addEventListener("input",()=>{if(prepared){prepared=null;summary="";setActions(false);$("form-status").textContent="Your details have changed. Prepare the request again before sharing."}});
 form.addEventListener("change",()=>{if(prepared){prepared=null;summary="";setActions(false);$("form-status").textContent="Your details have changed. Prepare the request again before sharing."}});
+$("submit-email").onclick=async()=>{
+ if(!prepared||!relayEnabled||!captchaToken||sent)return;
+ const email=$("contactEmail").value.trim();
+ if(!email||!$("privacyConsent").checked)return;
+ $("submit-email").disabled=true;
+ $("handoff-status").textContent="Sending the request to our Outlook inbox…";
+ try{
+   const response=await fetch("/api/sourcing-request",{
+    method:"POST",headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({request:values(),contactEmail:email,privacyConsent:true,captchaToken,website:$("website").value})
+   });
+   const result=await response.json().catch(()=>({}));
+   if(!response.ok||!result.accepted)throw Error(result.error||"Email relay unavailable");
+   sent=true;
+   $("handoff-status").textContent="Microsoft accepted your request for email delivery. Reference: "+result.reference+". This does not confirm inbox delivery. No card has been purchased.";
+ }catch(err){
+   $("handoff-status").textContent="Automatic delivery couldn't be completed: "+err.message+" Use Draft email instead.";
+ }finally{
+   captchaToken="";if(window.turnstile?.reset)window.turnstile.reset();
+   setActions(Boolean(prepared));
+ }
+};
 $("copy").onclick=async()=>{if(!summary)return;try{await navigator.clipboard.writeText(summary);$("handoff-status").textContent="Request copied. Paste it into your preferred channel.";}catch{$("handoff-status").textContent="Clipboard unavailable. Select the text above to copy it.";}};
 $("wa").onclick=()=>{if(!summary)return;const url=whatsappLink(businessPhone,summary);if(url)window.open(url,"_blank","noopener,noreferrer")};
 $("email").onclick=()=>{if(!summary)return;const url=emailLink(COMPANY_EMAIL,summary);if(url){$("handoff-status").textContent="Email draft opened. Please review and press Send in your mail app.";window.location.href=url}};
