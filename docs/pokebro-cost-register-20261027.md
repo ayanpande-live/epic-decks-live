@@ -1,3 +1,5 @@
+> **Architecture decision update (27 October 2026):** AWS SES for outbound website notifications, GoDaddy-managed Microsoft 365 Outlook for inbound `welcome@epic-decks.com`; the Graph option below is now reference-only. SES Essentials first-tier **$0.16/1,000 emails** and à-la-carte **$0.10/1,000** (2026 pricing). See [AWS SES handover](./aws-ses-handover.md). Paid hosting, API/WAF security and labor require separate budgets. No production activation or purchases performed.
+
 # Epic Decks NL + Pokébro — cost register and pricing gates (27 October 2026)
 
 **Scope:** Internal Epic Decks NL operating costs AND wholesale / SaaS unit economics if the tooling is later offered to third-party card businesses. These are **planning assumptions**, not actual account invoices. All figures exclude VAT unless otherwise stated; provider currencies are retained. Never convert USD to EUR without a dated FX rate.
