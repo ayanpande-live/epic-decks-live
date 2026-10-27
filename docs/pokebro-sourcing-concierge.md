@@ -12,9 +12,18 @@
 ## What works right now
 1. Collector enters exact card or flexible sourcing request, budget in EUR, delivery country, desired grader/grade/condition, optional sample listing and shipment preference. Alternatively, Collector Radar can transfer relevant preferences using one-time, same-tab session storage; the transfer is deleted as soon as the sourcing page loads.
 2. A reviewable brief is prepared **locally in the browser**.
-3. The collector can copy the brief or open an email draft to the business contact shown in the Epic Decks legal notice (`info@epic-decks.com`). Opening a draft does not send it; the email inbox should be checked before launch.
+3. The collector can copy the brief or open an email draft to the published Epic Decks contact mailbox (`welcome@epic-decks.com`). Opening a draft does not send it; confirm the inbox receives and is monitored before launch.
 4. The direct WhatsApp button is automatically **disabled** unless `whatsapp_phone_digits` is configured with a real, verified business number in international digits (no `+`). Once configured, the button opens a user-editable chat through an official `wa.me` link. The user must explicitly press Send in WhatsApp.
-5. No server stores personal information, no marketplace is searched, no quotation is issued, and no transaction is initiated. There is no business-inbox integration yet.
+5. A disabled-by-default Microsoft 365 Graph email relay has been scaffolded at `/api/sourcing-request.js`, behind Turnstile, same-origin checks and explicit consent. It requires a verified mailbox, server environment secrets, secure mailbox-restricted Graph application permission, abuse rate limiting and privacy/retention checks. Until activated it returns a not-configured response and customers use email drafts. No marketplace search, quote, or transaction is initiated.
+
+## Outlook-first relay setup and financial review
+
+- **Stage 0** (usable now): Draft email opened in the visitor’s email program. No direct submission or marketing opt-in.
+- **Stage 1** (not yet activated): Confirm `welcome@epic-decks.com` is a Microsoft 365 **Exchange Online** mailbox, not merely an Outlook client configured for IMAP/SMTP or another host. In Microsoft Entra create a **dedicated** service principal, restrict Graph application Mail.Send to the single mailbox using Exchange app RBAC, and separately enable anti-abuse rate limiting. Admin consent is necessary. Never place Microsoft credentials in browser code or GitHub.
+- Before enabling Vercel Preview environment, configure `SOURCING_EMAIL_RELAY_ENABLED=true`, `MS_TENANT_ID`, `MS_CLIENT_ID`, `MS_CLIENT_SECRET`, `TURNSTILE_SITE_KEY`, `TURNSTILE_SECRET_KEY`, `TURNSTILE_ALLOWED_HOSTNAMES` (comma-separated exact approved preview hostnames). Use different credentials in production. **Keep relay disabled** until the mail scope, security and privacy gate is satisfied.
+- The test endpoint responds `GET /api/sourcing-request` with `enabled:false` before configuration. Microsoft Graph `202 Accepted` means it accepted a send request, **not that the email was delivered**. Verify Outlook inbox and deliverability manually.
+- Recommended optional automation: Microsoft Outlook rules or Power Automate standard trigger "When a new email arrives (V3)" to file incoming sourcing messages, set a human review task, and eventually draft but **not send** AI-assisted customer replies.
+- Cost assumptions, official price links, and service-fee profit scenarios: [Pokébro cost register](./pokebro-cost-pricing.md).
 
 ## Prerequisites before connecting WhatsApp
 1. Confirm the exact business phone number and that the business controls the corresponding WhatsApp/WhatsApp Business account. Do **not** commit account credentials or access tokens to a public repository.
@@ -36,7 +45,7 @@ Possible alternate states: `declined`, `expired`, `unavailable`, `cancelled`, `d
 **Order**: buyer approval event, payment-provider transaction reference, permitted external purchase reference, fulfillment/inspection events, and return/dispute audit trail. Use a payment services provider; do not hold customer funds in an improvised escrow.
 
 ## What we should build next (after preview feedback)
-- Authenticated request intake and private CRM dashboard.
+- Authenticated request intake and private CRM dashboard. Start with Outlook inbox only once mailbox scope and privacy/security steps are complete.
 - Read-only search adapters for supported marketplaces + Epic Decks inventory, strictly respecting their terms.
 - Assisted research: compare options and calculate landed cost; present true tradeoffs and clearly identify commercial fees.
 - Quote review and approval (human operator first) and secure payment links.
