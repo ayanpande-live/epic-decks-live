@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#10192b"><meta name="apple-mobile-web-app-capable" content="yes"><link rel="manifest" href="./manifest.webmanifest"><title>Epic Decks | Slab Intake</title>
 <style>
-:root{font-family:system-ui,-apple-system,sans-serif;background:#091526;color:#f7f3ed;color-scheme:dark}*{box-sizing:border-box}body{margin:0}main{max-width:670px;margin:auto;padding:24px 16px 80px}header{display:flex;justify-content:space-between;align-items:center;font-weight:900;letter-spacing:.07em}header b{color:#ff713f}.tag{font-size:10px;border:1px solid #49627c;padding:7px;border-radius:25px;color:#ddd}h1{font-size:clamp(30px,8vw,54px);line-height:1.05;margin:32px 0 14px}h2{font-size:19px;margin:0 0 18px}p,small{color:#c7d2df;line-height:1.5}.panel{background:#152842;border:1px solid #34506a;border-radius:20px;padding:18px;margin:20px 0}.photo-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.photo{position:relative;background:#0d1d33;border:1px dashed #617b99;border-radius:15px;min-height:175px;padding:12px;display:flex;flex-direction:column;justify-content:center;align-items:center;overflow:hidden;text-align:center}.photo img{max-width:100%;max-height:225px;object-fit:contain}.photo input{width:100%;font-size:12px;margin-top:10px}button{border:0;background:#ff713f;color:#101624;font-size:16px;font-weight:800;padding:14px 18px;border-radius:12px;cursor:pointer;min-height:47px}button.secondary{background:#354b65;color:white}.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}.hidden{display:none}.fields{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field{display:flex;flex-direction:column;gap:6px;font-size:13px;color:#c9d4dd}.field.full{grid-column:1/-1}input[type=text],input[type=password],textarea{border:1px solid #566981;border-radius:9px;background:#0a1b30;color:white;font-size:16px;padding:12px;width:100%}textarea{min-height:75px}.hint{font-size:13px}.status{margin-top:10px;color:#ffc18f}.success{color:#9fefba}.draft{padding:13px 0;border-bottom:1px solid #314961}select{border:1px solid #566981;border-radius:9px;background:#0a1b30;color:white;font-size:16px;padding:12px;width:100%}.thumb-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.thumb{border:2px solid #49627c;border-radius:12px;padding:6px;background:#0a1b30;color:#fff;text-align:center;overflow:hidden}.thumb.selected{border-color:#ff713f}.thumb img{width:100%;height:100px;object-fit:contain}.thumb small{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.muted{color:#c5d3df}footer{font-size:12px;color:#b4bfd0;padding:20px 0}
+:root{font-family:system-ui,-apple-system,sans-serif;background:#091526;color:#f7f3ed;color-scheme:dark}*{box-sizing:border-box}[hidden]{display:none!important}body{margin:0}main{max-width:670px;margin:auto;padding:24px 16px 80px}header{display:flex;justify-content:space-between;align-items:center;font-weight:900;letter-spacing:.07em}header b{color:#ff713f}.tag{font-size:10px;border:1px solid #49627c;padding:7px;border-radius:25px;color:#ddd}h1{font-size:clamp(30px,8vw,54px);line-height:1.05;margin:32px 0 14px}h2{font-size:19px;margin:0 0 18px}p,small{color:#c7d2df;line-height:1.5}.panel{background:#152842;border:1px solid #34506a;border-radius:20px;padding:18px;margin:20px 0}.photo-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.photo{position:relative;background:#0d1d33;border:1px dashed #617b99;border-radius:15px;min-height:175px;padding:12px;display:flex;flex-direction:column;justify-content:center;align-items:center;overflow:hidden;text-align:center}.photo img{max-width:100%;max-height:225px;object-fit:contain}.photo input{width:100%;font-size:12px;margin-top:10px}button{border:0;background:#ff713f;color:#101624;font-size:16px;font-weight:800;padding:14px 18px;border-radius:12px;cursor:pointer;min-height:47px}button.secondary{background:#354b65;color:white}.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}.hidden{display:none}.fields{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field{display:flex;flex-direction:column;gap:6px;font-size:13px;color:#c9d4dd}.field.full{grid-column:1/-1}input[type=text],input[type=password],textarea{border:1px solid #566981;border-radius:9px;background:#0a1b30;color:white;font-size:16px;padding:12px;width:100%}textarea{min-height:75px}.hint{font-size:13px}.status{margin-top:10px;color:#ffc18f}.success{color:#9fefba}.draft{padding:13px 0;border-bottom:1px solid #314961}select{border:1px solid #566981;border-radius:9px;background:#0a1b30;color:white;font-size:16px;padding:12px;width:100%}.thumb-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.thumb{border:2px solid #49627c;border-radius:12px;padding:6px;background:#0a1b30;color:#fff;text-align:center;overflow:hidden}.thumb.selected{border-color:#ff713f}.thumb img{width:100%;height:100px;object-fit:contain}.thumb small{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.muted{color:#c5d3df}footer{font-size:12px;color:#b4bfd0;padding:20px 0}
 .batch-pairs{display:grid;gap:10px;margin:10px 0 16px}
 .batch-pair{background:#0a1e32;border:1px solid #526b87;border-radius:12px;padding:10px;text-align:left;color:#edf6fb;font-weight:600;width:100%;display:flex;align-items:center;gap:12px}
 .batch-pair.selected{border-color:#ff713f}
@@ -55,7 +55,7 @@
 "use strict";
 const el=id=>document.getElementById(id);
 const schema=[["card_name","Card name"],["set_name","Set"],["card_number","Card number"],["language","Language"],["year","Year"],["rarity","Rarity"],["grade_company","Grading company"],["grade_value","Grade"],["cert_number","Certificate number"],["label_variant","Label variant"],["sku","Internal SKU"],["price_eur","Selling price (€)"],["purchase_cost_eur","Private purchase cost (€)"]];
-let photos={},currentId=null,dbP,batch=[],pairIndex=0,batchBusy=false,selectNext="front",batchPairs=[],pairReviews=[],pairOverrides=[],batchReviewBusy=false,loadedBatchIndex=null,singlePairReview=null;
+let photos={},currentId=null,dbP,batch=[],pairIndex=0,batchBusy=false,selectNext="front",batchPairs=[],pairReviews=[],pairOverrides=[],batchReviewBusy=false,loadedBatchIndex=null,singlePairReview=null,batchDraftIds=[];
 for(const [name,label] of schema){const wrap=document.createElement("label");wrap.className="field"+(name==="card_name"?" full":"");wrap.textContent=label;const input=document.createElement("input");input.type="text";input.id="f-"+name;input.required=name==="card_name";input.autocomplete="off";wrap.append(input);el("fields").append(wrap);}
 function db(){return dbP||(dbP=new Promise((yes,no)=>{const r=indexedDB.open("epic-decks-slab-intake-v1",1);r.onupgradeneeded=()=>r.result.createObjectStore("drafts",{keyPath:"id"});r.onsuccess=()=>yes(r.result);r.onerror=()=>no(r.error)}))}
 async function save(item){const d=await db();return new Promise((ok,no)=>{const t=d.transaction("drafts","readwrite");t.objectStore("drafts").put(item);t.oncomplete=ok;t.onerror=()=>no(t.error)})}
@@ -109,7 +109,7 @@ function renderBatchOverview(){
    if(idx>=0&&batch[idx]){const pic=document.createElement("img");pic.src=batch[idx].data;pic.alt=(idx===pair.front?"Front":"Back")+" image for pair "+(i+1);photosWrap.append(pic);}
   }
   const label=document.createElement("span");label.className="pair-label";
-  const caption=document.createElement("strong");caption.textContent="Slab "+(i+1);label.append(caption);
+  const caption=document.createElement("strong");caption.textContent="Slab "+(i+1)+(batchDraftIds[i]?" · Draft saved":"");label.append(caption);
   const detail=document.createElement("small");
   detail.textContent=errors[i].length?"Needs attention":pairReviews[i]?.status==="consistent"?"AI checked — review manually":reviewNeedsConfirmation(i)?"AI warning — review":pairReviews[i]?"Review manually":"Awaiting your review";
   label.append(detail);b.append(photosWrap,label);
@@ -175,12 +175,12 @@ el("batch-files").addEventListener("change",async e=>{
  if(selected.length>30){el("batch-message").textContent="Select up to 30 images (15 pairs) at a time.";return}
  batchBusy=true;
  el("batch-message").textContent="Preparing "+selected.length+" images locally. Please review the selected order…";
- batch=[];batchPairs=[];pairReviews=[];pairOverrides=[];pairIndex=0;loadedBatchIndex=null;
+ batch=[];batchPairs=[];pairReviews=[];pairOverrides=[];batchDraftIds=[];pairIndex=0;loadedBatchIndex=null;
  el("details").classList.add("hidden");
  try{
   for(const f of selected){const data=await shrink(f);batch.push({name:f.name,data})}
   batchPairs=pairsFromOrderedPhotos(batch.length);
-  pairReviews=batchPairs.map(()=>null);pairOverrides=batchPairs.map(()=>false);
+  pairReviews=batchPairs.map(()=>null);pairOverrides=batchPairs.map(()=>false);batchDraftIds=batchPairs.map(()=>null);
   el("batch-message").textContent=batch.length+" photos → "+batchPairs.length+" proposed slab"+
     (batchPairs.length===1?"":"s")+". No photos sent to AI yet."+
     (batch.length%2?" ⚠️ Last slab has no back photo; please add or confirm manually.":"");
@@ -254,7 +254,7 @@ function loadBatchPair(){
  else el("back-preview").hidden=true;
  for(const [k] of schema)el("f-"+k).value="";
  el("notes").value="";
- currentId=crypto.randomUUID();loadedBatchIndex=pairIndex;singlePairReview=null;el("ai-confirm-row").hidden=true;el("ai-confirm").checked=false;el("ai-message").textContent="";
+ currentId=batchDraftIds[pairIndex]||crypto.randomUUID();loadedBatchIndex=pairIndex;singlePairReview=null;el("ai-confirm-row").hidden=true;el("ai-confirm").checked=false;el("ai-message").textContent="";
  el("details").classList.remove("hidden");el("save-message").textContent="";
  el("details").scrollIntoView({behavior:"smooth"});
  el("batch-message").textContent="Pair loaded. Review the slab label and enter details before saving.";
@@ -302,7 +302,7 @@ el("ai-confirm").addEventListener("change",()=>{
  }else if(singlePairReview)singlePairReview.acknowledged=el("ai-confirm").checked;
 });
 el("continue").onclick=()=>{if(!photos.front){el("photo-message").textContent="Please add a front image.";return}loadedBatchIndex=null;singlePairReview=null;el("ai-confirm-row").hidden=true;el("ai-confirm").checked=false;el("details").classList.remove("hidden");el("details").scrollIntoView({behavior:"smooth"});currentId=crypto.randomUUID()};
-function record(){const values={};for(const [key] of schema)values[key]=el("f-"+key).value.trim();return {id:currentId||crypto.randomUUID(),created_at:new Date().toISOString(),status:"local-draft",fields:values,notes:el("notes").value.trim(),front_photo:photos.front||"",back_photo:photos.back||"",photo_pair_review:loadedBatchIndex!==null?(pairReviews[loadedBatchIndex]||{status:"not_checked"}):(singlePairReview||{status:"not_checked"}),ai_verified:false,published:false}}
+function record(){const values={};for(const [key] of schema)values[key]=el("f-"+key).value.trim();return {id:currentId||crypto.randomUUID(),created_at:new Date().toISOString(),status:"local-draft",fields:values,notes:el("notes").value.trim(),front_photo:photos.front||"",back_photo:photos.back||"",batch_source:loadedBatchIndex!==null?{pair_number:loadedBatchIndex+1,front_file:batch[batchPairs[loadedBatchIndex].front]?.name||"",back_file:batchPairs[loadedBatchIndex].back>=0?batch[batchPairs[loadedBatchIndex].back]?.name||"":""}:null,photo_pair_review:loadedBatchIndex!==null?(pairReviews[loadedBatchIndex]||{status:"not_checked"}):(singlePairReview||{status:"not_checked"}),ai_verified:false,published:false}}
 function download(obj,name){const blob=new Blob([JSON.stringify(obj,null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),7000)}
 el("draft-form").onsubmit=async e=>{
  e.preventDefault();
@@ -314,6 +314,7 @@ el("draft-form").onsubmit=async e=>{
  try{
   await save(record());
   if(loadedBatchIndex!==null){
+   batchDraftIds[loadedBatchIndex]=currentId;
    nextPair();el("details").classList.add("hidden");
    if(pairIndex<batchPairs.length){
     el("batch-message").textContent="Draft saved. Review the next suggested pair.";
