@@ -8,6 +8,8 @@ const MAILBOX = "welcome@epic-decks.com";
 const reply = (res, status, body) => res.status(status).setHeader("Cache-Control", "no-store").json(body);
 const ready = () => process.env.SOURCING_EMAIL_RELAY_ENABLED === "true"
   && !!process.env.MS_TENANT_ID && !!process.env.MS_CLIENT_ID
+  && process.env.SOURCING_RATE_LIMIT_READY === "true"
+  && process.env.SOURCING_GRAPH_SCOPE_VERIFIED === "true"
   && !!process.env.MS_CLIENT_SECRET && !!process.env.TURNSTILE_SECRET_KEY
   && !!process.env.TURNSTILE_SITE_KEY;
 function validEmail(email) {
@@ -30,7 +32,7 @@ async function verifyHuman(token) {
   // Cloudflare must validate the challenge and issue the response for this exact site.
   if (result.success !== true) return false;
   const allowed = String(process.env.TURNSTILE_ALLOWED_HOSTNAMES || "").split(",").map(x => x.trim().toLowerCase()).filter(Boolean);
-  return allowed.length > 0 && allowed.includes(String(result.hostname || "").toLowerCase());
+  return result.action==="pokebro_sourcing" && allowed.length > 0 && allowed.includes(String(result.hostname || "").toLowerCase());
 }
 async function getGraphToken() {
   const tenant = process.env.MS_TENANT_ID;
@@ -68,7 +70,7 @@ async function sendSourcingMail(accessToken, msg) {
 export default async function handler(req, res) {
   if (req.method === "GET") return reply(res, 200, {
     enabled: ready() && Boolean(process.env.TURNSTILE_ALLOWED_HOSTNAMES),
-    siteKey: ready() ? process.env.TURNSTILE_SITE_KEY : ""
+    siteKey: ready() && Boolean(process.env.TURNSTILE_ALLOWED_HOSTNAMES) ? process.env.TURNSTILE_SITE_KEY : ""
   });
   if (req.method !== "POST") {
     res.setHeader("Allow", "GET, POST");return reply(res, 405, { error: "Method not supported." });
