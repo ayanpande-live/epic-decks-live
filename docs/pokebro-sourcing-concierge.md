@@ -10,7 +10,7 @@
 - `/assets/sourcing-request.test.mjs` — validation and handoff regression tests.
 
 ## What works right now
-1. Collector enters exact card or flexible sourcing request, budget in EUR, delivery country, desired grader/grade/condition, optional sample listing and shipment preference.
+1. Collector enters exact card or flexible sourcing request, budget in EUR, delivery country, desired grader/grade/condition, optional sample listing and shipment preference. Alternatively, Collector Radar can transfer relevant preferences using one-time, same-tab session storage; the transfer is deleted as soon as the sourcing page loads.
 2. A reviewable brief is prepared **locally in the browser**.
 3. The collector can copy the brief or open an email draft to the business contact shown in the Epic Decks legal notice (`info@epic-decks.com`). Opening a draft does not send it; the email inbox should be checked before launch.
 4. The direct WhatsApp button is automatically **disabled** unless `whatsapp_phone_digits` is configured with a real, verified business number in international digits (no `+`). Once configured, the button opens a user-editable chat through an official `wa.me` link. The user must explicitly press Send in WhatsApp.
