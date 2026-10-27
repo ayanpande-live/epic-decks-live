@@ -1,0 +1,11 @@
+# Never commit secrets or internal inventory
+.env
+.env.*
+!.env.example
+private-data/
+data/*.xlsx
+*.pem
+*.key
+__pycache__/
+*.py[cod]
+.DS_Store
