@@ -29,7 +29,7 @@
 <label id="batch-upload-target" for="batch-files" style="display:block;cursor:pointer;border:2px dashed #6887a8;border-radius:14px;padding:24px 18px;text-align:center;margin-top:14px;background:#122c48"><strong style="display:block;font-size:19px">＋ Tap anywhere here to select slab photos</strong><span style="display:block;margin-top:8px;color:#c8d6e8">Choose multiple images from your photo library</span></label><input id="batch-files" type="file" accept="image/*" multiple aria-label="Select multiple slab photos" style="position:absolute;width:1px;height:1px;opacity:0;overflow:hidden">
 <p id="batch-message" class="status" aria-live="polite"></p><div id="batch-review" class="hidden">
 <p id="batch-progress" class="hint"></p>
-<div id="batch-overview" class="batch-pairs" aria-label="All proposed slab photo pairs"></div>
+<div id="batch-overview" class="batch-pairs" aria-label="All proposed slab photo pairs"></div><section id="batch-all" class="panel"><h2>Review entire batch</h2><p class="hint">Edit each slab and approve before saving. Saving does not publish.</p><div id="batch-all-cards"></div><button type="button" id="save-batch">Save approved batch</button><p id="save-batch-status" role="status"></p></section>
 <p class="hint">Tap a pair above to inspect it, then use the dropdowns or photo thumbnails below if the suggested order is wrong.</p>
 <div id="batch-gallery" class="thumb-grid" aria-label="Photo review gallery"></div>
 <div class="photo-grid"><label class="field">Front picture<select id="batch-front" aria-label="Choose front image"></select></label><label class="field">Back picture<select id="batch-back" aria-label="Choose back image"></select></label></div>
@@ -58,7 +58,7 @@
 "use strict";
 const el=id=>document.getElementById(id);
 const schema=[["card_name","Card name"],["set_name","Set"],["card_number","Card number"],["language","Language"],["year","Year"],["rarity","Rarity"],["grade_company","Grading company"],["grade_value","Grade"],["cert_number","Certificate number"],["label_variant","Label variant"],["sku","Internal SKU"],["price_eur","Selling price (€)"],["purchase_cost_eur","Private purchase cost (€)"]];
-let photos={},currentId=null,dbP,batch=[],pairIndex=0,batchBusy=false,selectNext="front",batchPairs=[],pairReviews=[],pairOverrides=[],batchReviewBusy=false,loadedBatchIndex=null,singlePairReview=null,batchDraftIds=[],stopBatchReview=false;
+let photos={},currentId=null,dbP,batch=[],pairIndex=0,batchBusy=false,selectNext="front",batchPairs=[],pairReviews=[],pairOverrides=[],batchReviewBusy=false,loadedBatchIndex=null,singlePairReview=null,batchDraftIds=[],stopBatchReview=false,batchResults=[],batchApprovals=[];
 for(const [name,label] of schema){const wrap=document.createElement("label");wrap.className="field"+(name==="card_name"?" full":"");wrap.textContent=label;const input=document.createElement("input");input.type="text";input.id="f-"+name;input.required=name==="card_name";input.autocomplete="off";wrap.append(input);el("fields").append(wrap);}
 function db(){return dbP||(dbP=new Promise((yes,no)=>{const r=indexedDB.open("epic-decks-slab-intake-v1",1);r.onupgradeneeded=()=>r.result.createObjectStore("drafts",{keyPath:"id"});r.onsuccess=()=>yes(r.result);r.onerror=()=>no(r.error)}))}
 async function save(item){const d=await db();return new Promise((ok,no)=>{const t=d.transaction("drafts","readwrite");t.objectStore("drafts").put(item);t.oncomplete=ok;t.onerror=()=>no(t.error)})}
@@ -166,8 +166,8 @@ function updatePairSelection(){
  const p=batchPairs[pairIndex];
  p.front=Number(el("batch-front").value);p.back=Number(el("batch-back").value);
  // Any reassignment invalidates the old AI verdict and explicit human acknowledgement.
- pairReviews[pairIndex]=null;pairOverrides[pairIndex]=false;
- el("pair-confirm").checked=false;renderGallery();renderBatchOverview();renderPairAudit();
+ pairReviews[pairIndex]=null;pairOverrides[pairIndex]=false;batchResults[pairIndex]={};batchApprovals[pairIndex]=false;
+ el("pair-confirm").checked=false;renderGallery();renderBatchOverview();renderPairAudit();renderBatchCards();
  el("batch-audit-message").textContent="Pair selection changed. Any previous AI verdict on this pair was cleared; re-check after correction.";
 }
 for(const side of ["front","back"])el("batch-"+side).addEventListener("change",updatePairSelection);
@@ -178,16 +178,16 @@ el("batch-files").addEventListener("change",async e=>{
  if(selected.length>30){el("batch-message").textContent="Select up to 30 images (15 pairs) at a time.";return}
  batchBusy=true;
  el("batch-message").textContent="Preparing "+selected.length+" images locally. Please review the selected order…";
- batch=[];batchPairs=[];pairReviews=[];pairOverrides=[];batchDraftIds=[];pairIndex=0;loadedBatchIndex=null;
+ batch=[];batchPairs=[];pairReviews=[];pairOverrides=[];batchDraftIds=[];batchResults=[];batchApprovals=[];pairIndex=0;loadedBatchIndex=null;
  el("details").classList.add("hidden");
  try{
   for(const f of selected){const data=await shrink(f);batch.push({name:f.name,data})}
   batchPairs=pairsFromOrderedPhotos(batch.length);
-  pairReviews=batchPairs.map(()=>null);pairOverrides=batchPairs.map(()=>false);batchDraftIds=batchPairs.map(()=>null);
+  pairReviews=batchPairs.map(()=>null);pairOverrides=batchPairs.map(()=>false);batchDraftIds=batchPairs.map(()=>null);batchResults=batchPairs.map(()=>({}));batchApprovals=batchPairs.map(()=>false);
   el("batch-message").textContent=batch.length+" photos → "+batchPairs.length+" proposed slab"+
     (batchPairs.length===1?"":"s")+". No photos sent to AI yet."+
     (batch.length%2?" ⚠️ Last slab has no back photo; please add or confirm manually.":"");
-  showPair();
+  showPair();renderBatchCards();
  }catch(err){batch=[];batchPairs=[];el("batch-review").classList.add("hidden");el("batch-message").textContent="Import failed: "+err.message}
  finally{batchBusy=false;}
 });
@@ -224,15 +224,16 @@ el("batch-audit").onclick=async()=>{
      reasons:Array.isArray(r.reasons)?r.reasons.filter(x=>typeof x==="string").slice(0,5):[],
      roles:Array.isArray(result.fields?.image_roles)?result.fields.image_roles:[]
     };
-    pairOverrides[i]=false;
+    pairOverrides[i]=false;batchResults[i]=result.fields||{};
    }catch(err){
     pairReviews[i]={status:"error",reasons:[err.message||"AI service unavailable."]};
     pairOverrides[i]=false;
     // Stop on authorization and service errors instead of wasting additional calls.
     if(/access code|unauthorized|invalid|not configured|unavailable|401|503/i.test(err.message||""))break;
    }
-   renderBatchOverview();if(pairIndex===i)renderPairAudit();
+   renderBatchOverview();renderBatchCards();if(pairIndex===i)renderPairAudit();
   }
+  renderBatchCards();
   const flagged=pairReviews.filter(r=>r&&r.status!=="consistent").length;
   const checked=pairReviews.filter(Boolean).length;
   el("batch-audit-message").textContent="AI reviewed "+checked+"/"+batchPairs.length+
@@ -344,4 +345,4 @@ el("export-all").onclick=async()=>{try{const items=await readAll();if(items.leng
 el("delete-all").onclick=async()=>{if(confirm("Delete all locally stored drafts? Export first!")){await clear();await refresh()}};
 async function refresh(){try{const items=await readAll();el("count").textContent="("+items.length+")";el("draft-list").replaceChildren();if(!items.length){el("draft-list").textContent="No saved drafts yet.";return}for(const it of items.slice(-15).reverse()){const row=document.createElement("div");row.className="draft";row.textContent=(it.fields.card_name||"Unnamed")+" · "+(it.fields.grade_company||"")+" "+(it.fields.grade_value||"");el("draft-list").append(row)}}catch(err){el("draft-list").textContent="Browser storage unavailable. Use Export draft."}}
 refresh();
-</script></body></html>
+</script><script src="./batch-review.js"></script></body></html>
