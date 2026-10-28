@@ -61,9 +61,11 @@ export function attachPhoto(record,side,dataUrl,rights,source="user_upload",now=
  return {...record,enrichment:{...e,media:{...media,[side]:{data_url:dataUrl,rights,source,added_at:now}},version:ENRICHMENT_VERSION,updated_at:now}};
 }
 export function coverage(records){
- const result={records:records.length,certifiable:0,reviewed:0,discrepancies:0,population:0,front:0,back:0};
+ const result={records:records.length,certifiable:0,missing_cert:0,unverified_stock:0,reviewed:0,discrepancies:0,population:0,front:0,back:0};
  for(const r of records){
   if(officialCertUrl(r))result.certifiable++;
+  if(!String(r.identity?.certificate??"").trim())result.missing_cert++;
+  if(String(r.raw?.["Physical stock status"]??"").trim().toLowerCase()==="unverified")result.unverified_stock++;
   if(r.enrichment?.certificate?.status==="reviewed_match")result.reviewed++;
   if(r.enrichment?.certificate?.status==="discrepancy")result.discrepancies++;
   if(r.enrichment?.population?.grade_population!==null&&r.enrichment?.population?.grade_population!==undefined)result.population++;
