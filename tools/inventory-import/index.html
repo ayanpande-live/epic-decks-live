@@ -95,7 +95,7 @@ footer{font-size:12px;color:#9baec1;margin-top:25px}
 import {FIELDS,suggestedSource,suggestedMapping,parseDelimited,normalizeRows,normalizeSlabDrafts,exportPackage} from "./normalize.js";
 import {reconcileCandidates,exportReconciliation} from "./reconcile.js";
 const $=x=>document.getElementById(x), clean=x=>String(x??"").trim();
-let selectedFile=null, workbook=null, currentRows=[],headers=[],staged=[],fileCount=0,draftJSON=null,matching={candidates:[],total:0,counts:{conflict:0,high:0,medium:0}};
+let selectedFile=null, workbook=null, currentRows=[],headers=[],staged=[],fileCount=0,draftJSON=null,packageRecords=null,matching={candidates:[],total:0,counts:{conflict:0,high:0,medium:0}};
 const sourceChoice=()=> $("source").value==="auto"?suggestedSource(headers):$("source").value;
 const setInfo=(message,isError=false)=>{$("file-info").textContent=message;$("file-info").className=isError?"subtle warn":"subtle"};
 function downloadFile(object,name){const b=new Blob([JSON.stringify(object,null,2)],{type:"application/json"});const url=URL.createObjectURL(b);const a=document.createElement("a");a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),10000);}
@@ -129,11 +129,16 @@ function loadSheet(){
  setRowsFromMatrix(matrix,idx);
  setInfo(selectedFile.name+" · "+matrix.length+" worksheet rows");
 }
-$("worksheet").onchange=()=>{const special=$("worksheet").value==="Inventory_Master";$("header-row").value=special?"3":"1";try{loadSheet()}catch(e){setInfo(e.message,true)}};
+function detectedHeaderRow(sheet){const matrix=window.XLSX.utils.sheet_to_json(sheet,{header:1,defval:"",raw:false,blankrows:false});let bestRow=1,best=0;
+ for(let i=0;i<Math.min(matrix.length,25);i++){const keys=(matrix[i]||[]).map(v=>clean(v).toLowerCase());let score=0;
+ for(const key of ["card name","grading company","grader","numeric grade","certificate number","stock id (provisional)","product title","sku","variant sku","item number","handle"]){if(keys.includes(key))score++;}
+ if(score>best){best=score;bestRow=i+1;}}
+ return best>=2?bestRow:1;}
+$("worksheet").onchange=()=>{const sheet=workbook?.Sheets[$("worksheet").value];$("header-row").value=sheet?String(detectedHeaderRow(sheet)):"1";try{loadSheet()}catch(e){setInfo(e.message,true)}};
 $("header-row").onchange=()=>{try{loadSheet()}catch(e){setInfo(e.message,true)}};
 $("source").onchange=()=>{if(headers.length)rebuildMapping()};
 $("file").onchange=async(e)=>{
- selectedFile=e.target.files?.[0]||null;headers=[];currentRows=[];workbook=null;draftJSON=null;$("mapping-panel").classList.add("hidden");$("excel-controls").classList.add("hidden");
+ selectedFile=e.target.files?.[0]||null;headers=[];currentRows=[];workbook=null;draftJSON=null;packageRecords=null;$("mapping-panel").classList.add("hidden");$("excel-controls").classList.add("hidden");
  if(!selectedFile){setInfo("No file selected.");return;}
  if(selectedFile.size>35*1024*1024){setInfo("File exceeds the pilot's 35MB limit. Split it into smaller files.",true);return}
  setInfo("Reading "+selectedFile.name+" on this device…");
@@ -142,6 +147,9 @@ $("file").onchange=async(e)=>{
  if(filename.endsWith(".json")){
    const json=JSON.parse(await selectedFile.text());
    if(Array.isArray(json?.drafts)){draftJSON=json;headers=["iphone_draft"];currentRows=json.drafts; $("mapping-panel").classList.remove("hidden");$("mapping").replaceChildren();$("preview-table").replaceChildren();$("map-message").textContent=json.drafts.length+" iPhone drafts recognized. No field mapping required.";setInfo(selectedFile.name+" · iPhone draft JSON");return;}
+   if(Array.isArray(json?.records)&&json.records.every(r=>r?.identity&&r?.content&&r?.commercial)){
+     packageRecords=json.records;$("mapping-panel").classList.remove("hidden");$("mapping").replaceChildren();$("preview-table").replaceChildren();$("map-message").textContent=packageRecords.length+" pre-normalized records. Their grading evidence and source IDs will be preserved. Click Add reviewed import to staging.";setInfo(selectedFile.name+" · staged review/enrichment JSON");return;
+   }
    const array=Array.isArray(json)?json:Array.isArray(json?.all_items)?json.all_items:Array.isArray(json?.records)?json.records:null;
    if(!array)throw new Error("Unsupported JSON format. Use an iPhone drafts export or inventory records array.");
    headers=[...new Set(array.flatMap(r=>Object.keys(r)))];
@@ -157,8 +165,8 @@ $("file").onchange=async(e)=>{
    const sheets=$("worksheet");sheets.replaceChildren();
    workbook.SheetNames.forEach(name=>sheets.add(new Option(name,name)));
    $("header-row").replaceChildren();for(let i=1;i<=25;i++)$("header-row").add(new Option("Row "+i,String(i)));
-   const special=workbook.SheetNames.includes("Inventory_Master");
-   sheets.value=special?"Inventory_Master":workbook.SheetNames[0];$("header-row").value=special?"3":"1";
+   const preferred=workbook.SheetNames.includes("Inventory")?"Inventory":workbook.SheetNames.includes("Inventory_Master")?"Inventory_Master":workbook.SheetNames[0];
+   sheets.value=preferred;$("header-row").value=String(detectedHeaderRow(workbook.Sheets[preferred]));
    $("excel-controls").classList.remove("hidden");loadSheet();return;
  }
  throw new Error("Unsupported file type");
@@ -212,7 +220,8 @@ $("stage").onclick=()=>{
  if(!selectedFile)return;
  try{
  let records;
- if(draftJSON){records=normalizeSlabDrafts(draftJSON,selectedFile.name);}
+ if(packageRecords){records=packageRecords;}
+ else if(draftJSON){records=normalizeSlabDrafts(draftJSON,selectedFile.name);}
  else{
  const mapping={};document.querySelectorAll("#mapping select[data-field]").forEach(s=>mapping[s.dataset.field]=s.value);
  if(!mapping.title && !mapping.sku && !mapping.certificate)throw new Error("Map at least a product title, SKU, or certificate number.");
