@@ -1,0 +1,163 @@
+"use strict";
+const el=id=>document.getElementById(id);
+const columns=[["card_name","Card"],["set_name","Set"],["card_number","Card number"],["language","Language"],["year","Year"],["rarity","Rarity"],["grade_company","Grader"],["grade_value","Grade"],["cert_number","Certificate"],["label_variant","Label variant"],["sku","SKU"],["price_eur","Price EUR"],["purchase_cost_eur","Private cost EUR"]];
+let photos=[],rows=[],busy=false,stop=false,dbP;
+const blank=()=>Object.fromEntries(columns.map(([k])=>[k,""]));
+const node=(tag,cls,text)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(text!==undefined)n.textContent=text;return n};
+function db(){return dbP||(dbP=new Promise((yes,no)=>{const r=indexedDB.open("epic-decks-slab-intake-v1",1);r.onupgradeneeded=()=>r.result.createObjectStore("drafts",{keyPath:"id"});r.onsuccess=()=>yes(r.result);r.onerror=()=>no(r.error)}))}
+async function saveRow(row){const d=await db();return new Promise((yes,no)=>{const t=d.transaction("drafts","readwrite");t.objectStore("drafts").put(row);t.oncomplete=yes;t.onerror=()=>no(t.error)})}
+async function readAll(){const d=await db();return new Promise((yes,no)=>{const r=d.transaction("drafts").objectStore("drafts").getAll();r.onsuccess=()=>yes(r.result);r.onerror=()=>no(r.error)})}
+async function shrink(file){if(!file.type.startsWith("image/")||file.size>24*1024*1024)throw Error("Choose an image under 24MB");const url=URL.createObjectURL(file);try{const im=new Image();await new Promise((yes,no)=>{im.onload=yes;im.onerror=()=>no(Error("Unreadable image"));im.src=url});const scale=Math.min(1,1300/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=Math.max(1,Math.round(im.width*scale));c.height=Math.max(1,Math.round(im.height*scale));c.getContext("2d").drawImage(im,0,0,c.width,c.height);return c.toDataURL("image/jpeg",.78)}finally{URL.revokeObjectURL(url)}}
+function pic(i){if(i<0||!photos[i])return node("span","muted","No back image");const n=node("img");n.src=photos[i].data;n.alt=photos[i].name;return n}
+function issues(i){const r=rows[i],out=[];if(r.front<0||!photos[r.front])out.push("Missing front");if(r.back===r.front)out.push("Same image used twice");if(r.back<0)out.push("Back missing: pairing unverified");for(let j=0;j<rows.length;j++){if(i===j)continue;if([r.front,r.back].some(x=>x>=0&&(x===rows[j].front||x===rows[j].back)))out.push("Image reused in slab "+(j+1))}return out}
+function blocked(i){return issues(i).some(x=>/Missing front|Same image|reused/.test(x))}
+function invalidate(i){rows[i].ai=null;rows[i].values=blank();rows[i].approved=false;rows[i].saved=false}
+function compactUnusedPhotos(){
+ const used=new Set(rows.flatMap(r=>[r.front,r.back]).filter(n=>n>=0));
+ const remap=new Map(),remaining=[];
+ photos.forEach((photo,index)=>{if(used.has(index)){remap.set(index,remaining.length);remaining.push(photo)}});
+ rows.forEach(r=>{r.front=remap.get(r.front)??-1;r.back=remap.get(r.back)??-1});
+ photos=remaining;
+}
+function removeSlab(i){
+ if(busy)return;
+ if(!confirm("Remove slab "+(i+1)+" and its unneeded photos from this unsaved batch? Previously saved drafts are not deleted."))return;
+ rows.splice(i,1);compactUnusedPhotos();
+ el("upload-status").textContent=rows.length+" slabs remain. Removed photos are no longer included in this batch.";
+ refresh();
+}
+function removeAssignedPhoto(i,side){
+ if(busy)return;
+ const r=rows[i],index=r[side];if(index<0)return;
+ if(!confirm("Remove the "+side+" photo from slab "+(i+1)+"? You can choose another photo afterward."))return;
+ r[side]=-1;invalidate(i);compactUnusedPhotos();
+ el("upload-status").textContent="Photo removed. Review the remaining pairings before AI analysis.";
+ refresh();
+}
+function pairUI(){
+ const host=el("pairs");host.replaceChildren();
+ rows.forEach((r,i)=>{
+  const box=node("div","pair"),head=node("div","pair-head");
+  head.append(node("strong","","Slab "+(i+1)));
+  const remove=node("button","remove-button","× Remove slab");remove.type="button";remove.disabled=busy;
+  remove.setAttribute("aria-label","Remove slab "+(i+1)+" from batch");
+  remove.onclick=()=>removeSlab(i);head.append(remove);box.append(head);
+  const images=node("div","photos");
+  for(const side of ["front","back"]){
+   const frame=node("div","photo-slot");
+   const label=node("div","muted",side==="front"?"FRONT":"BACK");frame.append(label,pic(r[side]));
+   if(r[side]>=0){
+    const del=node("button","remove-photo","× Remove "+side);
+    del.type="button";del.disabled=busy;
+    del.setAttribute("aria-label","Remove "+side+" photo from slab "+(i+1));
+    del.onclick=()=>removeAssignedPhoto(i,side);frame.append(del);
+   }
+   images.append(frame);
+  }
+  box.append(images);
+  const controls=node("div","controls");
+  for(const side of ["front","back"]){
+   const label=node("label","",side==="front"?"Front":"Back"),select=node("select");
+   if(side==="back"){const o=node("option","","No back");o.value="-1";select.append(o)}
+   if(side==="front"){const o=node("option","","No front");o.value="-1";select.append(o)}
+   photos.forEach((p,n)=>{const o=node("option","",(n+1)+". "+p.name);o.value=String(n);select.append(o)});
+   select.value=String(r[side]);select.disabled=busy;
+   select.onchange=()=>{r[side]=Number(select.value);invalidate(i);refresh()};
+   label.append(select);controls.append(label);
+  }
+  box.append(controls);
+  const warnings=issues(i);if(warnings.length)box.append(node("p","warning muted",warnings.join(" · ")));
+  host.append(box);
+ });
+}
+function reviewUI(){const host=el("reviews");host.replaceChildren();let done=0,approved=0,flagged=0;rows.forEach((r,i)=>{if(r.ai)done++;if(r.approved)approved++;if(issues(i).length||r.ai&&(r.ai.status!=="consistent"||!r.values.language?.trim()||!r.values.grade_company?.trim()||/^(unknown|unidentified|n\/a)$/i.test(r.values.grade_company.trim())))flagged++;const card=node("article","review"),head=node("div","review-head");head.append(node("strong","",String(i+1)+". "+(r.values.card_name||"Unidentified slab")),node("span","pill",r.saved?"Saved":r.approved?"Approved":r.ai?.status==="error"?"AI failed":r.ai?"Review":"Not analyzed"));card.append(head);const warnings=[...issues(i),...(r.ai?.reasons||[])];if(r.ai&&r.ai.status!=="error"&&!r.values.language?.trim())warnings.push("Card language not identified — check the text on the card front.");if(r.ai&&r.ai.status!=="error"&&(!r.values.grade_company?.trim()||/^(unknown|unidentified|n\/a)$/i.test(r.values.grade_company.trim())))warnings.push("Grading company not identified — inspect the slab label.");if(warnings.length)card.append(node("p","warning muted",warnings.join(" · ")));const details=node("details");details.open=!r.ai||warnings.length>0;details.append(node("summary","","Photos and editable details"));const images=node("div","photos");images.append(pic(r.front),pic(r.back));details.append(images);const grid=node("div","grid");columns.forEach(([key,label])=>{const wrap=node("label","",label),input=node("input");input.type="text";input.value=String(r.values[key]||"");input.onchange=()=>{r.values[key]=input.value.trim();r.approved=false;r.saved=false;refresh()};wrap.append(input);grid.append(wrap)});details.append(grid);card.append(details);const confirm=node("label","check"),check=node("input");check.type="checkbox";check.checked=r.approved;check.disabled=blocked(i);check.onchange=()=>{if(check.checked&&!r.values.card_name.trim()){check.checked=false;el("save-status").textContent="Enter a card name before approving.";return}r.approved=check.checked;r.saved=false;refresh()};confirm.append(check,node("span","muted","I checked this slab's identity, photos and warnings."));card.append(confirm);host.append(card)});el("summary").replaceChildren(node("span","",rows.length+" slabs"),node("span","",done+" AI reviewed"),node("span","",approved+" approved"),node("span","",flagged+" flagged"));el("save").disabled=busy||!rows.some((r,i)=>r.approved&&!blocked(i))}
+function refresh(){pairUI();reviewUI();el("analyze").disabled=busy||!rows.length;if(typeof renderQuality==="function")renderQuality()}
+el("file").onchange=async event=>{
+ const input=event.target;
+ if(busy){input.value="";return}
+ const files=Array.from(input.files||[]);
+ input.value="";
+ if(!files.length)return;
+ if(photos.length+files.length>30){
+  el("upload-status").textContent="Batch limit: 30 photos total. Currently "+photos.length+"; you can add "+(30-photos.length)+" more. Remove unwanted photos or save and start a new batch.";
+  return;
+ }
+ busy=true;el("upload-status").textContent="Preparing "+files.length+" additional photos locally…";
+ try{
+  const prepared=[];
+  for(const file of files)prepared.push({name:file.name,data:await shrink(file)});
+  const first=photos.length;
+  photos.push(...prepared);
+  for(let n=0;n<prepared.length;n+=2){
+   rows.push({id:crypto.randomUUID(),front:first+n,
+    back:n+1<prepared.length?first+n+1:-1,
+    values:blank(),ai:null,approved:false,saved:false});
+  }
+  el("upload-status").textContent="Added "+prepared.length+" photos. "+photos.length+" photos across "+rows.length+" proposed slabs. Earlier pairings, edits, approvals and AI results were preserved. Correct any pairings below.";
+ }catch(err){el("upload-status").textContent="No new photos added: "+err.message}
+ finally{busy=false;refresh()}
+};
+el("add-front-only").onclick=()=>{const used=new Set(rows.flatMap(r=>[r.front,r.back]).filter(x=>x>=0));const index=photos.findIndex((_,i)=>!used.has(i));if(index<0){el("upload-status").textContent="No unused photo. Set an existing slab’s back to No back first.";return}rows.push({id:crypto.randomUUID(),front:index,back:-1,values:blank(),ai:null,approved:false,saved:false});el("upload-status").textContent="Added a front-only slab from photo "+(index+1);refresh()};
+el("stop").onclick=()=>{stop=true;el("ai-status").textContent="Stopping after current request…"};
+el("analyze").onclick=async()=>{
+ if(busy)return;
+ const token=el("token").value.trim();
+ if(!token){el("ai-status").textContent="Enter your private AI access code.";return}
+ if(rows.some((_,i)=>blocked(i))){el("ai-status").textContent="Fix reused or invalid photo assignments first.";return}
+ busy=true;stop=false;el("stop").classList.remove("hidden");refresh();
+ let count=0,failed=0;
+ try{
+  for(let i=0;i<rows.length;i++){
+   if(stop)break;
+   const r=rows[i];
+   if(r.ai&&r.ai.status!=="error")continue;
+   if(r.ai?.status==="error"&&r.ai.retryable===false)continue;
+   el("ai-status").textContent="Extracting slab "+(i+1)+" / "+rows.length+"…";
+   try{
+    await analyzeOne(i,token);
+    count++;
+   }catch(err){
+    const info=classifyAIError(err,err.status);
+    r.ai={status:"error",kind:info.kind,retryable:info.retryable,reasons:[info.message]};
+    failed++;
+    if(info.kind==="access"||info.kind==="configuration"||info.kind==="rate_limit")break;
+   }
+   reviewUI();renderQuality();
+  }
+  el("ai-status").textContent=count+" slabs extracted; "+failed+" request failures. Use the quality dashboard to review exceptions or retry failed slabs.";
+ }finally{busy=false;el("stop").classList.add("hidden");refresh()}
+};
+el("recheck-language").onclick=async()=>{
+ if(busy)return;
+ const token=el("token").value.trim();
+ if(!token){el("ai-status").textContent="Enter your private AI access code before rechecking.";return}
+ const selected=rows.map((r,i)=>({r,i})).filter(({r,i})=>r.ai&&r.ai.status!=="error"&&!r.values.language?.trim()&&!blocked(i));
+ if(!selected.length){el("ai-status").textContent="No previously analyzed slabs with missing language.";return}
+ if(!confirm("Recheck card language on "+selected.length+" slabs? This makes "+selected.length+" additional paid AI requests. Other extracted fields will be preserved."))return;
+ busy=true;stop=false;el("stop").classList.remove("hidden");refresh();
+ let filled=0,checked=0;
+ try{
+  for(const {r,i} of selected){
+   if(stop)break;
+   el("ai-status").textContent="Rechecking language "+(checked+1)+" / "+selected.length+"…";
+   try{
+    const response=await fetch("/api/slab-analyze",{method:"POST",headers:{"Content-Type":"application/json","X-Intake-Token":token},body:JSON.stringify({front:photos[r.front].data,back:r.back>=0?photos[r.back].data:null})});
+    const result=await response.json();
+    if(!response.ok)throw Error(result.error||"AI error");
+    checked++;
+    const proposed=String(result.fields?.language||"").trim();
+    if(proposed){
+     r.values.language=proposed;r.approved=false;r.saved=false;filled++;
+    }
+    if((!r.values.grade_company?.trim()||/^(unknown|unidentified|n\/a)$/i.test(r.values.grade_company.trim()))&&result.fields?.grade_company&& !/^(unknown|unidentified|n\/a)$/i.test(result.fields.grade_company.trim())){
+     r.values.grade_company=result.fields.grade_company.trim();r.approved=false;r.saved=false;
+    }
+   }catch(err){el("ai-status").textContent="Recheck stopped: "+err.message;break}
+   reviewUI();
+  }
+  el("ai-status").textContent="Rechecked "+checked+" slabs; identified language on "+filled+". Remaining unknown languages require manual review. Other fields preserved.";
+ }finally{busy=false;el("stop").classList.add("hidden");refresh()}
+};
+el("save").onclick=async()=>{if(busy)return;const selected=rows.map((r,i)=>({r,i})).filter(({r,i})=>r.approved&&!blocked(i));if(!selected.length){el("save-status").textContent="Approve at least one valid slab.";return}busy=true;refresh();let count=0;try{for(const {r,i} of selected){await saveRow({id:r.id,created_at:new Date().toISOString(),status:"local-draft",fields:{...r.values},notes:"",front_photo:photos[r.front].data,back_photo:r.back>=0?photos[r.back].data:"",batch_source:{pair_number:i+1},photo_pair_review:r.ai||{status:"not_checked"},human_reviewed:true,ai_verified:false,published:false});r.saved=true;count++}el("save-status").textContent="Saved "+count+" private drafts. Nothing published. Export JSON for backup."}catch(err){el("save-status").textContent=count+" saved before error: "+err.message}finally{busy=false;refresh()}};
+el("export").onclick=async()=>{try{const drafts=await readAll();if(!drafts.length){el("save-status").textContent="No saved drafts to export.";return}const url=URL.createObjectURL(new Blob([JSON.stringify({exported_at:new Date().toISOString(),drafts},null,2)],{type:"application/json"}));const a=node("a");a.href=url;a.download="epic-decks-slab-drafts.json";a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}catch(err){el("save-status").textContent="Export error: "+err.message}};
+refresh();
