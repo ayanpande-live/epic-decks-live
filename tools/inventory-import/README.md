@@ -93,3 +93,16 @@ Open `/tools/inventory-import/enrichment.html` on the **development preview** af
 **Automated lookup status:** The official [PSA Public API](https://www.psacard.com/publicapi/documentation) offers authenticated, per-certificate data access, but population API and image re-publication rights are not guaranteed. ACE certificate pages contain scans and population information, but a permitted bulk API has not been established. This stage therefore supports **official-link assisted review and user-supplied photos**, not bulk scraping or automatic licensed image downloads. Build a server-side credentialed PSA connector and secure image storage only after authentication, data rights and official access are resolved.
 
 **Smoke tests:** `node --test tools/inventory-import/enrichment.test.mjs` (Node 22+ recommended).
+
+
+### Optional authorized PSA API candidate importer
+
+`psa-adapter.mjs` implements a **read-only, server/local-only** PSA API adapter. It reads review JSON, checks PSA certificates using the official bearer-authenticated API and stages the returned identity, grade and available population fields **as candidates** for human inspection. It also supports an opt-in `--images` flag to obtain **image reference URLs only**, where the PSA account permits that endpoint. It does **not download or republish provider images**, mark slabs physically authenticated, or post to any sales channel. ACE is still human-assisted pending an approved API or commercial licensing arrangement.
+
+- Node 22+; obtain legitimate PSA API access first and review the agreement, account permissions and limits.
+- Keep the `PSA_API_TOKEN` environment variable on a trusted local machine or private service. Never put it into browser code, repo, JSON exports, screenshots or support messages.
+- Command: `node tools/inventory-import/psa-adapter.mjs INPUT-review.json OUTPUT-psa-candidates.json --limit=5` after setting the token securely in your local environment. The output path must **not already exist**, to prevent overwriting existing data. Access with `--images` requires appropriate rights and may fail if the API route is unavailable to the account.
+- Upload the resulting JSON into the Enrichment Studio to review each candidate and populate dates, grades and counts. A candidate record from the PSA API is never a physical-authenticity guarantee.
+- API endpoints and quota availability can change. This adapter has **mock-tested** request/response mapping, but has **not** been verified against a live authorized PSA account yet.
+
+The studio also exports (a) **social research** with dated, source-linked grade-population observations (review before publication) and (b) a **Project TC seed catalogue** containing only manually checked slabs, without private costs, but explicitly marked unpublished, stock-unconfirmed and ineligible for trade until manually approved. No production app imports those files automatically yet.
