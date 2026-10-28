@@ -47,7 +47,7 @@
 <pre id="public-preview" class="muted" style="white-space:pre-wrap;overflow-wrap:anywhere;max-height:200px;overflow:auto"></pre>
 </div></section></div>
 <section class="panel"><h2>6 · Export updated review package</h2><p class="muted">Preserves your original source fields and warnings, and appends grader evidence and photo metadata. This export may contain confidential acquisition costs and image data: keep it private. Do not upload it to a public repository or share it as a public catalogue.</p>
-<div class="row"><button id="download" type="button" disabled>Download enriched review JSON</button></div></section>
+<div class="row"><button id="download" type="button" disabled>Download enriched review JSON</button><button id="social-export" class="secondary" type="button" disabled>Export source-linked social research</button><button id="tc-export" class="secondary" type="button" disabled>Export Project TC draft catalogue</button></div><p class="muted">Project TC export is an unpublished draft with trade eligibility disabled. Only certificate-reviewed slabs are included; physical stock and images still require separate approval.</p></section>
 <footer>Prototype 1 · Local browser session only · No automatic certificate claims · No bulk PSA or ACE data extraction · No marketplace updates</footer>
 <script type="module">
 import {officialCertUrl,officialPopUrl,applyEvidence,attachPhoto,coverage,socialInsight,approvedPublicPreview} from "./enrichment.js";
@@ -88,14 +88,14 @@ $("file").onchange=async ev=>{
  const data=JSON.parse(await f.text());if(!Array.isArray(data.records))throw Error("Expected an inventory review JSON with records array.");
  if(!data.records.every(r=>r&&r.identity&&r.content&&r.commercial))throw Error("Unexpected inventory schema. Import the review JSON from Universal Inventory Import.");
  if(data.records.length>2000)throw Error("Pilot limit: 2,000 records per upload.");
- records=data.records;selected=records.length?0:-1;loadedSource=f.name;renderStats();renderList();renderEditor();$("download").disabled=!records.length;notify("Loaded "+records.length+" staged records from "+f.name+". No records have been published.");}
+ records=data.records;selected=records.length?0:-1;loadedSource=f.name;renderStats();renderList();renderEditor();$("download").disabled=!records.length;$("social-export").disabled=!records.length;$("tc-export").disabled=!records.length;notify("Loaded "+records.length+" staged records from "+f.name+". No records have been published.");}
  catch(e){notify(e.message,true);}
 };
 $("demo").onclick=()=>{records=[
  {identity:{title:"Sample Pikachu",grader:"ACE",grade:"10",certificate:"160419",item_type:"slab"},commercial:{price:125,acquisition_cost:70},content:{image_urls:[]},stock:{quantity:1},warnings:[],source:"demo"},
  {identity:{title:"Sample Charizard",grader:"PSA",grade:"9",certificate:"28329627",item_type:"slab"},commercial:{price:200,acquisition_cost:115},content:{image_urls:[]},stock:{quantity:1},warnings:[],source:"demo"},
  {identity:{title:"Sample Mewtwo — needs certificate",grader:"PSA",grade:"8",certificate:"",item_type:"slab"},commercial:{price:95},content:{image_urls:[]},stock:{quantity:1},warnings:[],source:"demo"}
- ];selected=0;loadedSource="sample";renderStats();renderList();renderEditor();$("download").disabled=false;notify("Loaded fictional demonstration inventory. Certificate links point to real provider pages but are NOT claims about these sample cards.");};
+ ];selected=0;loadedSource="sample";renderStats();renderList();renderEditor();$("download").disabled=false;$("social-export").disabled=false;$("tc-export").disabled=false;notify("Loaded fictional demonstration inventory. Certificate links point to real provider pages but are NOT claims about these sample cards.");};
 $("search").oninput=renderList;$("queue-filter").onchange=renderList;
 $("save").onclick=()=>{if(selected<0)return;try{
  if(val("review")==="reviewed_match"&&(!val("official-grade").trim()||!val("reviewer").trim()))throw Error("To confirm a match, enter the official grade and reviewer.");
@@ -117,7 +117,14 @@ for(const side of ["front","back"]){$(side+"-attach").onclick=async()=>{
 };}
 $("copy-social").onclick=()=>{if(!val("social"))return;navigator.clipboard.writeText(val("social")).then(()=>{$("save-status").textContent="Copied factual insight."}).catch(()=>{$("save-status").textContent="Copy unavailable; select the text manually."});};
 $("public").onclick=()=>{if(selected<0)return;const preview=approvedPublicPreview(current());$("public-preview").textContent=JSON.stringify({...preview,photos:Object.fromEntries(Object.keys(preview.photos).map(k=>[k,"[approved image omitted from preview]"]))},null,2);};
+function saveJSON(payload,filename){const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=filename;a.click();setTimeout(()=>URL.revokeObjectURL(url),30000);}
+$("social-export").onclick=()=>{const insights=records.map(r=>({title:r.identity?.title||"",grader:r.identity?.grader||"",certificate:r.identity?.certificate||"",text:socialInsight(r)})).filter(x=>x.text);
+ saveJSON({kind:"social-evidence-review",exported_at:new Date().toISOString(),warning:"Research drafts. Recheck grader figures, image rights and current counts before publishing.",insights},"epic-decks-social-research.json");
+ notify("Exported "+insights.length+" source-linked research draft(s).");};
+$("tc-export").onclick=()=>{const slabs=records.filter(r=>r.enrichment?.certificate?.status==="reviewed_match").map(r=>({...approvedPublicPreview(r),publication_status:"draft_unpublished",trade_eligible:false,stock_confirmed:false}));
+ saveJSON({kind:"project-tc-seed-review",exported_at:new Date().toISOString(),warning:"UNPUBLISHED draft. Identity check does not authenticate physical holder, stock or trade eligibility.",slabs},"project-tc-unpublished-seed.json");
+ notify("Exported "+slabs.length+" unpublished TC catalogue draft(s).");};
 $("download").onclick=()=>{if(!records.length)return;const payload={schema_version:"1.0",kind:"inventory-enrichment-review",exported_at:new Date().toISOString(),source_file:loadedSource,warning:"Private review-only data; contains costs and may contain large embedded photographs. No marketplace publication or authenticity guarantee.",records};
- const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="epic-decks-enriched-review-"+new Date().toISOString().slice(0,10)+".json";a.click();setTimeout(()=>URL.revokeObjectURL(url),30000);
+ saveJSON(payload,"epic-decks-enriched-review-"+new Date().toISOString().slice(0,10)+".json");
  notify("Exported "+records.length+" records. Save the file securely.");};
 </script></main></body></html>
