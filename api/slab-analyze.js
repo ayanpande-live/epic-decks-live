@@ -40,5 +40,5 @@ export default async function handler(req,res){
   const status=imgs.length===1?"insufficient_evidence":roleIssues.length?"possible_mismatch":
    ["consistent","possible_mismatch","insufficient_evidence"].includes(reported.status)?reported.status:"insufficient_evidence";
   return respond(res,200,{fields:clean,verified:false,pair_review:{status,reasons:issues},message:"AI suggestion only. Confirm photo roles, card identity and certificate manually."});
- }catch(e){return respond(res,400,{error:"Unable to analyze the images. Check image format and retry."});}
+ }catch(e){const timedOut=e?.name==="TimeoutError"||e?.name==="AbortError";return respond(res,timedOut?504:502,{error:timedOut?"AI provider timed out. Retry this slab.":"AI response could not be processed. Retry this slab."});}
 }
