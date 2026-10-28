@@ -76,3 +76,20 @@ Pairs remain review-only. A conflicting certificate/grade/card number/language i
 Test example: import the sample Shopify CSV and the sample eBay CSV (their current sample SKUs differ, so no match is expected); to exercise an overlap, edit a COPY of the Shopify sample and change a SKU to `ED-SLAB-001` before importing both. You should see one medium-confidence matching-SKU candidate. For a high-confidence match, import two generic CSVs with the same grader and cert number but different SKUs. Review all candidates; no auto-merge button exists.
 
 **Next prerequisite before real inventory**: authenticated users and tenant isolation, a protected persistent database, and private image storage; the current importer runs in the browser and can import untrusted documents. Do not test confidential real pricing on a publicly accessible preview.
+
+
+## ACE / PSA Enrichment Studio (review-first)
+
+Open `/tools/inventory-import/enrichment.html` on the **development preview** after exporting JSON from this importer. It reads the same canonical `records[]` package and exports `kind: inventory-enrichment-review` with the original inventory, source identifiers and private costs retained. No schema migration or live stock mutation occurs.
+
+- ACE and PSA records offer official cert lookup links; only validated numerical cert IDs may generate URLs.
+- The human reviewer compares grader, card and grade, records the source, date, and discrepancy status. A real cert number **does not authenticate a physical holder**.
+- PSA grade population / pop higher and ACE grade + label population are separate optional values with observation dates. Unknown values stay **null**, not zero.
+- Front/back scans are attached as locally resized JPEGs with explicit image rights (`owned`, `licensed`, `internal_reference`). Provider images default to internal reference use unless license/permission is established.
+- A public preview excludes private cost/source rows and excludes internal-reference scans. It is **not** a publishing endpoint and is not a verified authenticity declaration.
+- A sourced, factual population sentence can be generated for social campaigns only after reviewed matching evidence. Counts can change; recheck before publication.
+- The pilot keeps files in browser memory and requires JSON export. Large embedded photos can make JSON large. Do not commit real inventory or screenshots with prices to this public repository.
+
+**Automated lookup status:** The official [PSA Public API](https://www.psacard.com/publicapi/documentation) offers authenticated, per-certificate data access, but population API and image re-publication rights are not guaranteed. ACE certificate pages contain scans and population information, but a permitted bulk API has not been established. This stage therefore supports **official-link assisted review and user-supplied photos**, not bulk scraping or automatic licensed image downloads. Build a server-side credentialed PSA connector and secure image storage only after authentication, data rights and official access are resolved.
+
+**Smoke tests:** `node --test tools/inventory-import/enrichment.test.mjs` (Node 22+ recommended).
