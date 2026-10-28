@@ -2,10 +2,13 @@
 const E=window.EpicInventory,$=id=>document.getElementById(id);
 const KEY="epic-decks-inventory-pilot-v1";
 const fresh=()=>({records:[],bundles:[],queue:[]});
-let state=fresh();try{const saved=JSON.parse(localStorage.getItem(KEY)||"null");if(saved&&Array.isArray(saved.records)&&Array.isArray(saved.bundles)&&Array.isArray(saved.queue))state=saved;}catch{}
+let state=fresh(),writeP=Promise.resolve(),inventoryDbP;
+function inventoryDb(){return inventoryDbP||(inventoryDbP=new Promise((yes,no)=>{const req=indexedDB.open(KEY,1);req.onupgradeneeded=()=>req.result.createObjectStore("state");req.onsuccess=()=>yes(req.result);req.onerror=()=>no(req.error)}))}
+async function loadState(){const d=await inventoryDb();return new Promise((yes,no)=>{const req=d.transaction("state").objectStore("state").get("main");req.onsuccess=()=>yes(req.result);req.onerror=()=>no(req.error)})}
+async function storeState(snapshot){const d=await inventoryDb();return new Promise((yes,no)=>{const tx=d.transaction("state","readwrite");tx.objectStore("state").put(snapshot,"main");tx.oncomplete=yes;tx.onerror=()=>no(tx.error)})}
 const node=(tag,text)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;return n};
 const money=n=>"€"+(Number(n)||0).toFixed(2);
-function persist(){localStorage.setItem(KEY,JSON.stringify(state));render()}
+function persist(){const snapshot=structuredClone(state);writeP=writeP.then(()=>storeState(snapshot)).catch(e=>message("Local save failed: "+e.message+" — export a backup."));render()}
 function message(t){$("status").textContent=t}
 function download(filename,data){const url=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:"application/json"}));const a=node("a");a.href=url;a.download=filename;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}
 function change(id,patch){try{state=E.transition(state,id,patch);persist()}catch(e){message(e.message)}}
@@ -41,4 +44,4 @@ $("demo").onclick=()=>{const names=["Pikachu","Charizard","Blastoise"],drafts=na
 $("add-bundle").onclick=()=>{const ids=[...document.querySelectorAll(".bundle-pick:checked")].map(x=>x.value);try{state=E.addBundle(state,{name:$("bundle-name").value.trim(),ids,price_eur:$("bundle-price").value});persist();message("Collection created. It will automatically become unavailable if a member slab is sold, held or reserved.")}catch(e){message(e.message)}};
 $("catalogue").onclick=()=>download("epic-decks-public-catalogue-preview.json",E.catalogue(state.records,state.bundles));
 $("backup").onclick=()=>download("epic-decks-private-inventory-backup.json",{exported_at:new Date().toISOString(),...state});
-$("filter").onchange=render;render();
+$("filter").onchange=render;render();loadState().then(saved=>{if(saved&&Array.isArray(saved.records)&&Array.isArray(saved.bundles)&&Array.isArray(saved.queue)){state=saved;render();message("Loaded saved inventory from this browser.")}}).catch(e=>message("Could not load saved inventory: "+e.message));
