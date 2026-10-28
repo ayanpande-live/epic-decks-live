@@ -71,7 +71,7 @@ function pairUI(){
  });
 }
 function reviewUI(){const host=el("reviews");host.replaceChildren();let done=0,approved=0,flagged=0;rows.forEach((r,i)=>{if(r.ai)done++;if(r.approved)approved++;if(issues(i).length||r.ai&&(r.ai.status!=="consistent"||!r.values.language?.trim()||!r.values.grade_company?.trim()||/^(unknown|unidentified|n\/a)$/i.test(r.values.grade_company.trim())))flagged++;const card=node("article","review"),head=node("div","review-head");head.append(node("strong","",String(i+1)+". "+(r.values.card_name||"Unidentified slab")),node("span","pill",r.saved?"Saved":r.approved?"Approved":r.ai?.status==="error"?"AI failed":r.ai?"Review":"Not analyzed"));card.append(head);const warnings=[...issues(i),...(r.ai?.reasons||[])];if(r.ai&&r.ai.status!=="error"&&!r.values.language?.trim())warnings.push("Card language not identified — check the text on the card front.");if(r.ai&&r.ai.status!=="error"&&(!r.values.grade_company?.trim()||/^(unknown|unidentified|n\/a)$/i.test(r.values.grade_company.trim())))warnings.push("Grading company not identified — inspect the slab label.");if(warnings.length)card.append(node("p","warning muted",warnings.join(" · ")));const details=node("details");details.open=!r.ai||warnings.length>0;details.append(node("summary","","Photos and editable details"));const images=node("div","photos");images.append(pic(r.front),pic(r.back));details.append(images);const grid=node("div","grid");columns.forEach(([key,label])=>{const wrap=node("label","",label),input=node("input");input.type="text";input.value=String(r.values[key]||"");input.onchange=()=>{r.values[key]=input.value.trim();r.approved=false;r.saved=false;refresh()};wrap.append(input);grid.append(wrap)});details.append(grid);card.append(details);const confirm=node("label","check"),check=node("input");check.type="checkbox";check.checked=r.approved;check.disabled=blocked(i);check.onchange=()=>{if(check.checked&&!r.values.card_name.trim()){check.checked=false;el("save-status").textContent="Enter a card name before approving.";return}r.approved=check.checked;r.saved=false;refresh()};confirm.append(check,node("span","muted","I checked this slab's identity, photos and warnings."));card.append(confirm);host.append(card)});el("summary").replaceChildren(node("span","",rows.length+" slabs"),node("span","",done+" AI reviewed"),node("span","",approved+" approved"),node("span","",flagged+" flagged"));el("save").disabled=busy||!rows.some((r,i)=>r.approved&&!blocked(i))}
-function refresh(){pairUI();reviewUI();el("analyze").disabled=busy||!rows.length}
+function refresh(){pairUI();reviewUI();el("analyze").disabled=busy||!rows.length;if(typeof renderQuality==="function")renderQuality()}
 el("file").onchange=async event=>{
  const input=event.target;
  if(busy){input.value="";return}
@@ -99,7 +99,34 @@ el("file").onchange=async event=>{
 };
 el("add-front-only").onclick=()=>{const used=new Set(rows.flatMap(r=>[r.front,r.back]).filter(x=>x>=0));const index=photos.findIndex((_,i)=>!used.has(i));if(index<0){el("upload-status").textContent="No unused photo. Set an existing slab’s back to No back first.";return}rows.push({id:crypto.randomUUID(),front:index,back:-1,values:blank(),ai:null,approved:false,saved:false});el("upload-status").textContent="Added a front-only slab from photo "+(index+1);refresh()};
 el("stop").onclick=()=>{stop=true;el("ai-status").textContent="Stopping after current request…"};
-el("analyze").onclick=async()=>{if(busy)return;const token=el("token").value.trim();if(!token){el("ai-status").textContent="Enter your private AI access code.";return}if(rows.some((_,i)=>blocked(i))){el("ai-status").textContent="Fix reused or invalid photo assignments first.";return}busy=true;stop=false;el("stop").classList.remove("hidden");refresh();let count=0;try{for(let i=0;i<rows.length;i++){if(stop)break;const r=rows[i];if(r.ai&&r.ai.status!=="error")continue;el("ai-status").textContent="Extracting slab "+(i+1)+" / "+rows.length+"…";try{const response=await fetch("/api/slab-analyze",{method:"POST",headers:{"Content-Type":"application/json","X-Intake-Token":token},body:JSON.stringify({front:photos[r.front].data,back:r.back>=0?photos[r.back].data:null})});const result=await response.json();if(!response.ok)throw Error(result.error||"AI error");r.values={...blank(),...(result.fields||{})};const pair=result.pair_review||{};r.ai={status:pair.status||"insufficient_evidence",reasons:Array.isArray(pair.reasons)?pair.reasons:[]};r.approved=false;count++}catch(err){r.ai={status:"error",reasons:[err.message]};if(/access code|unauthorized|not configured|401|503/i.test(err.message))break}reviewUI()}el("ai-status").textContent=count+" slabs extracted. Review and approve below."}finally{busy=false;el("stop").classList.add("hidden");refresh()}};
+el("analyze").onclick=async()=>{
+ if(busy)return;
+ const token=el("token").value.trim();
+ if(!token){el("ai-status").textContent="Enter your private AI access code.";return}
+ if(rows.some((_,i)=>blocked(i))){el("ai-status").textContent="Fix reused or invalid photo assignments first.";return}
+ busy=true;stop=false;el("stop").classList.remove("hidden");refresh();
+ let count=0,failed=0;
+ try{
+  for(let i=0;i<rows.length;i++){
+   if(stop)break;
+   const r=rows[i];
+   if(r.ai&&r.ai.status!=="error")continue;
+   if(r.ai?.status==="error"&&r.ai.retryable===false)continue;
+   el("ai-status").textContent="Extracting slab "+(i+1)+" / "+rows.length+"…";
+   try{
+    await analyzeOne(i,token);
+    count++;
+   }catch(err){
+    const info=classifyAIError(err,err.status);
+    r.ai={status:"error",kind:info.kind,retryable:info.retryable,reasons:[info.message]};
+    failed++;
+    if(info.kind==="access"||info.kind==="configuration"||info.kind==="rate_limit")break;
+   }
+   reviewUI();renderQuality();
+  }
+  el("ai-status").textContent=count+" slabs extracted; "+failed+" request failures. Use the quality dashboard to review exceptions or retry failed slabs.";
+ }finally{busy=false;el("stop").classList.add("hidden");refresh()}
+};
 el("recheck-language").onclick=async()=>{
  if(busy)return;
  const token=el("token").value.trim();
