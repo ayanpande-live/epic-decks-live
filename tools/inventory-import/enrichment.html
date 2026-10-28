@@ -19,7 +19,7 @@
 <div id="editor" class="hidden">
 <h2 id="title"></h2><p id="identity" class="muted"></p>
 <div class="row"><a id="cert-link" href="#" target="_blank" rel="noopener noreferrer">Open official certificate ↗</a><a id="pop-link" href="#" target="_blank" rel="noopener noreferrer">Open population report ↗</a></div>
-<p class="muted">Compare the official record with the actual holder. A valid certification number alone is not proof of authenticity. These are manual evidence notes, not an authentication guarantee.</p>
+<div id="api-candidate" class="notice hidden" style="margin:12px 0"></div><p class="muted">Compare the official record with the actual holder. A valid certification number alone is not proof of authenticity. These are manual evidence notes, not an authentication guarantee.</p>
 <div class="fields">
 <label class="field">Certificate review status<select id="review"><option value="needs_review">Needs review</option><option value="reviewed_match">Record checked — matches</option><option value="discrepancy">Discrepancy / escalation</option></select></label>
 <label class="field">Grade shown on official record<input id="official-grade" placeholder="e.g., 10"></label>
@@ -70,12 +70,15 @@ function renderList(){const search=val("search").toLowerCase(),container=$("item
 function put(id,v){$(id).value=v??"";}
 function renderEditor(){
  const r=current();$("editor").classList.toggle("hidden",!r);$("empty").classList.toggle("hidden",!!r);if(!r)return;
- const id=r.identity||{},e=r.enrichment||{},c=e.certificate||{},p=e.population||{};
+ const id=r.identity||{},e=r.enrichment||{},c=e.certificate||{},p=e.population||{},candidate=e.provider_candidate||null;
  $("title").textContent=id.title||"Untitled";$("identity").textContent=[id.grader,id.grade,id.certificate?"Cert #"+id.certificate:"Certificate missing",id.set_name,id.card_number].filter(Boolean).join(" · ");
  const url=officialCertUrl(r),pop=officialPopUrl(r);
  for(const [el,href] of [["cert-link",url],["pop-link",pop]]){$(el).href=href||"#";$(el).style.display=href?"":"none";}
- put("review",c.status||"needs_review");put("official-grade",c.official_grade||"");put("reviewer",c.reviewed_by||"");put("as-of",p.as_of||new Date().toISOString().slice(0,10));
- put("grade-pop",p.grade_population);put("higher-pop",p.higher_population);put("total-pop",p.total_population);put("label-pop",p.label_grade_population);put("label-type",p.label_type);put("notes",c.notes);
+ const api=$("api-candidate");api.classList.toggle("hidden",!candidate);
+ if(candidate){api.replaceChildren();const note=document.createElement("div");note.textContent="PSA API candidate: "+candidate.status+". Review against the actual slab before confirming.";api.append(note);
+ for(const image of candidate.images||[]){const link=document.createElement("a");link.href=image.url;link.target="_blank";link.rel="noopener noreferrer";link.textContent="Open provider "+image.side+" scan (internal reference only)";api.append(document.createElement("br"),link);}}
+ put("review",c.status||"needs_review");put("official-grade",c.official_grade||candidate?.official_grade||"");put("reviewer",c.reviewed_by||"");put("as-of",p.as_of||candidate?.fetched_at?.slice(0,10)||new Date().toISOString().slice(0,10));
+ put("grade-pop",p.grade_population??candidate?.grade_population);put("higher-pop",p.higher_population??candidate?.higher_population);put("total-pop",p.total_population);put("label-pop",p.label_grade_population);put("label-type",p.label_type);put("notes",c.notes);
  for(const side of ["front","back"]){const photo=e.media?.[side];$(side+"-preview").src=photo?.data_url||"";$(side+"-rights").value=photo?.rights||"owned";$(side+"-file").value="";}
  $("social").value=socialInsight(r);$("public-preview").textContent="";$("save-status").textContent="";$("photo-status").textContent="";
  $("save").disabled=!url;
