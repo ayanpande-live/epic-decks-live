@@ -8,23 +8,23 @@ export const FIELDS = [
  ["image_url","Image URL"],["external_id","External item ID"],["listing_url","Listing URL"]
 ];
 const ALIASES={
- title:["item_title","title","name","product name","item name","listing title","card name","article name"],
- sku:["sku","variant sku","seller sku","stock keeping unit","custom label (sku)","custom label","custom label sku"],
+ title:["card name","item_title","title","name","product name","item name","listing title","card name","article name"],
+ sku:["stock id (provisional)","stock id","sku","variant sku","seller sku","stock keeping unit","custom label (sku)","custom label","custom label sku"],
  item_type:["item_type","category","product category","product type","type"],
  description:["item_description","description","body (html)","body html","item description"],
  grader:["grade_company","grader","grading company","grading service"],
- grade:["grade_value","grade","grading grade","card grade"],
+ grade:["numeric grade","grade_value","grade","grading grade","card grade"],
  certificate:["cert_number","certificate number","certification number","cert number","certification id","cert"],
- set_name:["set_name","set name","set","expansion"],
+ set_name:["set code","set_name","set name","set","expansion"],
  card_number:["card_number","card number","collector number","card no","number"],
  language:["language","lang"],
  year:["year","release year"],
- condition:["condition","card condition"],
- quantity:["available_qty","available quantity","inventory quantity","variant inventory qty","quantity","stock","amount","qty"],
- price:["target_price","variant price","selling price","sale price","price","unit price","current price (figure)","current price","start price","buy it now price"],
+ condition:["cardmarket condition","condition","card condition"],
+ quantity:["confirmed physical qty","available_qty","available quantity","inventory quantity","variant inventory qty","quantity","stock","amount","qty"],
+ price:["cardmarket ask/unit eur","target_price","variant price","selling price","sale price","price","unit price","current price (figure)","current price","start price","buy it now price"],
  currency:["currency","currency code"],
- cost:["purchase_price","purchase cost","cost per item","acquisition cost","buy price","cost"],
- image_url:["hero_image","image src","image url","photo url","image","images"],
+ cost:["landed cost/unit eur","purchase_price","purchase cost","cost per item","acquisition cost","buy price","cost"],
+ image_url:["front scan url","hero_image","image src","image url","photo url","image","images"],
  external_id:["idarticle","id_product","idproduct","listing id","item id","item number","external id","article id","variant id","id","handle"],
  listing_url:["whatnot_listing_url","listing url","product url","url","link"]
 };
@@ -100,6 +100,8 @@ function toRecord(row,mapping,ctx){
  const issues=[];
  if(!title)issues.push("Missing product title");
  if(!sku && !cert)issues.push("Missing SKU/certificate for reliable identity");
+ if(["ace","psa"].includes(norm(grader))&&!cert)issues.push("Missing ACE/PSA certificate: enrichment cannot start until checked");
+ if(norm(row["Physical stock status"])==="unverified")issues.push("Physical stock not verified; listing quantity is not confirmed on-hand stock");
  const rawQty=get("quantity"),rawPrice=get("price");
  const quantity=rawQty?count(rawQty):"";
  const price=rawPrice?amount(rawPrice):"";
