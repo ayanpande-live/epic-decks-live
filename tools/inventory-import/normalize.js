@@ -94,13 +94,13 @@ function mappedValue(row,mapping,key){
 function toRecord(row,mapping,ctx){
  const get=f=>clean(mappedValue(row,mapping,f));
  const title=get("title"),sku=get("sku"),grader=get("grader"),cert=get("certificate");
- const itemType=typeOf(get("item_type")+" "+title);
+ const itemType=grader ? "slab" : typeOf(get("item_type")+" "+title);
  const rawGrade=get("grade");
  const isConditionGrade=itemType==="single" && /^(NM|M|EX|LP|MP|HP|DMG|GOOD|POOR|NEAR MINT|LIGHTLY PLAYED|MODERATELY PLAYED)$/i.test(rawGrade);
  const issues=[];
  if(!title)issues.push("Missing product title");
  if(!sku && !cert)issues.push("Missing SKU/certificate for reliable identity");
- if(["ace","psa"].includes(norm(grader))&&!cert)issues.push("Missing ACE/PSA certificate: enrichment cannot start until checked");
+ if(["ace","ace grading","psa"].includes(norm(grader))&&!cert)issues.push("Missing ACE/PSA certificate: enrichment cannot start until checked");
  if(norm(row["Physical stock status"])==="unverified")issues.push("Physical stock not verified; listing quantity is not confirmed on-hand stock");
  const rawQty=get("quantity"),rawPrice=get("price");
  const quantity=rawQty?count(rawQty):"";
