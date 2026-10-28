@@ -13,7 +13,7 @@
 <p class="muted">Start with <a href="./index.html">Universal Inventory Import</a> to upload Excel/CSV, map columns and export the review JSON. This enrichment tool also accepts its own previously exported file.</p><div id="message" role="status" class="muted"></div>
 <div class="row" id="stats"></div></section>
 <div class="layout">
-<section class="panel"><h2>2 · Choose slab</h2><label class="field">Search title, grader, cert<input id="search" placeholder="e.g., Pikachu or 385507"></label><div id="items" class="scroll"><p class="muted">Upload an inventory file to begin.</p></div></section>
+<section class="panel"><h2>2 · Choose slab</h2><label class="field">Search title, grader, cert<input id="search" placeholder="e.g., Pikachu or 385507"></label><label class="field">Review queue<select id="queue-filter"><option value="all">All records</option><option value="missing-cert">Missing certificate</option><option value="not-reviewed">Certificate not reviewed</option><option value="needs-pop">Population missing</option><option value="needs-images">Images missing</option><option value="discrepancies">Discrepancies</option></select></label><div id="items" class="scroll"><p class="muted">Upload an inventory file to begin.</p></div></section>
 <section class="panel"><h2>3 · Review official evidence</h2>
 <div id="empty"><p class="muted">Select a slab from the left to inspect its certificate, population and images.</p></div>
 <div id="editor" class="hidden">
@@ -59,6 +59,12 @@ const current=()=>records[selected];
 function renderStats(){const c=coverage(records);$("stats").replaceChildren();for(const [key,n] of Object.entries(c)){const box=document.createElement("div");box.className="stat";const b=document.createElement("strong");b.textContent=fmt(n);const label=document.createElement("small");label.textContent=key.replace(/_/g," ");box.append(b,label);$("stats").append(box);}}
 function renderList(){const search=val("search").toLowerCase(),container=$("items");container.replaceChildren();records.forEach((r,i)=>{
  const id=r.identity||{},s=[id.title,id.grader,id.grade,id.certificate,id.sku].join(" ").toLowerCase();if(!s.includes(search))return;
+ const f=val("queue-filter"),e=r.enrichment||{};
+ if(f==="missing-cert"&&String(id.certificate||"").trim())return;
+ if(f==="not-reviewed"&&e.certificate?.status==="reviewed_match")return;
+ if(f==="needs-pop"&&e.population?.grade_population!==null&&e.population?.grade_population!==undefined)return;
+ if(f==="needs-images"&&e.media?.front?.data_url&&e.media?.back?.data_url)return;
+ if(f==="discrepancies"&&e.certificate?.status!=="discrepancy")return;
  const b=document.createElement("button");b.className="item"+(i===selected?" active":"");const name=document.createElement("b");name.textContent=id.title||"Untitled slab";const meta=document.createElement("small");meta.textContent=[id.grader,id.grade,id.certificate?"#"+id.certificate:"No cert"].filter(Boolean).join(" · ");const tag=document.createElement("span");tag.className="tag";tag.textContent=" · "+(r.enrichment?.certificate?.status||"not checked");b.append(name,document.createElement("br"),meta,tag);b.onclick=()=>{selected=i;renderList();renderEditor();};container.append(b);
  });}
 function put(id,v){$(id).value=v??"";}
@@ -87,7 +93,7 @@ $("demo").onclick=()=>{records=[
  {identity:{title:"Sample Charizard",grader:"PSA",grade:"9",certificate:"28329627",item_type:"slab"},commercial:{price:200,acquisition_cost:115},content:{image_urls:[]},stock:{quantity:1},warnings:[],source:"demo"},
  {identity:{title:"Sample Mewtwo — needs certificate",grader:"PSA",grade:"8",certificate:"",item_type:"slab"},commercial:{price:95},content:{image_urls:[]},stock:{quantity:1},warnings:[],source:"demo"}
  ];selected=0;loadedSource="sample";renderStats();renderList();renderEditor();$("download").disabled=false;notify("Loaded fictional demonstration inventory. Certificate links point to real provider pages but are NOT claims about these sample cards.");};
-$("search").oninput=renderList;
+$("search").oninput=renderList;$("queue-filter").onchange=renderList;
 $("save").onclick=()=>{if(selected<0)return;try{
  if(val("review")==="reviewed_match"&&(!val("official-grade").trim()||!val("reviewer").trim()))throw Error("To confirm a match, enter the official grade and reviewer.");
  const input={status:val("review"),official_grade:val("official-grade"),reviewed_by:val("reviewer"),as_of:val("as-of"),grade_population:num("grade-pop"),higher_population:num("higher-pop"),total_population:num("total-pop"),label_grade_population:num("label-pop"),label_type:val("label-type"),notes:val("notes")};
