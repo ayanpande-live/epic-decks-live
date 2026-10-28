@@ -20,6 +20,7 @@ export function officialPopUrl(record){
 export function normalizeEvidence(input,record,date=new Date().toISOString()){
  const i=input||{},identity=record?.identity||{},expected=trim(identity.grade),reported=trim(i.official_grade);
  const status=["reviewed_match","needs_review","discrepancy"].includes(i.status)?i.status:"needs_review";
+ if(status==="reviewed_match"&&(!reported||!trim(i.reviewed_by)))throw Error("Confirmed cert review requires the observed grade and reviewer.");
  const mismatch=!!(expected&&reported&&expected!==reported);
  const certUrl=officialCertUrl(record);
  if(!certUrl)throw Error("A valid ACE or PSA grader and numeric certificate are required.");
@@ -33,7 +34,7 @@ export function normalizeEvidence(input,record,date=new Date().toISOString()){
  };
  const counts=["grade_population","higher_population","total_population","label_grade_population"];
  const hasPop=counts.some(k=>pop[k]!==null);
- if(hasPop && !/^\d{4}-\d{2}-\d{2}$/.test(pop.as_of))throw Error("Population evidence requires a source observation date (YYYY-MM-DD).");
+ if(hasPop && (!/^\d{4}-\d{2}-\d{2}$/.test(pop.as_of)||!Number.isFinite(Date.parse(pop.as_of))))throw Error("Population evidence requires a source observation date (YYYY-MM-DD).");
  if(hasPop&&status!=="reviewed_match")throw Error("Review certificate identity before recording confirmed population metrics.");
  if(pop.total_population!==null&&pop.grade_population!==null&&pop.total_population<pop.grade_population)throw Error("Total population cannot be lower than grade population.");
  return {
@@ -47,7 +48,10 @@ export function applyEvidence(record,input,date){
  const previous=record.enrichment||{};
  const warnings=(record.warnings||[]).filter(w=>!String(w).startsWith("Certificate discrepancy:"));
  if(evidence.certificate.identity_mismatch)warnings.push("Certificate discrepancy: official grade differs from inventory grade.");
- return {...record,warnings,enrichment:{...previous,...evidence,version:ENRICHMENT_VERSION,updated_at:date||new Date().toISOString()}};
+ const history=[...(previous.population_history||[])];
+ if(evidence.population){const key=p=>JSON.stringify([p.provider,p.source_url,p.as_of,p.grade_population,p.higher_population,p.label_grade_population,p.total_population,p.label_type]);
+ if(!history.some(x=>key(x)===key(evidence.population)))history.push(evidence.population);}
+ return {...record,warnings,enrichment:{...previous,...evidence,population_history:history,version:ENRICHMENT_VERSION,updated_at:date||new Date().toISOString()}};
 }
 export function attachPhoto(record,side,dataUrl,rights,source="user_upload",now=new Date().toISOString()){
  if(!["front","back"].includes(side))throw Error("Invalid image side");
