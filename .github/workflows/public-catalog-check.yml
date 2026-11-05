@@ -1,0 +1,41 @@
+name: Public catalogue safety checks
+on:
+  pull_request:
+    paths:
+      - 'tools/build_public_catalog.py'
+      - 'tests/test_public_catalog_export.py'
+      - 'data/public-catalog.json'
+      - 'index.html'
+      - '.github/workflows/public-catalog-check.yml'
+  push:
+    paths:
+      - 'tools/build_public_catalog.py'
+      - 'tests/test_public_catalog_export.py'
+      - 'data/public-catalog.json'
+      - 'index.html'
+      - '.github/workflows/public-catalog-check.yml'
+permissions:
+  contents: read
+jobs:
+  public-catalog:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m unittest discover -s tests -p 'test_public_catalog_export.py' -v
+      - name: Fail if the public feed contains private or stale product data
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          feed=json.loads(Path('data/public-catalog.json').read_text(encoding='utf-8'))
+          assert feed['schema_version']==1
+          assert isinstance(feed['items'],list)
+          private={'purchase_price','acquisition_cost_eur','private_notes','reserved_qty'}
+          assert not any(private.intersection(item) for item in feed['items'])
+          # The beta must start blank; enable products only with founder-approved release gate.
+          assert len(feed['items'])==0
+          print('Empty, approval-gated public catalogue verified.')
+          PY

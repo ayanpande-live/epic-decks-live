@@ -1,0 +1,10 @@
+# Exclude internal inventory/master files from a Vercel static deployment.
+# Only data/public-catalog.json is allowed for the consumer site.
+data/*.xlsx
+data/*.xls
+data/*.csv
+data/inventory.json
+data/inventory_converted.json
+data/private*.json
+data/*_internal.json
+.env*
