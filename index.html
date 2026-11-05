@@ -1599,52 +1599,110 @@
 <script>
   async function loadFeaturedInventory() {
     const grid = document.getElementById("inventory-grid");
+    if (!grid) return;
 
+    function showCataloguePending() {
+      grid.replaceChildren();
+      const message = document.createElement("p");
+      message.textContent = "We're verifying our latest featured cards before publishing availability. Browse current listings on Whatnot or message us to check a specific card.";
+      const link = document.createElement("a");
+      link.href = "https://www.whatnot.com/user/epicdecksnl";
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+      link.textContent = "Browse Whatnot listings";
+      link.style.display = "inline-block";
+      link.style.marginLeft = "10px";
+      grid.append(message, link);
+    }
+
+    // Fail closed: only use founder-approved, recently verified PUBLIC listings.
+    // Never consume the old private inventory workbook or legacy /data/inventory.json.
     try {
-      const response = await fetch("/data/inventory.json");
+      const response = await fetch("/data/public-catalog.json", {cache: "no-store"});
+      if (!response.ok) throw new Error("Catalogue unavailable");
       const data = await response.json();
+      if (data.schema_version !== 1 || !Array.isArray(data.items)) {
+        throw new Error("Unexpected catalogue schema");
+      }
 
-      const items = data.featured_items || [];
+      const now = Date.now();
+      const eligible = data.items.filter(item => {
+        if (!item || item.approved_for_publication !== true ||
+            item.availability_confirmed !== true ||
+            item.condition_confirmed !== true ||
+            item.photo_confirmed !== true ||
+            item.listing_status !== "live") return false;
+        if (!/^[A-Z0-9-]{4,64}$/.test(item.sku || "") ||
+            typeof item.item_title !== "string" || item.item_title.trim().length < 3 ||
+            item.currency !== "EUR" ||
+            !Number.isFinite(item.target_price) || item.target_price <= 0) return false;
+        const inspected = Date.parse(item.verified_at || "");
+        if (!Number.isFinite(inspected) || inspected > now ||
+            now - inspected > 14 * 24 * 60 * 60 * 1000) return false;
+        try {
+          const listing = new URL(item.whatnot_listing_url);
+          if (listing.protocol !== "https:" ||
+              !["whatnot.com", "www.whatnot.com"].includes(listing.hostname) ||
+              !listing.pathname.startsWith("/listing/") ||
+              listing.username || listing.password) return false;
+        } catch (_) { return false; }
+        return typeof item.hero_image === "string" &&
+          /^\/images\/inventory\/[A-Za-z0-9/_.-]+\.(png|jpg|jpeg|webp)$/i.test(item.hero_image) &&
+          !item.hero_image.includes("..");
+      });
 
-      grid.innerHTML = "";
+      grid.replaceChildren();
+      if (!eligible.length) {
+        showCataloguePending();
+        return;
+      }
 
-      items.forEach((item) => {
-        const price = item.target_price
-          ? `${item.currency || "€"} ${item.target_price}`
-          : "POA";
-
-        const grade = item.grade_company && item.grade_value
-          ? `${item.grade_company} ${item.grade_value}`
-          : "Graded";
-
-        const link = item.whatnot_listing_url || "https://www.whatnot.com/user/epicdecksnl";
-
+      const seen = new Set();
+      eligible.forEach(item => {
+        if (seen.has(item.sku)) return;
+        seen.add(item.sku);
         const card = document.createElement("a");
         card.className = "card-item";
-        card.href = link;
+        card.href = item.whatnot_listing_url;
         card.target = "_blank";
         card.rel = "noopener noreferrer";
 
-        card.innerHTML = `
-          <div class="card-img">
-            <img src="${item.hero_image}" alt="${item.item_title}" loading="lazy">
-            <div class="grade-badge ace">${grade}</div>
-          </div>
-          <div class="card-info">
-            <div class="card-name">${item.item_title || "Epic Decks NL Collectible"}</div>
-            <div class="card-set">${item.set_name || "Pokémon TCG"}</div>
-            <div class="card-footer">
-              <div class="card-price">${price}</div>
-              <div class="card-offer">View</div>
-            </div>
-          </div>
-        `;
+        const imageWrap = document.createElement("div");
+        imageWrap.className = "card-img";
+        const img = document.createElement("img");
+        img.src = item.hero_image;
+        img.alt = item.item_title;
+        img.loading = "lazy";
+        imageWrap.appendChild(img);
+        const grade = document.createElement("div");
+        grade.className = "grade-badge ace";
+        grade.textContent = item.grade_company && item.grade_value
+          ? String(item.grade_company) + " " + String(item.grade_value) : "Graded";
+        imageWrap.appendChild(grade);
 
+        const info = document.createElement("div");
+        info.className = "card-info";
+        const title = document.createElement("div");
+        title.className = "card-name";
+        title.textContent = item.item_title;
+        const set = document.createElement("div");
+        set.className = "card-set";
+        set.textContent = item.set_name || "Pokémon TCG";
+        const footer = document.createElement("div");
+        footer.className = "card-footer";
+        const price = document.createElement("div");
+        price.className = "card-price";
+        price.textContent = new Intl.NumberFormat("nl-NL", {style:"currency", currency:"EUR"}).format(item.target_price);
+        const offer = document.createElement("div");
+        offer.className = "card-offer";
+        offer.textContent = "View listing";
+        footer.append(price, offer);
+        info.append(title, set, footer);
+        card.append(imageWrap, info);
         grid.appendChild(card);
       });
-    } catch (error) {
-      grid.innerHTML = "<p>Inventory is loading. Please check back soon.</p>";
-      console.error("Inventory load error:", error);
+    } catch (_) {
+      showCataloguePending();
     }
   }
 
