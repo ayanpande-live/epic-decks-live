@@ -1,0 +1,12 @@
+# Private inventory and working files must NEVER be committed to this public site repository.
+data/*.xlsx
+data/*.xls
+data/*.csv
+data/inventory.json
+data/inventory_converted.json
+data/private*.json
+data/*_internal.json
+*.env
+.env*
+__pycache__/
+*.pyc
