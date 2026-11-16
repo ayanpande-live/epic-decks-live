@@ -1,0 +1,15 @@
+import assert from "node:assert/strict";
+import {readFileSync} from "node:fs";
+import vm from "node:vm";
+const html=readFileSync(new URL("../labs/collector-cockpit-v3.html",import.meta.url),"utf8");
+assert.match(html,/<meta name="robots" content="noindex,nofollow">/);
+assert.ok((html.match(/\/images\/logo\.webp/g)||[]).length>=2,"real logo should anchor the brand");
+for(const name of ["water","fire","spark","mystic"])assert.match(html,new RegExp('data-element="'+name+'"'));
+assert.match(html,/prefers-reduced-motion:reduce/);
+for(const id of ["slab","flip","light","stage","search","grade","reset"])assert.ok(html.includes('id="'+id+'"'),"Missing "+id);
+assert.match(html,/NO PRICE OR|NOT A LIVE STORE/);
+assert.doesNotMatch(html,/<script[^>]+src=/);
+const scripts=[...html.matchAll(/<script>([\s\S]*?)<\/script>/g)];
+assert.equal(scripts.length,2);
+for(const script of scripts)new vm.Script(script[1]);
+console.log("Collector Cockpit V3 static safety and JS syntax tests passed.");
