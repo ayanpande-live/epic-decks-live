@@ -8,7 +8,7 @@ const STORAGE="myepicdecks-collector-learning-prototype-v1";
 const $=(s)=>document.querySelector(s);
 const select=(s)=>Array.from(document.querySelectorAll(s));
 let state=readState(),activeScreen="home",csvPreview=null,quizIdentity="",quizIndex=0,answerVisible=false;
-let photoObjectUrl=null,toastTimer=null;
+let photoObjectUrl=null,toastTimer=null,questMode=false,questSteps=0,choiceResolved=false;
 function readState(){
  try {const raw=localStorage.getItem(STORAGE);return raw?safeState(JSON.parse(raw)):createState()}
  catch {return createState()}
@@ -77,7 +77,7 @@ function renderCollection(){
     unlocked?"Practise again →":isFull&&!state.proPreview?"Free limit reached · View Pro":"Unlock this card ✦");
   action.type="button";
   action.addEventListener("click",()=>{
-    if(unlocked){quizIdentity=id;quizIndex=0;answerVisible=false;go("learn");return}
+    if(unlocked){quizIdentity=id;quizIndex=0;answerVisible=false;questMode=false;go("learn");return}
     const done=unlockCard(state,id);
     if(done.result==="quota-reached"){toast("You've unlocked 10 new free cards this month. Old lessons still work.");go("plans");return}
     if(done.result!=="unlocked"){toast("Couldn't unlock this card: "+done.result);return}
@@ -97,31 +97,75 @@ function fillSelect(el,cards,selected,placeholder){
  el.value=cards.some(c=>cardIdentity(c)===old)?old:cardIdentity(cards[0]);
  return el.value;
 }
+function answerChoices(card,fact){
+ const field=({ "Card identity":"name","Set / series":"set","Card number":"number","Illustrator":"artist","Visual feature":"feature","Pose / stance":"pose","Variant":"variant","Language":"language" })[fact.label];
+ if(!field)return [];
+ const pool=[...new Set(state.cards.filter(c=>c.source===card.source).map(c=>String(c[field]||"").trim()).filter(v=>v&&v!==fact.value))].slice(0,12);
+ if(pool.length<2)return [];
+ // Deterministic shuffle: avoids an unpredictable answer location on each rerender.
+ const seed=quizIndex+card.name.length;
+ const a=pool[seed%pool.length],b=pool[(seed+1)%pool.length];
+ const arr=[fact.value,a,b];const offset=seed%3;
+ return [...arr.slice(offset),...arr.slice(0,offset)];
+}
+function startQuickQuest(){
+ if(!state.cards.length){const added=mergeCards(state,DEMO_CARDS);state=added.state;persist()}
+ const card=state.cards.find(c=>!!state.unlocked[cardIdentity(c)])||state.cards[0];
+ const id=cardIdentity(card);
+ if(!state.unlocked[id]){
+  const result=unlockCard(state,id);
+  if(result.result==="quota-reached"){go("plans");toast("Your free monthly unlocks are used. Practise an unlocked card instead.");return}
+  state=result.state;persist();
+ }
+ quizIdentity=id;quizIndex=0;answerVisible=false;choiceResolved=false;questMode=true;questSteps=0;renderAll();go("learn");
+}
 function renderTraining(){
  const available=unlockedCards();
  quizIdentity=fillSelect($("#learn-card"),available,quizIdentity,"Unlock a card to begin");
- const stage=$("#lesson-stage"),reveal=$("#reveal-fact"),remember=$("#remembered"),again=$("#review-again");
+ const stage=$("#lesson-stage"),reveal=$("#reveal-fact"),remember=$("#remembered"),again=$("#review-again"),choices=$("#quiz-options"),feedback=$("#quest-feedback");
+ choices.replaceChildren();feedback.replaceChildren();
  stage.replaceChildren();
  if(!available.length){
   stage.append(element("h3","","No cards unlocked yet."),element("p","","Start by unlocking one card from your collection. Demo cards don't require an account."));
-  reveal.hidden=true;remember.hidden=true;again.hidden=true;$("#learn-fact-count").textContent="";return;
+  reveal.hidden=true;remember.hidden=true;again.hidden=true;$("#learn-fact-count").textContent="";$("#quest-step").textContent="NO LESSON YET";$("#quest-progress").style.width="0%";return;
  }
  const card=cardByIdentity(quizIdentity),facts=cardFacts(card);
  if(!facts.length){stage.append(element("p","","No supported facts in this record yet."));reveal.hidden=true;remember.hidden=true;again.hidden=true;return}
  quizIndex=((quizIndex%facts.length)+facts.length)%facts.length;
  const fact=facts[quizIndex];
+ $("#quest-step").textContent=questMode?"QUICK QUEST · "+Math.min(3,questSteps+1)+" / 3":"FACT "+(quizIndex+1)+" / "+facts.length;
+ $("#quest-progress").style.width=(questMode?Math.round(questSteps/3*100):Math.round(quizIndex/facts.length*100))+"%";
  const label=element("div","count","FACT "+(quizIndex+1)+" / "+facts.length+" · "+card.name);
  const title=element("h3","",fact.question);
  const subtitle=element("div","source",card.source==="synthetic-demo"?"FICTIONAL DEMO KNOWLEDGE":"YOUR OWN ENTRY · FACT NOT VERIFIED");
  stage.append(label,title,subtitle);
  if(answerVisible)stage.append(element("div","answer",fact.value));
+ if(!answerVisible&&!choiceResolved){
+  const options=answerChoices(card,fact);
+  if(options.length>=3){
+   const prompt=element("p","choice-hint","Choose the answer, or reveal it if you’re unsure.");choices.append(prompt);
+   options.forEach(option=>{
+    const button=element("button","quiz-choice",option);button.type="button";
+    button.addEventListener("click",()=>{
+     if(choiceResolved)return;choiceResolved=true;
+     const correct=option===fact.value;
+     choices.querySelectorAll("button").forEach(b=>{b.disabled=true;if(b.textContent===fact.value)b.classList.add("correct");if(b===button&&!correct)b.classList.add("incorrect")});
+     feedback.textContent=correct?"Correct! You spotted the detail. Mark it remembered to earn XP.":"Not quite — the correct answer is highlighted. Mark it for another look.";
+     answerVisible=true;stage.append(element("div","answer",fact.value));reveal.hidden=true;remember.hidden=!correct;again.hidden=correct;
+    });choices.append(button);
+   });
+  }
+ }
  reveal.hidden=answerVisible;remember.hidden=!answerVisible;again.hidden=!answerVisible;
+ if(choiceResolved){remember.hidden=feedback.textContent.startsWith("Not quite");again.hidden=!remember.hidden;}
  $("#learn-fact-count").textContent=facts.length+" facts available";
 }
 function finishPractice(remembered){
  const done=practiceSession(state,quizIdentity,remembered);
  if(done.result!=="recorded"){toast("Unlock the card before practising.");return}
- state=done.state;persist();quizIndex++;answerVisible=false;stats();renderTraining();
+ state=done.state;persist();quizIndex++;answerVisible=false;choiceResolved=false;
+ if(questMode){questSteps++;if(questSteps>=3){questMode=false;stats();renderTraining();toast("Quest complete! Three facts practised. Your XP is saved.");return}}
+ stats();renderTraining();
  toast(remembered?"+12 XP · Nice recall!":"+4 XP · Keep practising!");
 }
 function renderSeller(){
@@ -227,8 +271,9 @@ function bind(){
  $("#photo").addEventListener("change",showPhotoPreview);
  $("#csv-file").addEventListener("change",loadCSV);
  $("#confirm-import").addEventListener("click",importCSV);
- $("#learn-card").addEventListener("change",e=>{quizIdentity=e.target.value;quizIndex=0;answerVisible=false;renderTraining()});
- $("#reveal-fact").addEventListener("click",()=>{answerVisible=true;renderTraining()});
+ $("#learn-card").addEventListener("change",e=>{quizIdentity=e.target.value;quizIndex=0;answerVisible=false;choiceResolved=false;questMode=false;renderTraining()});
+ $("#reveal-fact").addEventListener("click",()=>{answerVisible=true;choiceResolved=false;renderTraining()});
+ $("#quick-quest").addEventListener("click",startQuickQuest);
  $("#remembered").addEventListener("click",()=>finishPractice(true));
  $("#review-again").addEventListener("click",()=>finishPractice(false));
  $("#sell-card").addEventListener("change",renderSeller);
