@@ -1,6 +1,12 @@
 # My Epic Decks — working freemium mobile prototype
 **Private-review concept; not a production app, connected account, paid subscription or live collection sync.** Code is in a draft PR and serves as a standalone static app under \`/labs/my-epic-decks/index.html\`.
 
+## Experience iteration (16 Nov 2026)
+- **Today’s Quest** on the dashboard starts a three-fact practice loop immediately, loading fictional demos if no cards exist, and unlocking a single card if free quota permits. The CTA reduces the original multi-step friction of finding a card and navigating into Learn.
+- Multiple-choice recall is offered only where two other distinct answers exist in the *same source class* (synthetic demo vs user-provided). Otherwise the app uses reveal/self-reported recall. This is a basic UI practice game, **not a validated assessment of card knowledge**.
+- Feedback visually distinguishes correct/incorrect choices, progress through the three-fact quest, and saved XP. Correctness and facts remain source-limited and are not independently verified.
+- Existing browser storage key and freemium rules remain unchanged. No real user inventory, subscriptions or third-party sync added.
+
 ## What works now
 - Mobile-first app with Epic Decks branding, dashboard, collector library, learning challenges, XP/levels, basic adult Seller Studio, and a simulated upgrade page.
 - **10 newly unlocked unique cards per calendar month** in the free experiment. A previously unlocked card can be practised repeatedly without burning another slot. Imported-but-locked cards remain accessible in the library. Demo has 12 explicitly *fictional* cards so the 11th unlock can be tested.
@@ -14,7 +20,7 @@
 
 ## To test on iPhone
 1. Open the Vercel **draft branch preview** at \`/labs/my-epic-decks/index.html\` using Safari (this is not the public site).
-2. Tap **Try 12 demo cards**. The library should show 12 *fictional* records.
+2. First tap **Start quick quest** from the dashboard and finish three questions. Then tap **Try 12 demo cards**. The library should show 12 *fictional* records.
 3. Unlock 10. The dashboard should show **10 / 10**, and the 11th free card should send you to the mock upgrade page.
 4. Go to **Learn**, choose an unlocked card, reveal a fact, and mark "I remembered." XP and level stats should update; you should still be able to repeat this lesson after reaching the free limit.
 5. Try **Seller Studio**: it requires the adult/supervised acknowledgement and a typed pitch. Confirm feedback is presented as a rule-based checklist, not magic AI analysis.
