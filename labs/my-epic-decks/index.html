@@ -36,6 +36,7 @@
    </div>
    <div class="hero-art" aria-hidden="true"><span class="orbit one"></span><span class="orbit two"></span><div class="lesson-card back"><div class="holo-arc"></div><span class="card-glyph">✦</span><span>ELEMENTAL FIELD GUIDE</span></div><div class="lesson-card front"><span>YOUR NEXT<br>CHALLENGE</span><div class="shine">◇</div><strong>+12 XP</strong></div><div class="hero-sticker">LEARN.<br>PLAY.<br>REPEAT.</div></div>
   </div>
+  <section class="daily-quest" aria-label="Quick learning challenge"><div class="quest-badge">✦ TODAY'S QUEST</div><div><h2>One card. Three facts. Let's go.</h2><p>Jump straight into a short lesson, earn XP and discover a detail worth remembering.</p></div><button id="quick-quest" class="btn primary" type="button">Start quick quest →</button></section>
   <div class="stats" aria-label="Learning dashboard">
     <div class="stat"><span class="stat-icon">◇</span><small>FREE CARD UNLOCKS</small><strong id="stat-quota">0 / 10</strong><div class="progress-track"><span id="quota-progress"></span></div><p id="quota-caption">Resets monthly. Learned cards stay yours.</p></div>
     <div class="stat"><span class="stat-icon">✦</span><small>YOUR LEVEL</small><strong id="stat-level">01</strong><p id="stat-xp">0 XP earned</p></div>
@@ -86,7 +87,7 @@
   <div class="studio-layout">
    <div class="studio-main">
     <div class="studio-header"><label for="learn-card">Choose an unlocked card</label><select id="learn-card"></select><span id="learn-fact-count" class="quiet"></span></div>
-    <div id="lesson-stage" class="lesson-stage" aria-live="polite"><p>Unlock a card to start practising.</p></div>
+    <div class="lesson-meter" aria-label="Quest progress"><span id="quest-step">QUESTION 1</span><div class="progress-track"><span id="quest-progress"></span></div><span id="quest-points">+12 XP for recall</span></div><div id="lesson-stage" class="lesson-stage" aria-live="polite"><p>Unlock a card to start practising.</p></div><div id="quiz-options" class="quiz-options" role="group" aria-label="Answer choices"></div><div id="quest-feedback" class="quest-feedback" role="status" aria-live="polite"></div>
     <div class="lesson-actions" id="lesson-actions"><button id="reveal-fact" class="btn primary" type="button">Reveal the answer</button><button id="remembered" class="btn good" type="button" hidden>I remembered · +12 XP</button><button id="review-again" class="btn outline" type="button" hidden>Need another look · +4 XP</button></div>
    </div>
    <aside class="studio-aside"><div class="aside-stamp">✦</div><h3>Knowledge is a collectible.</h3><p>Each completed fact earns XP. Correct recall earns extra XP. Watch your level rise as you learn the details behind your cards.</p><div class="mini-stat">CURRENT LEVEL <strong id="level-aside">01</strong></div><div class="mini-stat">PRACTICE ROUNDS <strong id="rounds-aside">0</strong></div><p class="small-note">Facts here are from a synthetic demo or your own entries. No external database verification yet.</p></aside>
