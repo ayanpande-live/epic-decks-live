@@ -1,4 +1,4 @@
-@import url("data:text/css,"); /* No network fonts or third-party CSS */
+/* No network fonts or third-party CSS. */
 :root{
  color-scheme:dark;--bg:#081320;--surface:#101e30;--surface-2:#172943;--text:#f5f4ee;--muted:#a9c2d3;--cyan:#37c4e8;--gold:#ffd64b;--pink:#f35b79;--purple:#af8bea;--line:#42617d;
  --radius:18px;font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-weight:400
