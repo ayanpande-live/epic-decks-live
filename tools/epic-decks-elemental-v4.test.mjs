@@ -1,0 +1,17 @@
+import assert from "node:assert/strict";
+import {readFileSync} from "node:fs";
+import vm from "node:vm";
+const html=readFileSync(new URL("../labs/epic-decks-elemental-experience-v4.html",import.meta.url),"utf8");
+assert.match(html,/<meta name="robots" content="noindex,nofollow">/);
+assert.match(html,/prefers-reduced-motion:reduce/);
+assert.match(html,/\/images\/logo\.webp/);
+assert.ok((html.match(/\/images\/logo\.webp/g)||[]).length>=2);
+assert.ok((html.match(/button[^>]*data-element="(?:water|fire|spark|mystic)"/g)||[]).length===4);
+for (const id of ["portal","boost","deck-stage","deck-prev","deck-next","deck-image","card-title"])assert.ok(html.includes('id="'+id+'"'),"missing "+id);
+assert.match(html,/NOT LIVE|NO LIVE STOCK/);
+assert.doesNotMatch(html,/<script[^>]+src=/);
+assert.doesNotMatch(html,/\/api\/(?:orders|checkout|purchase|send)/);
+const script=html.match(/<script>([\s\S]+?)<\/script>/);
+assert.ok(script);
+new vm.Script(script[1]);
+console.log("V4 source-only static safety and JavaScript syntax checks passed");

@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="en" data-element="water">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#070f1b">
+<meta name="robots" content="noindex,nofollow">
+<meta name="description" content="Private Epic Decks elemental design study. Fictional experience, archive images; no live inventory or checkout.">
+<title>Epic Decks — The Elemental Experience / Design Study 04</title>
+<style>
+:root{
+ color-scheme:dark;
+ --ink:#070f1b;--ink2:#101b2e;--white:#f7f4ed;--muted:#b6c4d6;
+ --blue:#21b6e9;--gold:#ffca36;--red:#ee535a;--violet:#9f66cc;
+ --accent:#21b6e9;--aura:rgba(33,182,233,.32);--aura2:rgba(33,182,233,.11);
+ --slab-tilt-x:0deg;--slab-tilt-y:0deg;--parallax-x:0px;--parallax-y:0px;
+ font-family:Arial,Helvetica,sans-serif
+}
+html[data-element="fire"]{--accent:#ee535a;--aura:rgba(238,83,90,.33);--aura2:rgba(238,83,90,.11)}
+html[data-element="spark"]{--accent:#ffca36;--aura:rgba(255,202,54,.32);--aura2:rgba(255,202,54,.11)}
+html[data-element="mystic"]{--accent:#b483df;--aura:rgba(180,131,223,.34);--aura2:rgba(180,131,223,.12)}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--ink);color:var(--white);margin:0;overflow-x:hidden}
+a{color:inherit}button,input{font:inherit}button{cursor:pointer}
+button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #fff;outline-offset:4px}
+button:disabled{opacity:.5;cursor:default}
+.skip{position:absolute;top:-100px;left:10px;z-index:100;background:white;color:black;padding:10px}
+.skip:focus{top:10px}
+.ambient-grain{position:fixed;inset:0;pointer-events:none;z-index:20;opacity:.065;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.topline{height:5px;background:linear-gradient(90deg,var(--blue) 0 27%,var(--gold) 27% 50%,var(--red) 50% 75%,var(--violet) 75% 100%)}
+.site-header{position:relative;z-index:30;height:89px;display:flex;align-items:center;justify-content:space-between;padding:8px clamp(18px,4.5vw,80px);border-bottom:1px solid #d7edf128;gap:16px;background:#07101dd9}
+.brand{display:flex;align-items:center;gap:11px;text-decoration:none;min-width:0}
+.brand img{width:70px;height:70px;object-fit:contain;filter:drop-shadow(0 4px 15px #010610)}
+.brand-word{font-size:12px;font-weight:900;letter-spacing:.14em;line-height:1.55;color:#eaf6ff}
+.brand-word small{display:block;font-size:9px;color:#91b8d6;letter-spacing:.19em}
+.site-nav{display:flex;gap:clamp(12px,2vw,30px);align-items:center}
+.site-nav a{text-decoration:none;font-size:11px;letter-spacing:.15em;font-weight:900}
+.site-nav a:hover{color:var(--accent)}
+.preview-pill{font-size:9px;letter-spacing:.15em;border:1px solid #7a93a777;padding:9px 12px;color:#b8d5e8;white-space:nowrap}
+.hero{min-height:710px;max-width:1800px;margin:auto;position:relative;display:grid;grid-template-columns:minmax(0,.94fr) minmax(0,1.06fr);isolation:isolate}
+.hero:before{content:"";position:absolute;inset:0;background:linear-gradient(100deg,#0a1527 4%,transparent 58%),radial-gradient(circle at 78% 40%,var(--aura2),transparent 45%);z-index:-1}
+.hero-copy{padding:clamp(55px,7vw,120px) 0 65px clamp(18px,6vw,100px);position:relative;z-index:3}
+.eyebrow{font-size:11px;letter-spacing:.26em;font-weight:900;color:var(--accent);text-transform:uppercase;display:flex;align-items:center;gap:13px}
+.eyebrow:before{content:"";width:11px;height:11px;transform:rotate(45deg);background:var(--accent);box-shadow:0 0 19px var(--aura)}
+h1,h2,h3,p{margin-top:0}
+.hero h1{font-family:Impact,"Arial Black",Arial,sans-serif;font-weight:900;font-size:clamp(86px,10vw,164px);letter-spacing:-.067em;line-height:.83;margin:32px 0 25px;text-transform:uppercase}
+.hero h1 span{display:block}.hero h1 .special{color:var(--accent);text-shadow:0 0 65px var(--aura)}
+.hero-desc{max-width:470px;color:#d3dfeb;line-height:1.62;font-size:17px}
+.hero-cta{margin-top:30px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.btn{min-height:51px;padding:16px 20px;border:1px solid var(--accent);background:var(--accent);color:#06111e;font-weight:950;text-transform:uppercase;font-size:11px;letter-spacing:.12em;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:14px;clip-path:polygon(0 0,calc(100% - 13px) 0,100% 13px,100% 100%,0 100%);transition:transform .25s ease,filter .25s ease}
+.btn:hover{transform:translateY(-3px);filter:brightness(1.15)}
+.btn.ghost{background:transparent;color:var(--white);border:1px solid #a5b7cd8e;clip-path:none}
+.meta-line{display:flex;align-items:center;gap:13px;flex-wrap:wrap;margin-top:32px;font-weight:850;font-size:9px;letter-spacing:.13em;color:#8fa8bf}
+.meta-line b{color:#d5eefa}.meta-line .dot{height:4px;width:4px;border-radius:50%;background:var(--accent)}
+.portal{position:relative;min-height:690px;display:flex;align-items:center;justify-content:center;isolation:isolate;overflow:hidden;perspective:1000px;touch-action:pan-y}
+.portal::before{content:"";position:absolute;inset:4%;background:radial-gradient(ellipse at 50% 52%,var(--aura) 0%,transparent 49%);filter:blur(29px);opacity:.8;pointer-events:none}
+.energy-ring{position:absolute;width:min(74%,570px);aspect-ratio:1;border-radius:50%;border:1px solid #7fb9de51;box-shadow:0 0 80px var(--aura2),inset 0 0 45px var(--aura2);animation:spin 33s linear infinite}
+.energy-ring::before,.energy-ring::after{content:"";position:absolute;inset:8%;border:1px dashed #b9d7f46f;border-radius:50%}
+.energy-ring::after{inset:-11%;border:2px solid transparent;border-top-color:var(--accent);border-bottom-color:#ffca3665;transform:rotate(-25deg)}
+.ring-secondary{width:min(93%,715px);animation-direction:reverse;animation-duration:48s;opacity:.49;border-style:dashed}
+.element-rays{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+.ray{position:absolute;left:50%;top:50%;width:40%;height:2px;transform-origin:0 0;opacity:.74}
+.ray.one{transform:rotate(-40deg);background:linear-gradient(90deg,#21b6e9bb,transparent)}
+.ray.two{transform:rotate(42deg);background:linear-gradient(90deg,#ffca36bb,transparent)}
+.ray.three{transform:rotate(143deg);background:linear-gradient(90deg,#ee535abb,transparent)}
+.ray.four{transform:rotate(223deg);background:linear-gradient(90deg,#9f66ccbb,transparent)}
+.logo-portal{position:relative;z-index:2;display:grid;place-items:center;width:min(86%,640px);aspect-ratio:1;transform:translate3d(var(--parallax-x),var(--parallax-y),0)}
+.logo-portal img{width:100%;height:auto;display:block;object-fit:contain;filter:drop-shadow(0 25px 45px #000a) drop-shadow(0 0 27px var(--aura));animation:float 6s ease-in-out infinite}
+.portal.is-energized .logo-portal img{animation:float 2.8s ease-in-out infinite;filter:drop-shadow(0 24px 48px #000b) drop-shadow(0 0 68px var(--aura))}
+.portal.is-energized .energy-ring{animation-duration:9s;box-shadow:0 0 90px var(--aura)}
+.portal-badge{position:absolute;z-index:4;border:1px solid #8dc4e478;background:#0a1933eb;backdrop-filter:blur(10px);padding:12px 15px;font-size:10px;line-height:1.5;letter-spacing:.12em;text-transform:uppercase;font-weight:900}
+.portal-badge.top{top:13%;right:4%}.portal-badge.bottom{bottom:14%;left:3%}
+.portal-badge strong{font-family:Impact,"Arial Black",Arial,sans-serif;display:block;font-size:23px;color:var(--accent);letter-spacing:.01em}
+.portal-power{z-index:5;position:absolute;bottom:15%;right:5%;border:1px solid var(--accent);border-radius:50%;width:90px;height:90px;background:#071427ed;color:var(--accent);font-weight:900;font-size:10px;letter-spacing:.1em;display:grid;place-items:center;text-align:center;line-height:1.6;transform:rotate(12deg);transition:box-shadow .3s}
+.portal-power:hover{box-shadow:0 0 32px var(--aura)}
+.scroll-prompt{position:absolute;bottom:25px;left:48%;font-weight:900;letter-spacing:.16em;font-size:10px;color:#b2c3d8}
+.scroll-prompt:after{content:"";display:block;height:32px;width:1px;background:var(--accent);margin:10px auto 0;animation:grow 2.2s ease-in-out infinite}
+.marquette{overflow:hidden;white-space:nowrap;border-top:1px solid #c0d0de30;border-bottom:1px solid #c0d0de30;background:#eaf3f4;color:#081b2c;height:73px;display:flex;align-items:center}
+.marquette__track{display:flex;gap:35px;min-width:max-content;animation:marquee 27s linear infinite;font-family:Impact,"Arial Black",Arial,sans-serif;font-size:34px;letter-spacing:.025em}
+.marquette__track .mark{color:#e64f4e;margin:0 15px}
+.section-head{font-size:11px;letter-spacing:.23em;font-weight:900;color:var(--accent);text-transform:uppercase;margin-bottom:19px}
+.section-head:before{content:"◆";margin-right:10px}
+.container{max-width:1450px;margin:auto;padding:100px clamp(18px,5vw,75px)}
+.section-title{font-family:Impact,"Arial Black",Arial,sans-serif;font-size:clamp(58px,8vw,121px);line-height:.9;letter-spacing:-.045em;text-transform:uppercase;margin:0}
+.section-title i{font-style:normal;color:var(--accent)}
+.section-desc{max-width:570px;font-size:15px;line-height:1.7;color:#c8d7e5}
+.elements{background:linear-gradient(155deg,#0d1d31,#121326 80%);border-bottom:1px solid #687e9940}
+.elements-heading{display:grid;grid-template-columns:1fr minmax(0,.54fr);align-items:end;gap:20px}
+.element-list{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:50px}
+.element-choice{position:relative;min-height:260px;padding:26px 23px;border:1px solid #d1ecf33a;background:#15253b;color:#fff;text-align:left;display:flex;flex-direction:column;align-items:flex-start;justify-content:space-between;isolation:isolate;overflow:hidden;transition:transform .3s,border-color .3s}
+.element-choice:before{content:"";position:absolute;width:240px;height:240px;right:-95px;top:-85px;border-radius:50%;background:var(--local);opacity:.15;filter:blur(10px);z-index:-1}
+.element-choice:after{content:"";position:absolute;width:220px;height:220px;right:-120px;bottom:-140px;border-radius:50%;border:22px solid var(--local);transform:rotate(20deg);opacity:.58}
+.element-choice:hover{transform:translateY(-7px);border-color:var(--local)}
+.element-choice[aria-pressed="true"]{border-color:var(--local);box-shadow:inset 0 0 0 1px var(--local),0 12px 50px #0006}
+.element-choice .glyph{font-size:60px;color:var(--local);line-height:1;text-shadow:0 0 38px var(--local)}
+.element-choice .ordinal{font-size:10px;letter-spacing:.16em;font-weight:900;color:#b4c9e0}
+.element-choice .choice-title{display:block;font-size:26px;font-weight:1000;letter-spacing:-.06em;margin:10px 0}
+.element-choice .choice-sub{max-width:190px;font-size:12px;line-height:1.5;color:#b9cce0}
+.element-choice.water{--local:#36c5ee}.element-choice.fire{--local:#f55a5e}.element-choice.spark{--local:#ffcd3b}.element-choice.mystic{--local:#b785e5}
+.element-narrative{margin-top:18px;min-height:66px;border-left:3px solid var(--accent);padding:18px 20px;background:#101d30;font-size:15px;line-height:1.65;color:#d7e5ef}
+.element-narrative strong{color:var(--accent)}
+.vault{background:radial-gradient(ellipse at 62% 45%,var(--aura2),transparent 46%),#070f1b}
+.vault-heading{display:flex;align-items:end;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.vault-layout{display:grid;grid-template-columns:minmax(0,1.12fr) minmax(300px,.88fr);gap:clamp(35px,6vw,90px);align-items:center;margin-top:50px}
+.deck-stage{min-height:570px;position:relative;display:grid;place-items:center;perspective:1050px;border:1px solid #8ab5cf4d;background:radial-gradient(ellipse at center,var(--aura2),transparent 63%),linear-gradient(130deg,#14223c,#0a1323);overflow:hidden}
+.deck-stage:before{content:"";position:absolute;width:440px;height:440px;border:1px solid #a4d8e47b;border-radius:50%;box-shadow:0 0 0 60px #b1eafa08,0 0 0 140px #b1eafa06}
+.deck-stage:after{content:"";position:absolute;width:270px;height:270px;border:1px dashed #fff8;border-radius:50%;transform:rotate(35deg)}
+.deck-card{width:min(57%,280px);aspect-ratio:.68;background:linear-gradient(140deg,#cadce4,#f6fbff,#779db5);padding:9px;border:2px solid #e8f7ff;border-radius:16px;position:relative;z-index:4;transform-style:preserve-3d;transform:rotateX(var(--slab-tilt-x)) rotateY(var(--slab-tilt-y)) rotateZ(-8deg);box-shadow:25px 37px 25px #02071191,0 0 43px var(--aura);transition:transform .25s ease,opacity .2s;will-change:transform}
+.deck-card:before{content:"EPIC DECKS · ARCHIVE";height:30px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:10px;color:#10283c;letter-spacing:.1em}
+.deck-card img{display:block;width:100%;height:calc(100% - 30px);object-fit:contain;background:#111b2a;border-radius:8px}
+.deck-card.switching{opacity:.25;transform:translateX(-30px) scale(.93) rotate(-12deg)}
+.deck-stamp{position:absolute;top:20px;left:20px;font-size:10px;font-weight:900;letter-spacing:.14em;z-index:5;color:#bfdde5}
+.deck-counter{position:absolute;bottom:17px;right:19px;font-family:Impact,"Arial Black",Arial,sans-serif;font-size:62px;letter-spacing:-.05em;color:#ffffff60}
+.vault-copy h3{font-family:Impact,"Arial Black",Arial,sans-serif;font-size:clamp(54px,6vw,84px);line-height:.9;letter-spacing:-.04em;margin:15px 0}
+.vault-copy p{line-height:1.7;color:#c3d4e4;font-size:15px}
+.tag{display:inline-block;padding:9px 12px;border:1px solid #8fb4c46a;color:#e3f7fd;font-size:10px;font-weight:900;letter-spacing:.13em}
+.deck-controls{display:flex;gap:13px;align-items:center;margin-top:30px}
+.deck-controls button{width:57px;height:57px;background:#132642;border:1px solid #8ab2d1;color:#fff;font-size:24px}
+.deck-controls button:hover{background:var(--accent);color:#06101d}
+.deck-controls .index{font-size:12px;letter-spacing:.17em;color:#dceffb;font-weight:900}
+.disclaimer{margin-top:24px;padding:16px 17px;border-left:3px solid var(--accent);background:#15243b;font-size:12px;line-height:1.6;color:#b3c9dc}
+.ending{position:relative;overflow:hidden;background:linear-gradient(128deg,#ecf3f8,#dcecf2);color:#071424}
+.ending .container{min-height:480px;display:grid;grid-template-columns:1fr minmax(0,.67fr);gap:40px;align-items:center}
+.ending .section-title{font-size:clamp(65px,8vw,130px)}
+.ending .section-title i{color:#e14950}
+.ending .section-head{color:#157ca7}
+.ending p{color:#394e61;line-height:1.7;max-width:490px}
+.ending-emblem{width:100%;max-width:400px;justify-self:center;filter:drop-shadow(22px 30px 16px #0b233020)}
+.ending .btn{background:#138fb9;border-color:#138fb9;color:#fff}
+footer{padding:30px clamp(18px,5vw,80px);display:flex;justify-content:space-between;gap:15px;flex-wrap:wrap;font-size:10px;line-height:1.7;letter-spacing:.12em;color:#9eb6ca}
+.scroll-in{opacity:0;transform:translateY(30px);transition:opacity .8s ease,transform .8s cubic-bezier(.22,.7,.2,1)}
+.scroll-in.visible{opacity:1;transform:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes float{0%,100%{transform:translateY(8px) rotate(-2deg)}50%{transform:translateY(-10px) rotate(2deg)}}
+@keyframes grow{0%,100%{opacity:.3;transform:scaleY(.5)}50%{opacity:1;transform:scaleY(1)}}
+@keyframes marquee{to{transform:translateX(-50%)}}
+@media(max-width:1050px){
+ .hero h1{font-size:clamp(80px,9.5vw,135px)}.portal{min-height:570px}
+ .element-list{grid-template-columns:repeat(2,1fr)}.element-choice{min-height:230px}
+ .vault-layout{gap:35px}.deck-stage{min-height:480px}
+}
+@media(max-width:760px){
+ .site-header{height:77px;padding:6px 16px}.brand img{width:58px;height:58px}.brand-word{font-size:10px}
+ .site-nav{gap:14px}.site-nav a{font-size:9px}.preview-pill{display:none}
+ .hero{grid-template-columns:1fr}.hero-copy{padding:65px 21px 20px}
+ .hero h1{font-size:clamp(78px,17vw,130px);margin-top:29px}.hero-desc{font-size:16px}
+ .portal{min-height:540px}.logo-portal{width:min(82%,480px)}.energy-ring{width:min(72%,435px)}
+ .scroll-prompt{left:40%;bottom:8px}
+ .container{padding:78px 21px}.elements-heading{grid-template-columns:1fr}
+ .vault-layout{grid-template-columns:1fr}.deck-stage{min-height:495px}
+ .deck-card{width:min(54%,250px)}.vault-copy h3{font-size:66px}
+ .ending .container{grid-template-columns:1fr;gap:12px}.ending-emblem{width:75%;max-width:270px}
+}
+@media(max-width:450px){
+ .site-nav a:last-child{display:none}.site-nav{gap:10px}
+ .hero h1{font-size:clamp(66px,18vw,90px)}.hero-copy{padding-top:51px}
+ .portal{min-height:430px}.portal-badge{padding:8px 9px;font-size:8px}
+ .portal-badge strong{font-size:17px}.portal-badge.top{top:6%;right:3%}
+ .portal-badge.bottom{bottom:13%;left:3%}.portal-power{width:74px;height:74px;font-size:8px;bottom:9%;right:3%}
+ .marquette{height:54px}.marquette__track{font-size:24px}
+ .section-title{font-size:clamp(56px,13vw,76px)}
+ .element-list{gap:9px}.element-choice{min-height:205px;padding:15px 13px}.element-choice .glyph{font-size:43px}
+ .element-choice .choice-title{font-size:22px}.element-choice .choice-sub{font-size:11px}
+ .deck-stage{min-height:400px}.deck-card{width:min(59%,220px)}
+}
+@media(prefers-reduced-motion:reduce){
+ html{scroll-behavior:auto}
+ *,*:before,*:after{animation:none!important;transition:none!important}
+ .scroll-in{opacity:1;transform:none}
+ .logo-portal{transform:none!important}.deck-card{transform:rotateZ(-8deg)!important}
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#vault">Skip to vault</a>
+<div class="topline" aria-hidden="true"></div>
+<div class="ambient-grain" aria-hidden="true"></div>
+<header class="site-header">
+<a class="brand" href="/" aria-label="Epic Decks current site"><img src="/images/logo.webp" alt="Epic Decks elemental logo" width="70" height="70" decoding="async"><span class="brand-word">EPIC DECKS <small>ELEMENTAL COLLECTOR UNIVERSE</small></span></a>
+<nav class="site-nav" aria-label="Concept sections"><a href="#elements">ELEMENTS</a><a href="#vault">THE VAULT</a><a href="#story">THE STORY</a></nav>
+<span class="preview-pill">V4 / DESIGN STUDY · NOT LIVE</span>
+</header>
+<main>
+<section class="hero" id="top" aria-labelledby="hero-title">
+<div class="hero-copy">
+<div class="eyebrow">FOR THE LOVE OF THE CHASE</div>
+<h1 id="hero-title"><span>MAKE</span><span>THE</span><span class="special">CHASE</span><span>EPIC.</span></h1>
+<p class="hero-desc">Not just a place to buy cards. A world of rare finds, remarkable artwork and the stories behind every collection.</p>
+<div class="hero-cta"><a class="btn" href="#vault">ENTER THE VAULT <span aria-hidden="true">↗</span></a><a class="btn ghost" href="#elements">CHOOSE YOUR ELEMENT</a></div>
+<div class="meta-line"><b>EPIC DECKS NL</b><i class="dot"></i><span>BUILT FOR COLLECTORS</span><i class="dot"></i><span>DESIGN EXPLORATION 04</span></div>
+</div>
+<div class="portal" id="portal" aria-label="Interactive Epic Decks logo portal">
+<div class="element-rays" aria-hidden="true"><span class="ray one"></span><span class="ray two"></span><span class="ray three"></span><span class="ray four"></span></div>
+<div class="energy-ring" aria-hidden="true"></div><div class="energy-ring ring-secondary" aria-hidden="true"></div>
+<div class="logo-portal" id="logo-portal"><img src="/images/logo.webp" width="640" height="640" alt="Epic Decks original four-colour elemental emblem" fetchpriority="high"></div>
+<div class="portal-badge top">ELEMENT ACTIVE<strong id="active-label">WATER</strong></div>
+<div class="portal-badge bottom">THE DIAMOND<br>AT THE CENTRE</div>
+<button class="portal-power" type="button" id="boost" aria-pressed="false">ACTIVATE<br>ENERGY ✦</button>
+<span class="scroll-prompt" aria-hidden="true">SCROLL TO EXPLORE</span>
+</div>
+</section>
+<div class="marquette" aria-label="Chase the rare, celebrate the collection">
+<div class="marquette__track" aria-hidden="true"><span>COLLECT SOMETHING EPIC <b class="mark">◆</b> THE ART OF THE CHASE <b class="mark">◆</b> THE VAULT IS OPEN <b class="mark">◆</b>&nbsp;</span><span>COLLECT SOMETHING EPIC <b class="mark">◆</b> THE ART OF THE CHASE <b class="mark">◆</b> THE VAULT IS OPEN <b class="mark">◆</b>&nbsp;</span></div>
+</div>
+<section id="elements" class="elements">
+<div class="container">
+<div class="elements-heading scroll-in"><div><div class="section-head">01 / CHOOSE YOUR PATH</div><h2 class="section-title">FIND YOUR<br><i>ELEMENT.</i></h2></div><p class="section-desc">Our emblem holds four energies. Tap one to change the atmosphere of the entire collector world. The logo stays unmistakably Epic Decks.</p></div>
+<div class="element-list">
+<button type="button" class="element-choice water scroll-in" data-element="water" aria-pressed="true"><span class="ordinal">01 / ELEMENT</span><span class="glyph" aria-hidden="true">≋</span><span><span class="choice-title">WATER</span><span class="choice-sub">Flow, discovery, the unexpected.</span></span></button>
+<button type="button" class="element-choice fire scroll-in" data-element="fire" aria-pressed="false"><span class="ordinal">02 / ELEMENT</span><span class="glyph" aria-hidden="true">♨</span><span><span class="choice-title">FIRE</span><span class="choice-sub">Intensity, ambition, chasing grails.</span></span></button>
+<button type="button" class="element-choice spark scroll-in" data-element="spark" aria-pressed="false"><span class="ordinal">03 / ELEMENT</span><span class="glyph" aria-hidden="true">ϟ</span><span><span class="choice-title">SPARK</span><span class="choice-sub">Surprise, wonder, that perfect pull.</span></span></button>
+<button type="button" class="element-choice mystic scroll-in" data-element="mystic" aria-pressed="false"><span class="ordinal">04 / ELEMENT</span><span class="glyph" aria-hidden="true">◇</span><span><span class="choice-title">MYSTIC</span><span class="choice-sub">Mystery, rarity, the collector's eye.</span></span></button>
+</div>
+<div class="element-narrative" role="status" aria-live="polite"><strong id="element-name">WATER MODE</strong><span id="element-description"> — An atmosphere inspired by discovery, flow and possibility.</span></div>
+</div>
+</section>
+<section id="vault" class="vault">
+<div class="container">
+<div class="vault-heading scroll-in"><div><div class="section-head">02 / THE VAULT</div><h2 class="section-title">RARE FINDS.<br><i>REAL FEELING.</i></h2></div><p class="section-desc">An interactive product stage built around the card itself. Swipe on mobile, use the arrow controls, and inspect the details. Archive illustrations only, not live stock.</p></div>
+<div class="vault-layout">
+<div class="deck-stage" id="deck-stage" aria-label="Interactive archive card showcase; swipe left or right to change card" tabindex="0">
+<span class="deck-stamp">ARCHIVE VISUALS / NOT FOR SALE</span>
+<div class="deck-card" id="deck-card"><img id="deck-image" loading="lazy" decoding="async" width="380" height="530" src="/images/inventory/graded-cards/ACE10-GengarVMAX-157-EN.svg" alt="Gengar VMAX archive slab visual; current stock not verified"></div>
+<div class="deck-counter" aria-hidden="true" id="stage-counter">01</div>
+</div>
+<div class="vault-copy" aria-live="polite">
+<div class="eyebrow">COLLECTOR SPOTLIGHT / DESIGN SAMPLE</div>
+<h3 id="card-title">GENGAR<br>VMAX.</h3>
+<span class="tag" id="card-tag">ARCHIVE IMAGE · ACE 10 FILE LABEL</span>
+<p id="card-description" style="margin-top:20px">A previously published graded-card image, used here to evaluate presentation and interaction. We are not confirming ownership, grade evidence or current availability.</p>
+<div class="deck-controls"><button id="deck-prev" type="button" aria-label="Previous archive card">←</button><span class="index" id="deck-index">01 / 03</span><button id="deck-next" type="button" aria-label="Next archive card">→</button></div>
+<div class="disclaimer">No active listings, prices or ordering in this preview. Final product pages will need verified images, certificate details, exact variants, stock, insured delivery and purchase/return information.</div>
+</div>
+</div>
+</div>
+</section>
+<section id="story" class="ending">
+<div class="container"><div class="scroll-in"><div class="section-head">03 / THE IDEA</div><h2 class="section-title">IT'S NOT<br>JUST A<br><i>CARD.</i></h2><p>It's the artwork you remember, the story of how you found it, and the feeling of holding something extraordinary. That's what the Epic Decks experience should celebrate.</p><a class="btn" href="/" aria-label="Return to existing Epic Decks website">VISIT OUR CURRENT WEBSITE ↗</a></div><img class="ending-emblem scroll-in" loading="lazy" src="/images/logo.webp" alt="Epic Decks elemental emblem" width="400" height="400"></div>
+</section>
+</main>
+<footer><span>EPIC DECKS NL · CONCEPT 04 · NOT AN ACTIVE STORE</span><span>NO LIVE STOCK, PRICES, ORDERS, PAYMENTS OR CUSTOMER DATA</span></footer>
+<script>
+(function(){
+"use strict";
+const doc=document.documentElement, portal=document.getElementById("portal"), boost=document.getElementById("boost"),logo=document.getElementById("logo-portal");
+const reduced=matchMedia("(prefers-reduced-motion: reduce)").matches;
+const elements={
+ water:{label:"WATER",description:" — An atmosphere inspired by discovery, flow and possibility."},
+ fire:{label:"FIRE",description:" — A celebration of energy, determination and the thrill of the hunt."},
+ spark:{label:"SPARK",description:" — For the surprise, excitement and small magic of an unforgettable pull."},
+ mystic:{label:"MYSTIC",description:" — For collectors fascinated by mystery, rarity and exceptional artwork."}
+};
+document.querySelectorAll("button[data-element]").forEach(function(button){
+ button.addEventListener("click",function(){
+  const name=button.dataset.element;if(!Object.prototype.hasOwnProperty.call(elements,name))return;
+  doc.dataset.element=name;
+  document.getElementById("active-label").textContent=elements[name].label;
+  document.getElementById("element-name").textContent=elements[name].label+" MODE";
+  document.getElementById("element-description").textContent=elements[name].description;
+  document.querySelectorAll("button[data-element]").forEach(function(b){b.setAttribute("aria-pressed",String(b===button))});
+ });
+});
+boost.addEventListener("click",function(){
+ const on=portal.classList.toggle("is-energized");
+ boost.setAttribute("aria-pressed",String(on));
+ boost.textContent=on?"POWER DOWN ↺":"ACTIVATE ENERGY ✦";
+});
+let animation=0;
+if(!reduced){
+ portal.addEventListener("pointermove",function(e){
+  if(e.pointerType==="touch")return;
+  const bounds=portal.getBoundingClientRect();
+  const dx=(e.clientX-bounds.left-bounds.width/2)/bounds.width;
+  const dy=(e.clientY-bounds.top-bounds.height/2)/bounds.height;
+  if(animation)cancelAnimationFrame(animation);
+  animation=requestAnimationFrame(function(){
+   logo.style.setProperty("--parallax-x",(dx*17).toFixed(1)+"px");
+   logo.style.setProperty("--parallax-y",(dy*17).toFixed(1)+"px");
+  });
+ },{passive:true});
+ portal.addEventListener("pointerleave",function(){logo.style.setProperty("--parallax-x","0px");logo.style.setProperty("--parallax-y","0px")});
+}
+const cardData=[
+ {title:"GENGAR VMAX.",tag:"ARCHIVE IMAGE · ACE 10 FILE LABEL",src:"/images/inventory/graded-cards/ACE10-GengarVMAX-157-EN.svg",alt:"Gengar VMAX archive slab illustration; availability not verified"},
+ {title:"GARDEVOIR EX.",tag:"ARCHIVE IMAGE · ACE 10 FILE LABEL",src:"/images/inventory/graded-cards/ACE10-GardevoirEX-328-JP.svg",alt:"Gardevoir EX archive slab illustration; availability not verified"},
+ {title:"CHARIZARD.",tag:"ARCHIVE IMAGE · ACE 10 FILE LABEL",src:"/images/inventory/graded-cards/ACE10-Charizard-143-JP.svg",alt:"Charizard archive slab illustration; availability not verified"}
+];
+let active=0;
+const deck=document.getElementById("deck-stage"),frame=document.getElementById("deck-card"),picture=document.getElementById("deck-image");
+const change=function(step){
+ active=(active+step+cardData.length)%cardData.length;
+ const item=cardData[active];
+ frame.classList.add("switching");
+ picture.src=item.src;
+ picture.alt=item.alt;
+ document.getElementById("card-title").textContent=item.title;
+ document.getElementById("card-tag").textContent=item.tag;
+ document.getElementById("deck-index").textContent=String(active+1).padStart(2,"0")+" / "+String(cardData.length).padStart(2,"0");
+ document.getElementById("stage-counter").textContent=String(active+1).padStart(2,"0");
+ if(reduced){frame.classList.remove("switching")}else{requestAnimationFrame(function(){requestAnimationFrame(function(){frame.classList.remove("switching")})})}
+};
+document.getElementById("deck-prev").addEventListener("click",function(){change(-1)});
+document.getElementById("deck-next").addEventListener("click",function(){change(1)});
+let startX=null;
+deck.addEventListener("pointerdown",function(e){if(e.pointerType==="touch"||e.pointerType==="pen")startX=e.clientX});
+deck.addEventListener("pointerup",function(e){
+ if(startX===null)return;
+ const distance=e.clientX-startX;startX=null;
+ if(Math.abs(distance)>42)change(distance<0?1:-1);
+});
+deck.addEventListener("pointercancel",function(){startX=null});
+deck.addEventListener("keydown",function(e){
+ if(e.key==="ArrowRight"){e.preventDefault();change(1)}
+ if(e.key==="ArrowLeft"){e.preventDefault();change(-1)}
+});
+if(!reduced){
+ deck.addEventListener("pointermove",function(e){
+  if(e.pointerType==="touch")return;
+  const b=deck.getBoundingClientRect(),x=(e.clientX-b.left)/b.width-.5,y=(e.clientY-b.top)/b.height-.5;
+  frame.style.setProperty("--slab-tilt-y",(x*18).toFixed(1)+"deg");
+  frame.style.setProperty("--slab-tilt-x",(-y*12).toFixed(1)+"deg");
+ },{passive:true});
+ deck.addEventListener("pointerleave",function(){
+  frame.style.setProperty("--slab-tilt-x","0deg");frame.style.setProperty("--slab-tilt-y","0deg");
+ });
+}
+const reveal=Array.from(document.querySelectorAll(".scroll-in"));
+if(reduced||!("IntersectionObserver" in window))reveal.forEach(function(node){node.classList.add("visible")});
+else{
+ const observer=new IntersectionObserver(function(entries){
+  entries.forEach(function(entry){if(entry.isIntersecting){entry.target.classList.add("visible");observer.unobserve(entry.target)}});
+ },{threshold:.08});
+ reveal.forEach(function(node){observer.observe(node)});
+}
+})();
+</script>
+</body>
+</html>
