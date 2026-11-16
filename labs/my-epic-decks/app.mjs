@@ -51,7 +51,7 @@ function go(screen){
  select("[data-screen]").forEach(b=>{
   if(b.matches("button")){if(b.dataset.screen===screen)b.setAttribute("aria-current","page");else b.removeAttribute("aria-current")}
  });
- window.scrollTo({top:0,behavior:"instant"});
+ window.scrollTo({top:0,behavior:"auto"});
  if(screen==="learn")renderTraining();
  if(screen==="sell")renderSeller();
 }
