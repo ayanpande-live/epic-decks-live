@@ -158,3 +158,19 @@ footer{border-top:1px solid #415f78;display:flex;justify-content:space-between;g
  .toast{bottom:90px}
 }
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{animation:none!important;transition:none!important}.btn:hover,.feature:hover{transform:none}}
+
+/* Experience V1.1: visible quick-start loop and tactile recall choices. */
+.daily-quest{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:20px;align-items:center;padding:22px 26px;margin:16px 0;border:1px solid #edc65d;border-radius:19px;background:linear-gradient(110deg,#43334b,#233e53 65%,#17475d);box-shadow:inset 0 1px #ffffff28}
+.quest-badge{font-size:11px;letter-spacing:.1em;color:#ffdc73;font-weight:950;max-width:95px}
+.daily-quest h2{font-size:23px;letter-spacing:-.045em;margin:0 0 4px}.daily-quest p{margin:0;color:#c9dce6;font-size:12px}
+.daily-quest .btn{white-space:nowrap}
+.lesson-meter{display:flex;align-items:center;gap:13px;margin-top:20px;color:#a9d7e6;font-size:10px;letter-spacing:.08em;font-weight:900}
+.lesson-meter .progress-track{flex:1;margin:0;height:8px}.lesson-meter .progress-track span{width:0}
+.quiz-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:15px}
+.choice-hint{grid-column:1/-1;font-size:12px;color:#a8c9da;margin:0}
+.quiz-choice{background:#1c3954;border:1px solid #6298af;border-radius:13px;color:#e9f8ff;min-height:56px;padding:12px 14px;font-size:13px;font-weight:800;text-align:left;overflow-wrap:anywhere;transition:transform .15s,border-color .15s,background .15s}
+.quiz-choice:not(:disabled):hover{transform:translateY(-2px);border-color:#ffe08a}
+.quiz-choice.correct{border-color:#b1e5b8;background:#225644;color:#ecfff0}
+.quiz-choice.incorrect{border-color:#ff8798;background:#603345;color:#ffe4e9}
+.quest-feedback{color:#f5e6a5;font-size:13px;margin-bottom:12px;min-height:0}
+@media(max-width:700px){.daily-quest{grid-template-columns:1fr;gap:10px;padding:19px}.quest-badge{max-width:none}.daily-quest .btn{width:100%}.quiz-options{grid-template-columns:1fr}.lesson-meter{gap:8px;flex-wrap:wrap}.lesson-meter .progress-track{min-width:90px}}
