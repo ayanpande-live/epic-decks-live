@@ -146,7 +146,7 @@ const ALIASES={
  set:["set","set name","expansion","series"],
  number:["number","card number","collector number","card #","no.","number in set"],
  artist:["artist","illustrator","illustration artist"],
- feature:["feature","special feature","art detail","special details"],
+ feature:["feature","visual feature","special feature","art detail","artwork detail","special details"],
  pose:["pose","stance","visual note","pose / stance"],
  language:["language","lang"],
  variant:["variant","finish","foil","rarity","version"],
