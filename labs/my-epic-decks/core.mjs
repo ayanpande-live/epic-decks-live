@@ -37,7 +37,7 @@ export function safeState(raw){
  const s=createState();
  if(!raw||typeof raw!=="object"||raw.version!==1)return s;
  s.cards=Array.isArray(raw.cards)?raw.cards.slice(0,MAX_COLLECTION).map(c=>normalizeCard(c,c?.source)):[];
- s.unlocked=raw.unlocked&&typeof raw.unlocked==="object"&&!Array.isArray(raw.unlocked)?raw.unlocked:{};
+ s.unlocked=raw.unlocked&&typeof raw.unlocked==="object"&&!Array.isArray(raw.unlocked)?Object.fromEntries(Object.entries(raw.unlocked).filter(([key,value])=>key.length<400&&value&&typeof value==="object").map(([key,value])=>[key,{source:value.source,month:value.month,date:value.date}])):{};
  s.sessions=Array.isArray(raw.sessions)?raw.sessions.slice(-300):[];
  s.proPreview=raw.proPreview===true;s.seenWelcome=raw.seenWelcome===true;
  return s;
