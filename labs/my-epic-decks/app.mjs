@@ -100,31 +100,32 @@ function fillSelect(el,cards,selected,placeholder){
 }
 
 // Curated fictional teaching content. Explanations are general principles, not real card metadata.
+// Real card metadata is grounded in linked publisher card records; scenarios are simulated.
 const DISCOVERY_STORIES=[
- {tag:"ARTWORK DETECTIVE",name:"Aurora Fox",glyph:"✧",glow:"#47bfe8",
-  story:"A fictional card shows a small fox looking back toward a bright halo. The foil looks dramatic, but the illustrator's use of negative space is what makes the character stand out.",
-  question:"You're showing this card to someone who collects artwork. What would you point out first?",
+ {tag:"ARTWORK DETECTIVE · VERIFIED CARD",name:"Magikarp · 203/193",glyph:"✧",glow:"#47bfe8",source:"https://www.pokemon.com/uk/pokemon-tcg/pokemon-cards/series/sv02/203",
+  story:"This is a real Illustration Rare Magikarp from Scarlet & Violet—Paldea Evolved, illustrated by Shinji Kanda. The card number 203/193 is beyond the main 193-card sequence. The question is how to talk about its appeal without confusing rarity classification with guaranteed value.",
+  question:"A collector asks what makes this Magikarp different from the regular 042/193 printing. What would you explain?",
   choices:[
-   {label:"The contrast between the halo and the empty space",reason:"Exactly the kind of observation that helps an artwork collector appreciate composition. You can explain what you actually see without inventing rarity claims.",good:true},
-   {label:"It must be the rarest card in the set",reason:"A dramatic illustration does not establish print rarity. To make that claim, you'd need a reliable source for the specific printing.",good:false},
-   {label:"The artwork guarantees future price growth",reason:"Artwork can influence personal appeal, but it does not guarantee demand or future prices. Lead with a visible detail instead.",good:false}
-  ],insight:"COLLECTOR INSIGHT · Composition can be a better conversation starter than an unsupported claim of rarity. Notice contrast, framing and where your eye is drawn."},
- {tag:"COLLECTOR'S EYE",name:"Crystal Finch",glyph:"◇",glow:"#a38de8",
-  story:"Two fictional versions of Crystal Finch are offered: a raw card with striking artwork and visible corner wear, and a graded copy with a clearly documented condition label.",
-  question:"A buyer cares most about knowing the card's condition before purchasing. Which approach is more useful?",
+   {label:"It's a distinct Illustration Rare printing with different artwork",reason:"Yes. The two numbers identify different printings. You can compare their art and documented rarity classifications without claiming future price gains.",good:true},
+   {label:"It must be worth more every year",reason:"A rarity label doesn't predict prices. Demand, supply, condition and actual transactions matter.",good:false},
+   {label:"203/193 means only 203 copies were printed",reason:"The numerator is the card's number in the set, not its print run. This is a useful collector misconception to catch.",good:false}
+  ],insight:"DISCOVERY · Card numbers identify printings, not population. A number higher than the main set total is not evidence of how many copies exist."},
+ {tag:"COLLECTOR'S EYE · VERIFIED CARD",name:"Gardevoir ex · 245/198",glyph:"◇",glow:"#a38de8",source:"https://www.pokemon.com/uk/pokemon-tcg/pokemon-cards/series/sv01/245",
+  story:"This real Scarlet & Violet Special Illustration Rare is illustrated by Jiro Sasumo. The official card record lists 310 HP and the Psychic Embrace Ability. An artwork collector and a competitive player may value different things about the same printing.",
+  question:"A buyer says they love illustration-focused cards, but don't know the difference between this and another Gardevoir ex. Where do you start?",
   choices:[
-   {label:"Explain the graded label and its limits, then show photos",reason:"This addresses the buyer's priority with evidence. A grade is a professional opinion at a point in time; photos and clear disclosures still matter.",good:true},
-   {label:"Tell them every graded card is flawless",reason:"Grading scales and standards differ. A grade does not mean all defects are impossible, so avoid an absolute promise.",good:false},
-   {label:"Ignore condition and only discuss the character",reason:"The character might be appealing, but it does not address the buyer's expressed concern. Ask what matters and respond with relevant evidence.",good:false}
-  ],insight:"COLLECTOR INSIGHT · Buyer fit is contextual. The strongest recommendation addresses what the buyer values, not what the seller most wants to talk about."},
- {tag:"SELLER'S INSTINCT",name:"Night Bloom",glyph:"✦",glow:"#e17fbd",
-  story:"A fictional collector likes Night Bloom's violet shadows, but says the asking price feels high. You do not have reliable comparable sales data in this exercise.",
+   {label:"Confirm the set, number, illustrator and artwork first",reason:"Correct. Specific print identification helps the buyer compare like with like. Then you can explore the art and condition.",good:true},
+   {label:"Focus only on the 310 HP",reason:"310 HP is a verified card attribute, but it doesn't address the buyer's stated artwork preference.",good:false},
+   {label:"Call every Gardevoir ex printing equally rare",reason:"Different printings can have different rarity classifications. Always identify the exact set and card number.",good:false}
+  ],insight:"DISCOVERY · Character name alone is not enough. Set + number + printing are the starting point for meaningful collector comparisons."},
+ {tag:"SELLER'S INSTINCT · REAL CARD",name:"Magikarp · Buyer conversation",glyph:"✦",glow:"#e17fbd",source:"https://www.pokemon.com/uk/pokemon-tcg/pokemon-cards/series/sv02/203",
+  story:"You're showing the real Magikarp Illustration Rare 203/193 to a simulated buyer. They like the artwork but say your hypothetical asking price feels high. No current comparable sales have been provided in this exercise.",
   question:"What's the best next move?",
   choices:[
-   {label:"Ask what they collect and explain the artwork without price promises",reason:"This keeps the conversation useful and honest. If pricing matters, look up comparable completed sales before making a market claim.",good:true},
-   {label:"Claim the card will double in value",reason:"No evidence supports that prediction. Pressure and speculative guarantees weaken trust.",good:false},
-   {label:"Say it is the cheapest available anywhere",reason:"Without verified, current comparable listings, a market-wide superlative is not defensible.",good:false}
-  ],insight:"SELLER INSIGHT · A good pitch is a conversation. Buyer questions, verified facts and transparency usually create more trust than exaggerated claims."}
+   {label:"Ask what matters to them, explain the printing and check sold comparables",reason:"Strong approach. Explain the real set/printing details, ask about buyer priorities and verify recent comparable sales before discussing market value.",good:true},
+   {label:"Guarantee the card will double in value",reason:"That prediction is unsupported. Never present speculation as a guarantee.",good:false},
+   {label:"Claim it's the cheapest copy in Europe",reason:"Without current like-for-like listings and condition checks, that claim cannot be substantiated.",good:false}
+  ],insight:"SELLER INSIGHT · A strong pitch connects verifiable card identity and buyer preferences. Pricing claims need current, comparable evidence."}
 ];
 function renderDiscovery(){
  const d=DISCOVERY_STORIES[discoveryIndex];
@@ -132,6 +133,7 @@ function renderDiscovery(){
  $("#discovery-status").textContent=discoveryAnswered?"Insight unlocked":"Explore · Decide · Discover";
  $("#discovery-tag").textContent=d.tag;$("#discovery-name").textContent=d.name;
  $("#discovery-story").textContent=d.story;$("#discovery-question").textContent=d.question;
+ const source=$("#discovery-source");source.href=d.source;source.textContent="Verify card details ↗";
  $("#discovery-art").textContent=d.glyph;$("#discovery-art").style.setProperty("--discovery-glow",d.glow);
  const choices=$("#discovery-choices");choices.replaceChildren();
  d.choices.forEach((choice,i)=>{
