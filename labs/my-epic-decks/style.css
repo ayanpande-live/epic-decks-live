@@ -254,3 +254,6 @@ footer{border-top:1px solid #415f78;display:flex;justify-content:space-between;g
  .discovery-question{font-size:14px;margin:5px 0}
  .discovery-choice{min-height:42px;padding:8px 11px}
 }
+
+.discovery-source{display:inline-block;color:#8ddff4;font-size:11px;font-weight:800;margin:4px 0 0;text-decoration:underline;text-underline-offset:3px}
+@media(max-width:700px){.discovery-source{flex:none;font-size:10px;margin:5px 0}}
