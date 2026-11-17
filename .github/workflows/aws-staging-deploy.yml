@@ -1,0 +1,41 @@
+name: AWS Staging Deploy (My Epic Decks)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: epic-decks-aws-staging
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    if: github.repository == 'ayanpande-live/epic-decks-live' && github.ref == 'refs/heads/feature/my-epic-decks-learning-pwa-20261116'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out selected branch
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Verify My Epic Decks entrypoint
+        run: test -f labs/my-epic-decks/index.html
+
+      - name: Configure temporary AWS credentials via GitHub OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::454492134257:role/EpicDecks-GitHub-Staging-Deploy
+          aws-region: eu-west-3
+          role-session-name: epic-decks-staging
+
+      - name: Upload My Epic Decks preview to private S3
+        run: |
+          aws s3 sync labs/my-epic-decks/ s3://epic-decks-staging-euw3-2026/labs/my-epic-decks/ --delete --exclude ".DS_Store" --exclude "*.test.mjs" --exclude "README.md"
+
+      - name: Refresh CloudFront preview cache
+        run: |
+          aws cloudfront create-invalidation --distribution-id E38YMZ6TN5CHNQ --paths "/" "/labs/my-epic-decks/*"
