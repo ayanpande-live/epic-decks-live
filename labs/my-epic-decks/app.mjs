@@ -45,7 +45,7 @@ function stats(){
  $("#toggle-pro").textContent=state.proPreview?"Disable Pro preview":"Enable Pro preview (no payment)";
 }
 function go(screen){
- if(!["home","collection","discover","compare","learn","sell","plans"].includes(screen))return;
+ if(!["home","collection","discover","compare","career","learn","sell","plans"].includes(screen))return;
  activeScreen=screen;
  select(".screen").forEach(s=>s.hidden=s.id!==screen);
  select("[data-screen]").forEach(b=>{
@@ -54,6 +54,7 @@ function go(screen){
  window.scrollTo({top:0,behavior:"auto"});
  if(screen==="discover")renderDiscovery();
  if(screen==="compare")renderCompare();
+ if(screen==="career")renderCareer();
  if(screen==="learn")renderTraining();
  if(screen==="sell")renderSeller();
 }
@@ -385,6 +386,44 @@ function evaluatePitch(){
  place.append(ul);for(const line of result.notes)place.append(element("p","",line));
 }
 
+
+let careerStage=0,careerSelected=-1,careerPath=[];
+const CAREER_STAGES=[
+ {scene:"Two English unlimited vintage Pikachu cards, each graded ACE 10, are offered at €200. You have a fictional €500 budget. No verified sales or grading-population figures are available yet.",question:"You can investigate one source before contacting the seller. Where do you start?",options:[
+ {title:"Recent sold transactions for the exact card and grade",feedback:"Good price anchor if transactions exist. Beware sparse ACE 10 sales, language/variant mismatches and outliers. A sale is not a promise of future resale."},
+ {title:"ACE and PSA population distributions",feedback:"Useful scarcity context, but ACE and PSA grading pools differ. A low ACE 10 count can reflect low submission volume rather than high rarity."},
+ {title:"Current EU listings for comparable slabs",feedback:"Useful to understand competing offers and availability. Asking prices are not completed sales, so they cannot establish realized value."}
+ ]},
+ {scene:"Your first investigation gives you a direction, not a definitive winner. You still have no verified figures in this demo. Both cards cost the same, but a €200 asking price alone tells you nothing about the quality of the deal.",question:"What information would most improve your confidence next?",options:[
+ {title:"Verify exact variants, certs and front/back slab photos",feedback:"Strong diligence. Base Set has variants such as shadowless and 1st Edition; exact matching matters. A grade is not a substitute for checking the actual slab and cert."},
+ {title:"Check how frequently condition-matched slabs actually sell",feedback:"A useful liquidity check. The median price of one sale is less informative than repeatable transactions over time."},
+ {title:"Clarify your collecting goal: nostalgia, set completion or resale",feedback:"A valid choice: the best card for your collection may not be the one with the strongest market evidence. Your objective changes the decision."}
+ ]},
+ {scene:"You have now considered pricing, grading context and collecting intent. Some evidence is still missing. You are not obliged to buy either slab.",question:"What's your decision with incomplete evidence?",options:[
+ {title:"Choose Base Set, conditional on checking its evidence",feedback:"A defensible preference if Base Set fits your collection, but this demo cannot establish that €200 is fair. Confirm the exact printing and condition first."},
+ {title:"Choose Jungle, conditional on checking its evidence",feedback:"A defensible preference if Jungle fits your collection, but this demo cannot establish that €200 is fair. Confirm the exact printing and condition first."},
+ {title:"Hold the €500 virtual budget until the evidence is sufficient",feedback:"Waiting is a legitimate collector decision. You avoid committing to an unsupported valuation, although you may miss a purchase opportunity."}
+ ]}
+];
+function renderCareer(){
+ const d=CAREER_STAGES[careerStage];$("#career-stage").textContent="STAGE "+String(careerStage+1).padStart(2,"0")+" / 03";
+ $("#career-situation").textContent=d.scene;$("#career-question").textContent=d.question;
+ const wrap=$("#career-options");wrap.replaceChildren();
+ d.options.forEach((option,i)=>{
+  const btn=element("button","career-choice",(i+1)+". "+option.title);btn.type="button";
+  if(careerSelected!==-1){btn.disabled=true;if(careerSelected===i)btn.classList.add("chosen")}
+  btn.addEventListener("click",()=>{if(careerSelected!==-1)return;careerSelected=i;careerPath[careerStage]=i;renderCareer()});wrap.append(btn);
+ });
+ const feedback=$("#career-feedback");feedback.replaceChildren();
+ if(careerSelected!==-1){
+  feedback.append(element("strong","",careerStage===2?"Decision reviewed":"Evidence perspective unlocked"));
+  feedback.append(element("p","",d.options[careerSelected].feedback));
+  if(careerStage===2)feedback.append(element("p","","Chapter complete. No fictional profit or unsupported card-price forecast was awarded. Your choices demonstrate how you approach evidence and uncertainty."));
+ }
+ $("#career-advance").hidden=careerSelected===-1;
+ $("#career-advance").textContent=careerStage===2?"Play again ↻":"Next stage →";
+}
+
 const COMPARE_KEY="myepicdecks-compare-v1";
 const COMPARE_FIELDS=[
  {key:"ace10",name:"ACE 10 population",help:"Count graded ACE 10 for the exact variant"},
@@ -451,6 +490,8 @@ function bind(){
  $("#learn-card").addEventListener("change",e=>{quizIdentity=e.target.value;quizIndex=0;answerVisible=false;choiceResolved=false;questMode=false;renderTraining()});
  $("#reveal-fact").addEventListener("click",()=>{answerVisible=true;choiceResolved=false;renderTraining()});
  $("#quick-quest").addEventListener("click",startQuickQuest);
+ $("#career-restart").addEventListener("click",()=>{careerStage=0;careerSelected=-1;careerPath=[];renderCareer()});
+ $("#career-advance").addEventListener("click",()=>{careerStage=(careerStage+1)%CAREER_STAGES.length;careerSelected=-1;if(careerStage===0)careerPath=[];renderCareer()});
  $("#cmp-analyze").addEventListener("click",compareAnalyze);
  $("#cmp-clear").addEventListener("click",()=>{if(!confirm("Clear saved comparison observations?"))return;try{localStorage.removeItem(COMPARE_KEY)}catch{};select("#compare-evidence input").forEach(n=>n.value="");$("#cmp-notes").value="";$("#cmp-a-price").value="200";$("#cmp-b-price").value="200";$("#cmp-goal").value="balanced";compareAnalyze()});
  $("#compare").addEventListener("change",compareSave);
