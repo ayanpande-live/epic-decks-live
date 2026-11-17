@@ -1,0 +1,20 @@
+{
+  "name": "My Epic Decks — Collector Academy",
+  "short_name": "My Epic Decks",
+  "description": "Learn your own trading cards, collect XP and practise memorable card stories. Offline prototype.",
+  "id": "/labs/my-epic-decks/",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#081320",
+  "theme_color": "#0c1727",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/images/logo.webp",
+      "sizes": "any",
+      "type": "image/webp",
+      "purpose": "any"
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+name: Deploy static Epic Decks to AWS staging
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+  id-token: write
+jobs:
+  deploy:
+    if: github.ref == 'refs/heads/feature/my-epic-decks-learning-pwa-20261116'
+    runs-on: ubuntu-latest
+    environment: aws-staging
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate configuration
+        env:
+          ROLE: ${{ vars.AWS_ROLE_ARN }}
+          BUCKET: ${{ vars.AWS_STATIC_BUCKET }}
+          DIST: ${{ vars.AWS_CLOUDFRONT_DISTRIBUTION_ID }}
+        run: |
+          test -n "$ROLE" && test -n "$BUCKET" && test -n "$DIST" || { echo "Missing AWS staging variables"; exit 1; }
+      - name: Configure AWS OIDC credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION || 'eu-west-3' }}
+      - name: Sync only approved game preview paths
+        env:
+          BUCKET: ${{ vars.AWS_STATIC_BUCKET }}
+        run: |
+          aws s3 sync labs/my-epic-decks/ "s3://$BUCKET/labs/my-epic-decks/" --delete --exclude "*.map" --exclude "*.zip"
+          aws s3 sync labs/trading-floor/ "s3://$BUCKET/labs/trading-floor/" --delete --exclude "*.map" --exclude "*.zip"
+      - name: Invalidate CloudFront cache
+        env:
+          DIST: ${{ vars.AWS_CLOUDFRONT_DISTRIBUTION_ID }}
+        run: aws cloudfront create-invalidation --distribution-id "$DIST" --paths "/*"

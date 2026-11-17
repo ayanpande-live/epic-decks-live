@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0c1727">
+<meta name="robots" content="noindex,nofollow">
+<meta name="description" content="My Epic Decks private-review learning app prototype. Fictional demo content. No payments or cloud syncing.">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" type="image/webp" href="/images/logo.webp">
+<link rel="stylesheet" href="./style.css">
+<title>My Epic Decks — Learn Your Cards</title>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<div id="app" class="app">
+<header class="header">
+ <a class="brand" href="#home" data-screen="home"><img src="/images/logo.webp" width="66" height="66" alt="Epic Decks logo"><span><strong>MY EPIC DECKS</strong><small>THE COLLECTOR ACADEMY</small></span></a>
+ <div class="header-right"><span class="local-chip" title="Nothing is sent to a server">◆ LOCAL DEMO</span><span class="spark" aria-hidden="true">✦</span></div>
+</header>
+<nav class="desktop-nav" aria-label="Primary">
+ <button type="button" data-screen="home" aria-current="page">Dashboard</button>
+ <button type="button" data-screen="collection">My collection</button>
+ <button type="button" data-screen="discover">Discovery Lab</button><button type="button" data-screen="career">Collector Career</button>
+ <button type="button" data-screen="learn">Memory practice</button>
+ <button type="button" data-screen="sell">Seller Studio</button>
+</nav>
+<main id="main">
+ <section id="home" class="screen" aria-labelledby="home-title">
+  <div class="hero">
+   <div class="hero-content">
+    <span class="eyebrow">YOUR CARDS. YOUR SUPERPOWER.</span>
+    <h1 id="home-title">KNOW IT.<br><em>SHOW IT.</em><br>LEVEL UP.</h1>
+    <p>Explore the stories behind collectible cards. Make collector decisions, discover new perspectives and level up.</p>
+    <div class="hero-actions"><button type="button" class="btn primary" data-screen="discover">Play Discovery Lab <span aria-hidden="true">↗</span></button><button type="button" class="btn ghost" data-action="load-demo">Explore demo cards</button><button type="button" class="btn ghost" data-screen="career">Play Collector Career ★</button></div>
+    <span class="hero-notice">No signup · No payments · All data stays in this browser</span>
+   </div>
+   <div class="hero-art" aria-hidden="true"><span class="orbit one"></span><span class="orbit two"></span><div class="lesson-card back"><div class="holo-arc"></div><span class="card-glyph">✦</span><span>ELEMENTAL FIELD GUIDE</span></div><div class="lesson-card front"><span>YOUR NEXT<br>CHALLENGE</span><div class="shine">◇</div><strong>+12 XP</strong></div><div class="hero-sticker">LEARN.<br>PLAY.<br>REPEAT.</div></div>
+  </div>
+  <section class="daily-quest" aria-label="Quick learning challenge"><div class="quest-badge">✦ TODAY'S QUEST</div><div><h2>One card. One discovery. Let's go.</h2><p>Explore a fictional card, uncover a collector insight, then make a choice.</p></div><button id="quick-quest" class="btn primary" type="button">Start quick quest →</button></section>
+  <div class="stats" aria-label="Learning dashboard">
+    <div class="stat"><span class="stat-icon">◇</span><small>FREE CARD UNLOCKS</small><strong id="stat-quota">0 / 10</strong><div class="progress-track"><span id="quota-progress"></span></div><p id="quota-caption">Resets monthly. Learned cards stay yours.</p></div>
+    <div class="stat"><span class="stat-icon">✦</span><small>YOUR LEVEL</small><strong id="stat-level">01</strong><p id="stat-xp">0 XP earned</p></div>
+    <div class="stat"><span class="stat-icon">▣</span><small>COLLECTION</small><strong id="stat-cards">0</strong><p id="stat-unlocked">0 unlocked lessons</p></div>
+  </div>
+  <div class="section-head"><div><span class="eyebrow">THE JOURNEY</span><h2>Three little steps.<br><span>Big collector energy.</span></h2></div></div>
+  <div class="feature-grid">
+   <button class="feature water" type="button" data-screen="collection"><span class="feature-number">01 / COLLECT</span><span class="feature-icon">◈</span><b>Build your deck</b><span>Import a CSV or add a card by hand. Keep private collection data on your device.</span><strong>START HERE ↗</strong></button>
+   <button class="feature fire" type="button" data-screen="learn"><span class="feature-number">02 / DISCOVER</span><span class="feature-icon">✧</span><b>Know your card</b><span>Reveal facts, practise remembering, earn XP and level up.</span><strong>PLAY A ROUND ↗</strong></button>
+   <button class="feature spark" type="button" data-screen="sell"><span class="feature-number">03 / PRESENT</span><span class="feature-icon">ϟ</span><b>Find your story</b><span>Try a short sales pitch and see which facts you included.</span><strong>SELLER STUDIO ↗</strong></button>
+  </div>
+  <div class="notice-panel"><strong>A real prototype, not a live product.</strong><span>All 12 built-in cards are fictional learning examples. Facts from manually imported cards are user-provided and not independently verified. No AI, speech recognition, live pricing or cloud sync is enabled.</span></div>
+ </section>
+
+ <section id="career" class="screen" hidden aria-labelledby="career-title">
+ <div class="page-heading"><span class="eyebrow">COLLECTOR CAREER · CHAPTER 01</span><h1 id="career-title">THE PIKACHU <em>DILEMMA.</em></h1><p>Investigate a real collector decision with fictional funds and progressive evidence. There is no guaranteed correct purchase.</p></div>
+ <div class="career-shell"><div class="panel" style="margin-bottom:14px"><span class="eyebrow">NEW · PLAYABLE PREVIEW</span><h2>Enter the Trading Floor</h2><p>Choose one of three dealers, browse slabs from the tabletop, build a cash-and-cards offer and negotiate your way to a deal.</p><a class="btn primary" href="../trading-floor/index.html" style="display:inline-block;text-decoration:none;margin-top:10px">Play the Trade Show Simulator →</a><p class="small-note">Fictional economy · saves progress locally · no real transactions</p></div>
+  <div class="career-head"><span id="career-stage" class="eyebrow">STAGE 01 / 03</span><span class="career-balance">VIRTUAL BUDGET <strong>€500</strong></span></div>
+  <div class="career-pair"><div class="career-option"><img src="https://images.pokemontcg.io/base1/58.png" alt="Base Set Pikachu 58/102"><div><strong>Base Set Pikachu</strong><small>Yellow Cheeks · ACE 10</small><b>€200</b></div></div><div class="career-option"><img src="https://images.pokemontcg.io/base2/60.png" alt="Jungle Pikachu 60/64"><div><strong>Jungle Pikachu</strong><small>ACE 10</small><b>€200</b></div></div></div>
+  <p id="career-situation" class="career-situation"></p><h2 id="career-question" class="career-question"></h2>
+  <div id="career-options" class="career-options" role="group" aria-label="Career decisions"></div>
+  <div id="career-feedback" class="career-feedback" role="status" aria-live="polite"></div>
+  <div class="career-footer"><button id="career-restart" class="btn outline" type="button">Restart chapter</button><button id="career-advance" class="btn primary" type="button" hidden>Continue →</button></div>
+  <p class="small-note">Real card identities; fictional transaction and outcomes. Populations and comparable sales are deliberately not fabricated.</p>
+ </div>
+</section>
+<section id="compare" class="screen" hidden aria-labelledby="compare-title">
+ <div class="page-heading"><span class="eyebrow">COLLECTOR'S EYE · DECISION DESK</span><h1 id="compare-title">COMPARE <em>SMARTER.</em></h1><p>Compare specific printings at real asking prices. Enter verified observations to reveal the trade-offs; no fabricated populations or market quotes.</p></div>
+ <div class="compare-layout">
+  <div class="compare-panel">
+   <div class="compare-topline"><strong>01 / Your shortlist</strong><span class="quiet">Private · Saved on this device</span></div>
+   <div class="compare-pair">
+    <div class="compare-card"><img src="https://images.pokemontcg.io/base1/58.png" alt="Base Set Pikachu 58/102" loading="lazy"><div><strong>Base Set Pikachu</strong><small>58/102 · Yellow Cheeks · English Unlimited · ACE 10</small><label for="cmp-a-price">Asking price (€)</label><input id="cmp-a-price" type="number" min="0" step="0.01" value="200" inputmode="decimal"></div></div>
+    <div class="compare-card"><img src="https://images.pokemontcg.io/base2/60.png" alt="Jungle Pikachu 60/64" loading="lazy"><div><strong>Jungle Pikachu</strong><small>60/64 · English Unlimited · ACE 10</small><label for="cmp-b-price">Asking price (€)</label><input id="cmp-b-price" type="number" min="0" step="0.01" value="200" inputmode="decimal"></div></div>
+   </div>
+   <label for="cmp-goal">What matters most to you?</label><select id="cmp-goal"><option value="balanced">Balanced collecting decision</option><option value="resale">Resale and liquidity</option><option value="scarcity">Graded scarcity</option><option value="personal">Personal collection</option></select>
+  </div>
+  <div class="compare-panel">
+   <div class="compare-topline"><strong>02 / Evidence notebook</strong><span class="quiet">Optional · No live feed</span></div>
+   <p class="compare-hint">Enter observations only if you've checked the exact variant, grade and source. Unknown is better than guessed.</p>
+   <div class="compare-evidence-head"><span>Metric</span><span>Base Set</span><span>Jungle</span></div>
+   <div id="compare-evidence"></div>
+   <label for="cmp-notes">Sources and observations</label><textarea id="cmp-notes" rows="2" placeholder="Source links, dates, grading-population notes, recent sold comparables…"></textarea>
+   <div class="compare-actions"><button id="cmp-analyze" class="btn primary" type="button">Evaluate evidence →</button><button id="cmp-clear" class="btn outline" type="button">Clear observations</button></div>
+  </div>
+  <div id="cmp-result" class="compare-panel compare-result" role="status" aria-live="polite"><strong>03 / Decision briefing</strong><p>Start with the two exact card identities, then add population and sales evidence. We'll highlight what is still unknown rather than invent a winner.</p></div>
+ </div>
+</section>
+<section id="discover" class="screen" hidden aria-labelledby="discover-title">
+  <div class="page-heading"><span class="eyebrow">DISCOVERY LAB · PLAY TO UNDERSTAND</span><h1 id="discover-title">SEE MORE. <em>KNOW WHY.</em></h1><p>Explore real Pokémon card facts and make collector decisions. Buyer conversations are simulated; no market-price advice.</p></div>
+  <div class="discovery-shell">
+    <div class="discovery-head"><span id="discovery-counter" class="eyebrow">STORY 01 / 03</span><span id="discovery-status" class="quiet">Curiosity first · No pressure</span></div>
+    <div class="discovery-scene"><div id="discovery-art" class="discovery-art" aria-hidden="true">✦</div><div class="discovery-copy"><span id="discovery-tag" class="eyebrow">ARTWORK DETECTIVE</span><h2 id="discovery-name"></h2><p id="discovery-story"></p><div id="discovery-insight" class="discovery-insight" hidden></div></div></div>
+    <div id="discovery-question" class="discovery-question"></div>
+    <div id="discovery-choices" class="discovery-choices" role="group" aria-label="Collector choices"></div>
+    <a id="discovery-source" class="discovery-source" href="https://www.pokemon.com/" target="_blank" rel="noopener noreferrer">Verify card details ↗</a><div id="discovery-feedback" class="discovery-feedback" role="status" aria-live="polite"></div>
+    <div class="discovery-footer"><button id="discovery-reset" class="btn outline" type="button">Start over</button><button id="discovery-next" class="btn primary" type="button" hidden>Next discovery →</button></div>
+    <p class="small-note">Real card identities and publisher references; simulated conversations. Artwork and image licensing remain under review.</p>
+  </div>
+ </section>
+ 
+ <section id="collection" class="screen" hidden aria-labelledby="collection-title">
+  <div class="page-heading"><span class="eyebrow">01 / YOUR LIBRARY</span><h1 id="collection-title">THE <em>COLLECTION.</em></h1><p>Bring your own card knowledge, or experiment with fictional demos. You may import more than 10 records; the free limit applies only to new lesson unlocks.</p></div>
+  <div class="split-tools">
+   <section class="panel add-panel" aria-labelledby="add-card-title">
+    <div class="panel-heading"><span class="mini-icon">✦</span><h2 id="add-card-title">Add a card</h2></div>
+    <form id="card-form">
+     <div class="form-row"><label>Card / character name *<input name="name" required maxlength="150" placeholder="Your card's exact name" autocomplete="off"></label><label>Set / series<input name="set" maxlength="150" placeholder="Set name"></label></div>
+     <div class="form-row"><label>Card number<input name="number" maxlength="30" placeholder="e.g. 123/198"></label><label>Illustrator / artist<input name="artist" maxlength="150" placeholder="Only if known"></label></div>
+     <div class="form-row"><label>Language<input name="language" maxlength="40" placeholder="English"></label><label>Variant / finish<input name="variant" maxlength="80" placeholder="Holo, reverse, etc."></label></div>
+     <label>Artwork detail / standout feature<input name="feature" maxlength="240" placeholder="Describe something you can actually see"></label>
+     <label>Character pose / stance<input name="pose" maxlength="240" placeholder="An observation, not an official fact"></label>
+     <div class="form-row"><label>Grader<input name="grader" maxlength="40" placeholder="Optional"></label><label>Grade<input name="grade" maxlength="20" placeholder="Optional"></label></div>
+     <div class="form-row"><label>Certificate ID<input name="certificate" maxlength="80" placeholder="Leave blank for raw cards"></label><label>Condition<input name="condition" maxlength="80" placeholder="Optional note"></label></div>
+     <label class="photo-label">Photo preview (optional, not stored)<input type="file" name="photo" accept="image/png,image/jpeg,image/webp" id="photo"><small>For this prototype, photos stay in memory only; card recognition is not enabled.</small></label>
+     <img id="photo-preview" class="photo-preview" alt="Temporary local upload preview" hidden>
+     <button type="submit" class="btn primary wide">Add to collection +</button>
+    </form>
+   </section>
+   <section class="panel import-panel" aria-labelledby="import-title">
+    <div class="panel-heading"><span class="mini-icon blue">⇩</span><h2 id="import-title">Import a collection</h2></div>
+    <p>Export a CSV from a collection app or spreadsheet, then map its columns. This is a user-file import, <strong>not</strong> an automatic Collectr or Dex sync.</p>
+    <label class="upload-zone" for="csv-file"><strong>Choose CSV / TSV file ↗</strong><span>Up to 500 rows · 1 MB · stays in your browser</span><input id="csv-file" type="file" accept=".csv,.tsv,text/csv,text/tab-separated-values"></label>
+    <div id="mapping-area" hidden><h3>Map your columns</h3><p id="mapping-summary"></p><div id="mapping-fields" class="mapping-grid"></div><button id="confirm-import" class="btn primary wide" type="button">Review & import records</button></div>
+    <div class="import-helper"><b>Can't export yet?</b><p>Try the demo collection first, or enter a few cards manually. Exact identity and artist details should be checked against a reliable source before presenting them as facts.</p><button type="button" class="btn outline" data-action="load-demo">Load 12 fictional examples</button></div>
+   </section>
+  </div>
+  <div class="collection-header"><div><span class="eyebrow">YOUR CARDS</span><h2 id="collection-count">0 records</h2></div><span class="quiet" id="collection-quota">10 free unlocks this month</span></div>
+  <div id="card-list" class="card-grid" aria-live="polite"></div>
+  <div class="utility-actions"><button type="button" class="text-button" data-action="export">Export my local data (JSON)</button><button type="button" class="text-button danger" data-action="reset">Clear this browser's demo data</button></div>
+ </section>
+
+ <section id="learn" class="screen" hidden aria-labelledby="learn-title">
+  <div class="page-heading"><span class="eyebrow">02 / COLLECTOR ACADEMY</span><h1 id="learn-title">LEARN. <em>REMEMBER.</em></h1><p>A three-minute brain workout based on your own card information. Replay lessons as often as you like—even if you hit the free monthly limit.</p></div>
+  <div class="studio-layout">
+   <div class="studio-main">
+    <div class="studio-header"><label for="learn-card">Choose an unlocked card</label><select id="learn-card"></select><span id="learn-fact-count" class="quiet"></span></div>
+    <div class="lesson-meter" aria-label="Quest progress"><span id="quest-step">QUESTION 1</span><div class="progress-track"><span id="quest-progress"></span></div><span id="quest-points">+12 XP for recall</span></div><div id="lesson-stage" class="lesson-stage" aria-live="polite"><p>Unlock a card to start practising.</p></div><div id="quiz-options" class="quiz-options" role="group" aria-label="Answer choices"></div><div id="quest-feedback" class="quest-feedback" role="status" aria-live="polite"></div>
+    <div class="lesson-actions" id="lesson-actions"><button id="reveal-fact" class="btn primary" type="button">Reveal the answer</button><button id="remembered" class="btn good" type="button" hidden>I remembered · +12 XP</button><button id="review-again" class="btn outline" type="button" hidden>Need another look · +4 XP</button></div>
+   </div>
+   <aside class="studio-aside"><div class="aside-stamp">✦</div><h3>Knowledge is a collectible.</h3><p>Each completed fact earns XP. Correct recall earns extra XP. Watch your level rise as you learn the details behind your cards.</p><div class="mini-stat">CURRENT LEVEL <strong id="level-aside">01</strong></div><div class="mini-stat">PRACTICE ROUNDS <strong id="rounds-aside">0</strong></div><p class="small-note">Facts here are from a synthetic demo or your own entries. No external database verification yet.</p></aside>
+  </div>
+ </section>
+
+ <section id="sell" class="screen" hidden aria-labelledby="seller-title">
+  <div class="page-heading"><span class="eyebrow">03 / SELLER STUDIO · ADULT PRACTICE</span><h1 id="seller-title">TELL A <em>BETTER STORY.</em></h1><p>Present a card clearly and accurately. This first version gives structured feedback on what your pitch covers; it is not AI voice coaching.</p></div>
+  <div class="studio-layout">
+    <div class="studio-main panel">
+      <label for="sell-card">Practise with</label><select id="sell-card"></select>
+      <div id="seller-card-brief" class="seller-brief"></div>
+      <label class="consent-line"><input id="seller-ack" type="checkbox"> I'm an adult testing seller practice (or an educator supervising a demonstration).</label>
+      <label for="pitch">Your 20–45 second card description</label>
+      <textarea id="pitch" rows="7" maxlength="1800" placeholder="Start with the card's name, explain what makes the artwork interesting, and describe the condition honestly. Only claim facts you can support."></textarea>
+      <div class="pitch-toolbar"><small id="word-count">0 words</small><button id="check-pitch" class="btn primary" type="button">Check my pitch ↗</button></div>
+      <div id="pitch-feedback" class="pitch-feedback" aria-live="polite"></div>
+    </div>
+    <aside class="studio-aside seller-aside"><div class="aside-stamp">◆</div><h3>Sell with confidence, not hype.</h3><p>Good selling doesn't require pressure. Help buyers understand the card, be precise about the condition, and avoid unsourced rarity or investment claims.</p><p class="small-note">Adult-only seller practice; no buyer contact, transaction, listings or price recommendations.</p></aside>
+  </div>
+ </section>
+
+ <section id="plans" class="screen" hidden aria-labelledby="plan-title">
+  <div class="page-heading"><span class="eyebrow">EXPERIMENTAL FREEMIUM</span><h1 id="plan-title">MORE CARDS. <em>MORE SKILLS.</em></h1><p>Test the future upgrade experience. This is a simulation; no subscriptions or payments are available.</p></div>
+  <div class="plans">
+    <div class="plan"><small>FOREVER FREE</small><h2>Explorer</h2><strong>€0</strong><p>Unlock up to 10 new unique cards each calendar month. Keep your old lessons and practise as much as you like.</p><span>✓ Saved collection · ✓ Basic lessons · ✓ XP and levels</span></div>
+    <div class="plan pro"><small>PROPOSED TEST PRICE</small><h2>Seller Pro</h2><strong>€7.99 <sub>/ month</sub></strong><p>Unlimited standard card unlocks plus expanded coaching once validated. High-cost AI and voice processing would have fair-use limits.</p><span>✓ More card lessons · ✓ Seller skills · ✓ Future coaching tools</span><button class="btn primary wide" id="toggle-pro" type="button">Enable Pro preview (no payment)</button><small class="plan-note">Only changes a local test flag. This is not a real entitlement.</small></div>
+  </div>
+ </section>
+</main>
+<nav class="mobile-nav" aria-label="Mobile navigation"><button type="button" data-screen="home"><span>⌂</span>Home</button><button type="button" data-screen="discover"><span>✧</span>Discover</button><button type="button" data-screen="career"><span>★</span>Career</button><button type="button" data-screen="collection"><span>▣</span>Cards</button></nav>
+<footer><span>MY EPIC DECKS · DEVELOPMENT PREVIEW</span><span>SIMULATED GAMEPLAY · NO LIVE MARKET DATA OR PAYMENTS</span></footer>
+</div>
+<div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+<script type="module" src="./app.mjs"></script>
+</body></html>
