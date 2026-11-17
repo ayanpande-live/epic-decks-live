@@ -257,3 +257,8 @@ footer{border-top:1px solid #415f78;display:flex;justify-content:space-between;g
 
 .discovery-source{display:inline-block;color:#8ddff4;font-size:11px;font-weight:800;margin:4px 0 0;text-decoration:underline;text-underline-offset:3px}
 @media(max-width:700px){.discovery-source{flex:none;font-size:10px;margin:5px 0}}
+
+/* Actual card image, presented as the hero object rather than a decorative glyph. */
+.discovery-art{background:radial-gradient(circle at 50% 50%,var(--discovery-glow),#111c2e 85%);padding:12px;overflow:hidden}
+.discovery-card-image{display:block;max-width:100%;max-height:300px;width:auto;height:auto;object-fit:contain;filter:drop-shadow(0 9px 18px #0008);border-radius:9px}
+@media(max-width:700px){.discovery-art{padding:3px;overflow:visible}.discovery-card-image{width:100%;height:100%;max-height:100%;object-fit:contain;border-radius:4px}}
