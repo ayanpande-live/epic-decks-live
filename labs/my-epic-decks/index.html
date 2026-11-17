@@ -21,7 +21,7 @@
 <nav class="desktop-nav" aria-label="Primary">
  <button type="button" data-screen="home" aria-current="page">Dashboard</button>
  <button type="button" data-screen="collection">My collection</button>
- <button type="button" data-screen="discover">Discovery Lab</button><button type="button" data-screen="compare">Compare cards</button>
+ <button type="button" data-screen="discover">Discovery Lab</button><button type="button" data-screen="career">Collector Career</button>
  <button type="button" data-screen="learn">Memory practice</button>
  <button type="button" data-screen="sell">Seller Studio</button>
 </nav>
@@ -32,7 +32,7 @@
     <span class="eyebrow">YOUR CARDS. YOUR SUPERPOWER.</span>
     <h1 id="home-title">KNOW IT.<br><em>SHOW IT.</em><br>LEVEL UP.</h1>
     <p>Explore the stories behind collectible cards. Make collector decisions, discover new perspectives and level up.</p>
-    <div class="hero-actions"><button type="button" class="btn primary" data-screen="discover">Play Discovery Lab <span aria-hidden="true">↗</span></button><button type="button" class="btn ghost" data-action="load-demo">Explore demo cards</button><button type="button" class="btn ghost" data-screen="compare">Compare two cards ⚖</button></div>
+    <div class="hero-actions"><button type="button" class="btn primary" data-screen="discover">Play Discovery Lab <span aria-hidden="true">↗</span></button><button type="button" class="btn ghost" data-action="load-demo">Explore demo cards</button><button type="button" class="btn ghost" data-screen="career">Play Collector Career ★</button></div>
     <span class="hero-notice">No signup · No payments · All data stays in this browser</span>
    </div>
    <div class="hero-art" aria-hidden="true"><span class="orbit one"></span><span class="orbit two"></span><div class="lesson-card back"><div class="holo-arc"></div><span class="card-glyph">✦</span><span>ELEMENTAL FIELD GUIDE</span></div><div class="lesson-card front"><span>YOUR NEXT<br>CHALLENGE</span><div class="shine">◇</div><strong>+12 XP</strong></div><div class="hero-sticker">LEARN.<br>PLAY.<br>REPEAT.</div></div>
@@ -52,7 +52,19 @@
   <div class="notice-panel"><strong>A real prototype, not a live product.</strong><span>All 12 built-in cards are fictional learning examples. Facts from manually imported cards are user-provided and not independently verified. No AI, speech recognition, live pricing or cloud sync is enabled.</span></div>
  </section>
 
- <section id="compare" class="screen" hidden aria-labelledby="compare-title">
+ <section id="career" class="screen" hidden aria-labelledby="career-title">
+ <div class="page-heading"><span class="eyebrow">COLLECTOR CAREER · CHAPTER 01</span><h1 id="career-title">THE PIKACHU <em>DILEMMA.</em></h1><p>Investigate a real collector decision with fictional funds and progressive evidence. There is no guaranteed correct purchase.</p></div>
+ <div class="career-shell">
+  <div class="career-head"><span id="career-stage" class="eyebrow">STAGE 01 / 03</span><span class="career-balance">VIRTUAL BUDGET <strong>€500</strong></span></div>
+  <div class="career-pair"><div class="career-option"><img src="https://images.pokemontcg.io/base1/58.png" alt="Base Set Pikachu 58/102"><div><strong>Base Set Pikachu</strong><small>Yellow Cheeks · ACE 10</small><b>€200</b></div></div><div class="career-option"><img src="https://images.pokemontcg.io/base2/60.png" alt="Jungle Pikachu 60/64"><div><strong>Jungle Pikachu</strong><small>ACE 10</small><b>€200</b></div></div></div>
+  <p id="career-situation" class="career-situation"></p><h2 id="career-question" class="career-question"></h2>
+  <div id="career-options" class="career-options" role="group" aria-label="Career decisions"></div>
+  <div id="career-feedback" class="career-feedback" role="status" aria-live="polite"></div>
+  <div class="career-footer"><button id="career-restart" class="btn outline" type="button">Restart chapter</button><button id="career-advance" class="btn primary" type="button" hidden>Continue →</button></div>
+  <p class="small-note">Real card identities; fictional transaction and outcomes. Populations and comparable sales are deliberately not fabricated.</p>
+ </div>
+</section>
+<section id="compare" class="screen" hidden aria-labelledby="compare-title">
  <div class="page-heading"><span class="eyebrow">COLLECTOR'S EYE · DECISION DESK</span><h1 id="compare-title">COMPARE <em>SMARTER.</em></h1><p>Compare specific printings at real asking prices. Enter verified observations to reveal the trade-offs; no fabricated populations or market quotes.</p></div>
  <div class="compare-layout">
   <div class="compare-panel">
@@ -154,8 +166,8 @@
   </div>
  </section>
 </main>
-<nav class="mobile-nav" aria-label="Mobile navigation"><button type="button" data-screen="home"><span>⌂</span>Home</button><button type="button" data-screen="discover"><span>✧</span>Discover</button><button type="button" data-screen="compare"><span>⚖</span>Compare</button><button type="button" data-screen="collection"><span>▣</span>Cards</button></nav>
-<footer><span>MY EPIC DECKS · DEVELOPMENT PREVIEW</span><span>FICTIONAL DEMO CARDS · NO LIVE INTEGRATIONS OR PAYMENTS</span></footer>
+<nav class="mobile-nav" aria-label="Mobile navigation"><button type="button" data-screen="home"><span>⌂</span>Home</button><button type="button" data-screen="discover"><span>✧</span>Discover</button><button type="button" data-screen="career"><span>★</span>Career</button><button type="button" data-screen="collection"><span>▣</span>Cards</button></nav>
+<footer><span>MY EPIC DECKS · DEVELOPMENT PREVIEW</span><span>SIMULATED GAMEPLAY · NO LIVE MARKET DATA OR PAYMENTS</span></footer>
 </div>
 <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
 <script type="module" src="./app.mjs"></script>
