@@ -101,31 +101,92 @@ function fillSelect(el,cards,selected,placeholder){
 
 // Curated fictional teaching content. Explanations are general principles, not real card metadata.
 // Real card metadata is grounded in linked publisher card records; scenarios are simulated.
+// Real card identities with hypothetical, evidence-led collector scenarios.
 const DISCOVERY_STORIES=[
- {tag:"CARD DETECTIVE · REAL PRINTING",name:"Magikarp · 203/193",image:"https://images.pokemontcg.io/sv2/203.png",glyph:"✧",glow:"#47bfe8",source:"https://www.pokemon.com/uk/pokemon-tcg/pokemon-cards/series/sv02/203",
-  story:"Magikarp 203/193 is a real Paldea Evolved Illustration Rare illustrated by Shinji Kanda. You have a copy in hand and a collector is interested in this exact printing. The next step is to understand the card in front of you, not compare it with an unrelated cheap card.",
-  question:"Before describing this particular copy as near mint, what would you inspect most closely?",
-  choices:[
-   {label:"Corners and edges under good lighting, then the front and back surfaces",reason:"A strong inspection sequence. Edge whitening, corner wear and surface marks can affect condition even when the front looks excellent. Check centering too, and disclose what you find.",good:true},
-   {label:"Centering first, followed by corners and surface condition",reason:"Also a defensible approach, especially if the buyer is grading-focused. Centering is easy to notice, but it is not a substitute for inspecting the rest of the card.",good:false},
-   {label:"Surface under angled light first, then edges, corners and centering",reason:"Also reasonable, particularly for spotting scratches or print lines. What matters is a consistent, complete inspection rather than one magic order.",good:false}
-  ],insight:"COLLECTOR INSIGHT · The real skill is documenting the condition of the exact copy, not selecting a single inspection order. A condition description is only as useful as the evidence behind it."},
- {tag:"COLLECTOR'S EYE · REAL PRINTING",name:"Gardevoir ex · 245/198",image:"https://images.pokemontcg.io/sv1/245.png",glyph:"◇",glow:"#a38de8",source:"https://www.pokemon.com/uk/pokemon-tcg/pokemon-cards/series/sv01/245",
-  story:"Gardevoir ex 245/198 is a real Scarlet & Violet Special Illustration Rare illustrated by Jiro Sasumo. Imagine you own two raw copies of this exact printing. One looks better centered; the other has cleaner edges. Neither has been professionally graded.",
-  question:"You're deciding which copy to submit for grading. What's the strongest next step?",
-  choices:[
-   {label:"Inspect both copies systematically across centering, corners, edges and surface",reason:"Best overall approach. You cannot infer a grade from one attractive feature. Use consistent lighting, magnification where useful, and the grading company's published standards.",good:true},
-   {label:"Prioritize the better-centered copy and check its surface afterward",reason:"Reasonable as an initial filter if centering is clearly poor on one copy. But the cleaner-edged copy could still be stronger overall; don't decide before completing both inspections.",good:false},
-   {label:"Estimate resale premiums before deciding whether either copy is worth grading",reason:"Economically sensible if resale is the goal. Still, you need a realistic condition assessment, grading fees and recent comparable sales to estimate whether submission is worthwhile.",good:false}
-  ],insight:"COLLECTOR INSIGHT · Grading decisions combine condition, grading standards, costs and personal goals. There is no reliable grade prediction from centering alone."},
- {tag:"SELLER SIMULATOR · SAME CARD",name:"Magikarp · 203/193",image:"https://images.pokemontcg.io/sv2/203.png",glyph:"✦",glow:"#e17fbd",source:"https://www.pokemon.com/uk/pokemon-tcg/pokemon-cards/series/sv02/203",
-  story:"A buyer specifically wants your Magikarp 203/193. In this fictional negotiation, your raw copy is listed at €200 and another seller offers the same printing at €185. You have not yet compared the two copies' conditions, shipping terms or seller protections. These prices are hypothetical, not market quotes.",
-  question:"The buyer asks why your copy costs €15 more. What do you do next?",
-  choices:[
-   {label:"Compare condition photos, delivery and protection before defending the premium",reason:"A sensible first move: establish whether the offers are truly comparable. If yours offers no meaningful advantage, reconsider the asking price rather than inventing one.",good:true},
-   {label:"Offer a small discount immediately to narrow the gap",reason:"A valid commercial tactic when margin allows, but you may concede before understanding whether the two offers are equivalent. Check your costs and floor price.",good:false},
-   {label:"Ask what matters most to the buyer and offer detailed images of your copy",reason:"A strong relationship-led approach. It may reveal that condition or trust matters more than €15, but you still need evidence before making price comparisons.",good:false}
-  ],insight:"SELLER INSIGHT · Compete on like-for-like evidence, not invented scarcity. The best response depends on the buyer's priorities, the true condition difference and your minimum acceptable price."}
+ {
+  "tag": "COLLECTOR'S EYE · CONDITION",
+  "name": "Magikarp · 203/193",
+  "image": "https://images.pokemontcg.io/sv2/203.png",
+  "glyph": "✧",
+  "glow": "#47bfe8",
+  "source": "https://www.pokemon.com/uk/pokemon-tcg/pokemon-cards/series/sv02/203",
+  "story": "You are considering a raw Magikarp Illustration Rare from Paldea Evolved, illustrated by Shinji Kanda. The seller has shared a sharp front photo, but the back and edges are not visible. This is a hypothetical purchase situation, not a live listing.",
+  "question": "Before committing to this particular copy, which evidence would you request first?",
+  "choices": [
+   {
+    "label": "Clear back, edge and corner photos under neutral lighting",
+    "reason": "Most useful missing evidence. A beautiful front image tells you little about whitening, edge wear or back centering. Photos cannot reveal every flaw, but they materially improve a condition assessment.",
+    "good": true
+   },
+   {
+    "label": "Recent completed sales for similar-condition raw copies",
+    "reason": "Essential for deciding whether the asking price is sensible. But you still cannot establish whether this specific card matches those comparables without better condition evidence.",
+    "good": false
+   },
+   {
+    "label": "A seller video tilting the front surface under light",
+    "reason": "A strong follow-up for checking surface marks and print lines. It complements rather than replaces back and edge images.",
+    "good": false
+   }
+  ],
+  "insight": "CONDITION INTELLIGENCE · Condition is evidence about a specific physical copy. Start by identifying what you cannot see; compare prices only after assessing whether the copies are truly comparable."
+ },
+ {
+  "tag": "COLLECTOR'S EYE · ARTWORK",
+  "name": "Gardevoir ex · 245/198",
+  "image": "https://images.pokemontcg.io/sv1/245.png",
+  "glyph": "◇",
+  "glow": "#a38de8",
+  "source": "https://www.pokemon.com/uk/pokemon-tcg/pokemon-cards/series/sv01/245",
+  "story": "Gardevoir ex 245/198 is a real Special Illustration Rare from Scarlet & Violet, illustrated by Jiro Sasumo. Instead of testing whether you memorized its set number, this challenge asks how you would understand the actual image.",
+  "question": "You want to explain why this illustration resonates with a collector. What is the strongest starting point?",
+  "choices": [
+   {
+    "label": "Point to specific visual details and describe how they guide your interpretation",
+    "reason": "Best grounded starting point. Let the actual image support your reading; another collector may interpret it differently, and that is part of the conversation.",
+    "good": true
+   },
+   {
+    "label": "Ask the collector which character moments or artistic styles they connect with",
+    "reason": "Also valuable, particularly in a conversation. It becomes stronger when paired with specific observations from the card rather than remaining generic.",
+    "good": false
+   },
+   {
+    "label": "Discuss how the illustration differs from conventional full-art presentation",
+    "reason": "Useful for an experienced collector who knows other printings. But make the comparison concrete and avoid implying a particular interpretation is objectively correct.",
+    "good": false
+   }
+  ],
+  "insight": "ARTWORK INTELLIGENCE · A strong interpretation starts with observable details. Ask what the artist makes you notice, then distinguish your interpretation from a verified fact."
+ },
+ {
+  "tag": "SELLER ACADEMY · BUYER FIT",
+  "name": "Magikarp · Price objection",
+  "image": "https://images.pokemontcg.io/sv2/203.png",
+  "glyph": "✦",
+  "glow": "#e17fbd",
+  "source": "https://www.pokemon.com/uk/pokemon-tcg/pokemon-cards/series/sv02/203",
+  "story": "A collector is considering your specific Magikarp 203/193. They like the artwork, but say the price feels high. This is a fictional sales conversation; we have not supplied a live asking price or comparable sales.",
+  "question": "What would you do before deciding whether to offer a discount?",
+  "choices": [
+   {
+    "label": "Ask what comparable copies they've seen and check condition-matched sold prices",
+    "reason": "Best first step for a price objection. You can establish whether the gap reflects condition, timing or a genuinely different market expectation.",
+    "good": true
+   },
+   {
+    "label": "Explain what makes this specific copy attractive, using clear condition photos",
+    "reason": "Useful if the buyer is uncertain about quality. It is less persuasive if the objection is strictly the market price, so first learn what they are comparing against.",
+    "good": false
+   },
+   {
+    "label": "Ask whether their budget is firm and offer a payment-free alternative",
+    "reason": "Reasonable when the buyer is budget-constrained. It should not become pressure to spend more or a distraction from the original price question.",
+    "good": false
+   }
+  ],
+  "insight": "SELLER INTELLIGENCE · Diagnose the objection before responding. A price concern can mean different things: budget, comparables, condition uncertainty or lack of conviction."
+ }
 ];
 function renderDiscovery(){
  const d=DISCOVERY_STORIES[discoveryIndex];
