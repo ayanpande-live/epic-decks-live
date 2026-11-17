@@ -102,30 +102,30 @@ function fillSelect(el,cards,selected,placeholder){
 // Curated fictional teaching content. Explanations are general principles, not real card metadata.
 // Real card metadata is grounded in linked publisher card records; scenarios are simulated.
 const DISCOVERY_STORIES=[
- {tag:"ARTWORK DETECTIVE · VERIFIED CARD",name:"Magikarp · 203/193",image:"https://images.pokemontcg.io/sv2/203.png",glyph:"✧",glow:"#47bfe8",source:"https://www.pokemon.com/uk/pokemon-tcg/pokemon-cards/series/sv02/203",
-  story:"This is a real Illustration Rare Magikarp from Scarlet & Violet—Paldea Evolved, illustrated by Shinji Kanda. The card number 203/193 is beyond the main 193-card sequence. The question is how to talk about its appeal without confusing rarity classification with guaranteed value.",
-  question:"An art collector is choosing between Magikarp 042/193 and 203/193. What should you compare FIRST?",
+ {tag:"CARD DETECTIVE · REAL PRINTING",name:"Magikarp · 203/193",image:"https://images.pokemontcg.io/sv2/203.png",glyph:"✧",glow:"#47bfe8",source:"https://www.pokemon.com/uk/pokemon-tcg/pokemon-cards/series/sv02/203",
+  story:"Magikarp 203/193 is a real Paldea Evolved Illustration Rare illustrated by Shinji Kanda. You have a copy in hand and a collector is interested in this exact printing. The next step is to understand the card in front of you, not compare it with an unrelated cheap card.",
+  question:"Before describing this particular copy as near mint, what would you inspect most closely?",
   choices:[
-   {label:"The two illustrations and how each printing expresses the character",reason:"Best for an art-first buyer. Compare the actual imagery before moving to rarity, condition and price.",good:true},
-   {label:"Their rarity classifications and recent completed sales",reason:"Important if scarcity or budget drives the choice. But those numbers don't reveal which artwork resonates with this collector.",good:false},
-   {label:"The physical condition and centering of available copies",reason:"Essential when comparing specific copies or considering grading. It doesn't establish which illustration the buyer prefers.",good:false}
-  ],insight:"DISCOVERY · Card numbers identify printings, not population. A number higher than the main set total is not evidence of how many copies exist."},
- {tag:"COLLECTOR'S EYE · VERIFIED CARD",name:"Gardevoir ex · 245/198",image:"https://images.pokemontcg.io/sv1/245.png",glyph:"◇",glow:"#a38de8",source:"https://www.pokemon.com/uk/pokemon-tcg/pokemon-cards/series/sv01/245",
-  story:"This real Scarlet & Violet Special Illustration Rare is illustrated by Jiro Sasumo. The official card record lists 310 HP and the Psychic Embrace Ability. An artwork collector and a competitive player may value different things about the same printing.",
-  question:"An illustration collector is comparing Gardevoir ex 245/198 and 228/198. Which angle would you lead with?",
+   {label:"Corners and edges under good lighting, then the front and back surfaces",reason:"A strong inspection sequence. Edge whitening, corner wear and surface marks can affect condition even when the front looks excellent. Check centering too, and disclose what you find.",good:true},
+   {label:"Centering first, followed by corners and surface condition",reason:"Also a defensible approach, especially if the buyer is grading-focused. Centering is easy to notice, but it is not a substitute for inspecting the rest of the card.",good:false},
+   {label:"Surface under angled light first, then edges, corners and centering",reason:"Also reasonable, particularly for spotting scratches or print lines. What matters is a consistent, complete inspection rather than one magic order.",good:false}
+  ],insight:"COLLECTOR INSIGHT · The real skill is documenting the condition of the exact copy, not selecting a single inspection order. A condition description is only as useful as the evidence behind it."},
+ {tag:"COLLECTOR'S EYE · REAL PRINTING",name:"Gardevoir ex · 245/198",image:"https://images.pokemontcg.io/sv1/245.png",glyph:"◇",glow:"#a38de8",source:"https://www.pokemon.com/uk/pokemon-tcg/pokemon-cards/series/sv01/245",
+  story:"Gardevoir ex 245/198 is a real Scarlet & Violet Special Illustration Rare illustrated by Jiro Sasumo. Imagine you own two raw copies of this exact printing. One looks better centered; the other has cleaner edges. Neither has been professionally graded.",
+  question:"You're deciding which copy to submit for grading. What's the strongest next step?",
   choices:[
-   {label:"Compare the artwork's composition and visual storytelling",reason:"Best match for the buyer's expressed preference. The other factors can inform their decision after seeing both illustrations.",good:true},
-   {label:"Compare rarity categories and how they affect availability",reason:"A legitimate collector consideration, but rarity categories don't quantify print runs and may be secondary for an art-first buyer.",good:false},
-   {label:"Compare the cards' usefulness in a playable deck",reason:"Useful for a competitive player. Ask whether playability matters before making it the main argument.",good:false}
-  ],insight:"DISCOVERY · Character name alone is not enough. Set + number + printing are the starting point for meaningful collector comparisons."},
- {tag:"SELLER'S INSTINCT · REAL CARD",name:"Magikarp · Buyer conversation",image:"https://images.pokemontcg.io/sv2/203.png",glyph:"✦",glow:"#e17fbd",source:"https://www.pokemon.com/uk/pokemon-tcg/pokemon-cards/series/sv02/203",
-  story:"You're showing the real Magikarp Illustration Rare 203/193 to a simulated buyer. They like the artwork but say your hypothetical asking price feels high. No current comparable sales have been provided in this exercise.",
-  question:"A buyer likes Magikarp 203/193 but hesitates over the price. Which next step best addresses that concern?",
+   {label:"Inspect both copies systematically across centering, corners, edges and surface",reason:"Best overall approach. You cannot infer a grade from one attractive feature. Use consistent lighting, magnification where useful, and the grading company's published standards.",good:true},
+   {label:"Prioritize the better-centered copy and check its surface afterward",reason:"Reasonable as an initial filter if centering is clearly poor on one copy. But the cleaner-edged copy could still be stronger overall; don't decide before completing both inspections.",good:false},
+   {label:"Estimate resale premiums before deciding whether either copy is worth grading",reason:"Economically sensible if resale is the goal. Still, you need a realistic condition assessment, grading fees and recent comparable sales to estimate whether submission is worthwhile.",good:false}
+  ],insight:"COLLECTOR INSIGHT · Grading decisions combine condition, grading standards, costs and personal goals. There is no reliable grade prediction from centering alone."},
+ {tag:"SELLER SIMULATOR · SAME CARD",name:"Magikarp · 203/193",image:"https://images.pokemontcg.io/sv2/203.png",glyph:"✦",glow:"#e17fbd",source:"https://www.pokemon.com/uk/pokemon-tcg/pokemon-cards/series/sv02/203",
+  story:"A buyer specifically wants your Magikarp 203/193. In this fictional negotiation, your raw copy is listed at €200 and another seller offers the same printing at €185. You have not yet compared the two copies' conditions, shipping terms or seller protections. These prices are hypothetical, not market quotes.",
+  question:"The buyer asks why your copy costs €15 more. What do you do next?",
   choices:[
-   {label:"Clarify their budget and check recent sold comparables for the exact printing",reason:"Best immediate response to a price objection. Compare condition and language as well as the printing.",good:true},
-   {label:"Show detailed condition photos and explain grading possibilities",reason:"Helpful for trust and perceived quality, but it may not resolve the price question without market comparisons.",good:false},
-   {label:"Offer to compare a cheaper Magikarp printing instead",reason:"A sensible alternative if they value the character more than this specific printing. First establish whether substitutions are welcome.",good:false}
-  ],insight:"SELLER INSIGHT · A strong pitch connects verifiable card identity and buyer preferences. Pricing claims need current, comparable evidence."}
+   {label:"Compare condition photos, delivery and protection before defending the premium",reason:"A sensible first move: establish whether the offers are truly comparable. If yours offers no meaningful advantage, reconsider the asking price rather than inventing one.",good:true},
+   {label:"Offer a small discount immediately to narrow the gap",reason:"A valid commercial tactic when margin allows, but you may concede before understanding whether the two offers are equivalent. Check your costs and floor price.",good:false},
+   {label:"Ask what matters most to the buyer and offer detailed images of your copy",reason:"A strong relationship-led approach. It may reveal that condition or trust matters more than €15, but you still need evidence before making price comparisons.",good:false}
+  ],insight:"SELLER INSIGHT · Compete on like-for-like evidence, not invented scarcity. The best response depends on the buyer's priorities, the true condition difference and your minimum acceptable price."}
 ];
 function renderDiscovery(){
  const d=DISCOVERY_STORIES[discoveryIndex];
