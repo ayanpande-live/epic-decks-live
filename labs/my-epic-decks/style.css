@@ -262,3 +262,21 @@ footer{border-top:1px solid #415f78;display:flex;justify-content:space-between;g
 .discovery-art{background:radial-gradient(circle at 50% 50%,var(--discovery-glow),#111c2e 85%);padding:12px;overflow:hidden}
 .discovery-card-image{display:block;max-width:100%;max-height:300px;width:auto;height:auto;object-fit:contain;filter:drop-shadow(0 9px 18px #0008);border-radius:9px}
 @media(max-width:700px){.discovery-art{padding:3px;overflow:visible}.discovery-card-image{width:100%;height:100%;max-height:100%;object-fit:contain;border-radius:4px}}
+
+/* Collector's Eye: structured evidence and comparison. */
+.compare-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:15px;align-items:start;margin:14px 0 28px}
+.compare-panel{border:1px solid #496980;border-radius:18px;background:#13283f;padding:18px;min-width:0}
+.compare-result{grid-column:1/-1}.compare-panel p{color:#c4d7e6;line-height:1.55}
+.compare-topline{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:14px}.compare-topline strong{color:#fff}
+.compare-pair{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:15px}
+.compare-card{background:#1d3851;border:1px solid #456b85;border-radius:13px;padding:12px;min-width:0;display:flex;flex-direction:column;gap:9px}
+.compare-card img{height:190px;max-width:100%;object-fit:contain;align-self:center}.compare-card strong{display:block;color:#fff}.compare-card small{display:block;color:#bdd1df;margin:5px 0 12px;line-height:1.4}
+.compare-panel label{display:block;color:#d9e8f1;font-size:12px;font-weight:700;margin:7px 0}
+.compare-panel input,.compare-panel select,.compare-panel textarea{width:100%;min-width:0;background:#0e1d30;border:1px solid #5d7e96;border-radius:9px;color:#fff;padding:10px;font-size:14px}
+.compare-hint{font-size:12px}.compare-evidence-head,.compare-evidence-row{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr) minmax(0,1fr);gap:8px;align-items:center}
+.compare-evidence-head{font-size:10px;color:#a9c3d4;text-transform:uppercase;letter-spacing:.08em;padding:5px 0}
+.compare-evidence-row{border-top:1px solid #ffffff15;padding:8px 0}.compare-evidence-row label{font-size:11px;line-height:1.3;margin:0}
+.compare-evidence-row input{font-size:13px;padding:9px 6px}
+.compare-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:13px}.compare-actions .btn{flex:1;min-height:44px}
+.compare-result p{font-size:13px;margin:9px 0}.compare-result strong{color:#f8d884}
+@media(max-width:750px){.compare-layout{grid-template-columns:1fr;gap:10px}.compare-result{grid-column:auto}.compare-panel{padding:13px}.compare-card img{height:120px}.compare-card{padding:9px}.compare-card strong{font-size:13px}.compare-card small{font-size:10px}.compare-evidence-row label{font-size:10px}.compare-panel .btn{font-size:11px}.compare-evidence-row input{font-size:12px}}
