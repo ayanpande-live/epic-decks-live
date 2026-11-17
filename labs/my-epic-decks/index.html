@@ -21,7 +21,7 @@
 <nav class="desktop-nav" aria-label="Primary">
  <button type="button" data-screen="home" aria-current="page">Dashboard</button>
  <button type="button" data-screen="collection">My collection</button>
- <button type="button" data-screen="discover">Discovery Lab</button>
+ <button type="button" data-screen="discover">Discovery Lab</button><button type="button" data-screen="compare">Compare cards</button>
  <button type="button" data-screen="learn">Memory practice</button>
  <button type="button" data-screen="sell">Seller Studio</button>
 </nav>
@@ -32,7 +32,7 @@
     <span class="eyebrow">YOUR CARDS. YOUR SUPERPOWER.</span>
     <h1 id="home-title">KNOW IT.<br><em>SHOW IT.</em><br>LEVEL UP.</h1>
     <p>Explore the stories behind collectible cards. Make collector decisions, discover new perspectives and level up.</p>
-    <div class="hero-actions"><button type="button" class="btn primary" data-screen="discover">Play Discovery Lab <span aria-hidden="true">↗</span></button><button type="button" class="btn ghost" data-action="load-demo">Explore demo cards</button></div>
+    <div class="hero-actions"><button type="button" class="btn primary" data-screen="discover">Play Discovery Lab <span aria-hidden="true">↗</span></button><button type="button" class="btn ghost" data-action="load-demo">Explore demo cards</button><button type="button" class="btn ghost" data-screen="compare">Compare two cards ⚖</button></div>
     <span class="hero-notice">No signup · No payments · All data stays in this browser</span>
    </div>
    <div class="hero-art" aria-hidden="true"><span class="orbit one"></span><span class="orbit two"></span><div class="lesson-card back"><div class="holo-arc"></div><span class="card-glyph">✦</span><span>ELEMENTAL FIELD GUIDE</span></div><div class="lesson-card front"><span>YOUR NEXT<br>CHALLENGE</span><div class="shine">◇</div><strong>+12 XP</strong></div><div class="hero-sticker">LEARN.<br>PLAY.<br>REPEAT.</div></div>
@@ -52,7 +52,29 @@
   <div class="notice-panel"><strong>A real prototype, not a live product.</strong><span>All 12 built-in cards are fictional learning examples. Facts from manually imported cards are user-provided and not independently verified. No AI, speech recognition, live pricing or cloud sync is enabled.</span></div>
  </section>
 
- <section id="discover" class="screen" hidden aria-labelledby="discover-title">
+ <section id="compare" class="screen" hidden aria-labelledby="compare-title">
+ <div class="page-heading"><span class="eyebrow">COLLECTOR'S EYE · DECISION DESK</span><h1 id="compare-title">COMPARE <em>SMARTER.</em></h1><p>Compare specific printings at real asking prices. Enter verified observations to reveal the trade-offs; no fabricated populations or market quotes.</p></div>
+ <div class="compare-layout">
+  <div class="compare-panel">
+   <div class="compare-topline"><strong>01 / Your shortlist</strong><span class="quiet">Private · Saved on this device</span></div>
+   <div class="compare-pair">
+    <div class="compare-card"><img src="https://images.pokemontcg.io/base1/58.png" alt="Base Set Pikachu 58/102" loading="lazy"><div><strong>Base Set Pikachu</strong><small>58/102 · Yellow Cheeks · English Unlimited · ACE 10</small><label for="cmp-a-price">Asking price (€)</label><input id="cmp-a-price" type="number" min="0" step="0.01" value="200" inputmode="decimal"></div></div>
+    <div class="compare-card"><img src="https://images.pokemontcg.io/base2/60.png" alt="Jungle Pikachu 60/64" loading="lazy"><div><strong>Jungle Pikachu</strong><small>60/64 · English Unlimited · ACE 10</small><label for="cmp-b-price">Asking price (€)</label><input id="cmp-b-price" type="number" min="0" step="0.01" value="200" inputmode="decimal"></div></div>
+   </div>
+   <label for="cmp-goal">What matters most to you?</label><select id="cmp-goal"><option value="balanced">Balanced collecting decision</option><option value="resale">Resale and liquidity</option><option value="scarcity">Graded scarcity</option><option value="personal">Personal collection</option></select>
+  </div>
+  <div class="compare-panel">
+   <div class="compare-topline"><strong>02 / Evidence notebook</strong><span class="quiet">Optional · No live feed</span></div>
+   <p class="compare-hint">Enter observations only if you've checked the exact variant, grade and source. Unknown is better than guessed.</p>
+   <div class="compare-evidence-head"><span>Metric</span><span>Base Set</span><span>Jungle</span></div>
+   <div id="compare-evidence"></div>
+   <label for="cmp-notes">Sources and observations</label><textarea id="cmp-notes" rows="2" placeholder="Source links, dates, grading-population notes, recent sold comparables…"></textarea>
+   <div class="compare-actions"><button id="cmp-analyze" class="btn primary" type="button">Evaluate evidence →</button><button id="cmp-clear" class="btn outline" type="button">Clear observations</button></div>
+  </div>
+  <div id="cmp-result" class="compare-panel compare-result" role="status" aria-live="polite"><strong>03 / Decision briefing</strong><p>Start with the two exact card identities, then add population and sales evidence. We'll highlight what is still unknown rather than invent a winner.</p></div>
+ </div>
+</section>
+<section id="discover" class="screen" hidden aria-labelledby="discover-title">
   <div class="page-heading"><span class="eyebrow">DISCOVERY LAB · PLAY TO UNDERSTAND</span><h1 id="discover-title">SEE MORE. <em>KNOW WHY.</em></h1><p>Explore real Pokémon card facts and make collector decisions. Buyer conversations are simulated; no market-price advice.</p></div>
   <div class="discovery-shell">
     <div class="discovery-head"><span id="discovery-counter" class="eyebrow">STORY 01 / 03</span><span id="discovery-status" class="quiet">Curiosity first · No pressure</span></div>
@@ -132,7 +154,7 @@
   </div>
  </section>
 </main>
-<nav class="mobile-nav" aria-label="Mobile navigation"><button type="button" data-screen="home"><span>⌂</span>Home</button><button type="button" data-screen="discover"><span>✧</span>Discover</button><button type="button" data-screen="collection"><span>▣</span>Cards</button><button type="button" data-screen="sell"><span>◆</span>Sell</button></nav>
+<nav class="mobile-nav" aria-label="Mobile navigation"><button type="button" data-screen="home"><span>⌂</span>Home</button><button type="button" data-screen="discover"><span>✧</span>Discover</button><button type="button" data-screen="compare"><span>⚖</span>Compare</button><button type="button" data-screen="collection"><span>▣</span>Cards</button></nav>
 <footer><span>MY EPIC DECKS · DEVELOPMENT PREVIEW</span><span>FICTIONAL DEMO CARDS · NO LIVE INTEGRATIONS OR PAYMENTS</span></footer>
 </div>
 <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
