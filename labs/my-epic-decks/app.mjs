@@ -8,7 +8,7 @@ const STORAGE="myepicdecks-collector-learning-prototype-v1";
 const $=(s)=>document.querySelector(s);
 const select=(s)=>Array.from(document.querySelectorAll(s));
 let state=readState(),activeScreen="home",csvPreview=null,quizIdentity="",quizIndex=0,answerVisible=false;
-let photoObjectUrl=null,toastTimer=null,questMode=false,questSteps=0,choiceResolved=false;
+let photoObjectUrl=null,toastTimer=null,questMode=false,questSteps=0,choiceResolved=false,discoveryIndex=0,discoveryAnswered=false;
 function readState(){
  try {const raw=localStorage.getItem(STORAGE);return raw?safeState(JSON.parse(raw)):createState()}
  catch {return createState()}
@@ -45,13 +45,14 @@ function stats(){
  $("#toggle-pro").textContent=state.proPreview?"Disable Pro preview":"Enable Pro preview (no payment)";
 }
 function go(screen){
- if(!["home","collection","learn","sell","plans"].includes(screen))return;
+ if(!["home","collection","discover","learn","sell","plans"].includes(screen))return;
  activeScreen=screen;
  select(".screen").forEach(s=>s.hidden=s.id!==screen);
  select("[data-screen]").forEach(b=>{
   if(b.matches("button")){if(b.dataset.screen===screen)b.setAttribute("aria-current","page");else b.removeAttribute("aria-current")}
  });
  window.scrollTo({top:0,behavior:"auto"});
+ if(screen==="discover")renderDiscovery();
  if(screen==="learn")renderTraining();
  if(screen==="sell")renderSeller();
 }
@@ -97,6 +98,62 @@ function fillSelect(el,cards,selected,placeholder){
  el.value=cards.some(c=>cardIdentity(c)===old)?old:cardIdentity(cards[0]);
  return el.value;
 }
+
+// Curated fictional teaching content. Explanations are general principles, not real card metadata.
+const DISCOVERY_STORIES=[
+ {tag:"ARTWORK DETECTIVE",name:"Aurora Fox",glyph:"✧",glow:"#47bfe8",
+  story:"A fictional card shows a small fox looking back toward a bright halo. The foil looks dramatic, but the illustrator's use of negative space is what makes the character stand out.",
+  question:"You're showing this card to someone who collects artwork. What would you point out first?",
+  choices:[
+   {label:"The contrast between the halo and the empty space",reason:"Exactly the kind of observation that helps an artwork collector appreciate composition. You can explain what you actually see without inventing rarity claims.",good:true},
+   {label:"It must be the rarest card in the set",reason:"A dramatic illustration does not establish print rarity. To make that claim, you'd need a reliable source for the specific printing.",good:false},
+   {label:"The artwork guarantees future price growth",reason:"Artwork can influence personal appeal, but it does not guarantee demand or future prices. Lead with a visible detail instead.",good:false}
+  ],insight:"COLLECTOR INSIGHT · Composition can be a better conversation starter than an unsupported claim of rarity. Notice contrast, framing and where your eye is drawn."},
+ {tag:"COLLECTOR'S EYE",name:"Crystal Finch",glyph:"◇",glow:"#a38de8",
+  story:"Two fictional versions of Crystal Finch are offered: a raw card with striking artwork and visible corner wear, and a graded copy with a clearly documented condition label.",
+  question:"A buyer cares most about knowing the card's condition before purchasing. Which approach is more useful?",
+  choices:[
+   {label:"Explain the graded label and its limits, then show photos",reason:"This addresses the buyer's priority with evidence. A grade is a professional opinion at a point in time; photos and clear disclosures still matter.",good:true},
+   {label:"Tell them every graded card is flawless",reason:"Grading scales and standards differ. A grade does not mean all defects are impossible, so avoid an absolute promise.",good:false},
+   {label:"Ignore condition and only discuss the character",reason:"The character might be appealing, but it does not address the buyer's expressed concern. Ask what matters and respond with relevant evidence.",good:false}
+  ],insight:"COLLECTOR INSIGHT · Buyer fit is contextual. The strongest recommendation addresses what the buyer values, not what the seller most wants to talk about."},
+ {tag:"SELLER'S INSTINCT",name:"Night Bloom",glyph:"✦",glow:"#e17fbd",
+  story:"A fictional collector likes Night Bloom's violet shadows, but says the asking price feels high. You do not have reliable comparable sales data in this exercise.",
+  question:"What's the best next move?",
+  choices:[
+   {label:"Ask what they collect and explain the artwork without price promises",reason:"This keeps the conversation useful and honest. If pricing matters, look up comparable completed sales before making a market claim.",good:true},
+   {label:"Claim the card will double in value",reason:"No evidence supports that prediction. Pressure and speculative guarantees weaken trust.",good:false},
+   {label:"Say it is the cheapest available anywhere",reason:"Without verified, current comparable listings, a market-wide superlative is not defensible.",good:false}
+  ],insight:"SELLER INSIGHT · A good pitch is a conversation. Buyer questions, verified facts and transparency usually create more trust than exaggerated claims."}
+];
+function renderDiscovery(){
+ const d=DISCOVERY_STORIES[discoveryIndex];
+ $("#discovery-counter").textContent="STORY "+String(discoveryIndex+1).padStart(2,"0")+" / "+String(DISCOVERY_STORIES.length).padStart(2,"0");
+ $("#discovery-status").textContent=discoveryAnswered?"Insight unlocked":"Explore · Decide · Discover";
+ $("#discovery-tag").textContent=d.tag;$("#discovery-name").textContent=d.name;
+ $("#discovery-story").textContent=d.story;$("#discovery-question").textContent=d.question;
+ $("#discovery-art").textContent=d.glyph;$("#discovery-art").style.setProperty("--discovery-glow",d.glow);
+ const choices=$("#discovery-choices");choices.replaceChildren();
+ d.choices.forEach((choice,i)=>{
+  const button=element("button","discovery-choice",choice.label);button.type="button";
+  if(discoveryAnswered){button.disabled=true;if(choice.good)button.classList.add("correct")}
+  button.addEventListener("click",()=>{
+   if(discoveryAnswered)return;
+   discoveryAnswered=true;
+   const feedback=$("#discovery-feedback");feedback.replaceChildren();
+   feedback.append(element("strong","",choice.good?"Great collector thinking.":"Here's the trade-off."));
+   feedback.append(element("p","",choice.reason));
+   const insight=$("#discovery-insight");insight.textContent=d.insight;insight.hidden=false;
+   $("#discovery-next").hidden=false;
+   renderDiscovery();
+  });
+  choices.append(button);
+ });
+ if(!discoveryAnswered){$("#discovery-feedback").replaceChildren();$("#discovery-insight").hidden=true}
+ $("#discovery-next").hidden=!discoveryAnswered;
+ $("#discovery-next").textContent=discoveryIndex===DISCOVERY_STORIES.length-1?"Play again ↻":"Next discovery →";
+}
+
 function answerChoices(card,fact){
  const field=({ "Card identity":"name","Set / series":"set","Card number":"number","Illustrator":"artist","Visual feature":"feature","Pose / stance":"pose","Variant":"variant","Language":"language" })[fact.label];
  if(!field)return [];
@@ -108,7 +165,8 @@ function answerChoices(card,fact){
  const arr=[fact.value,a,b];const offset=seed%3;
  return [...arr.slice(offset),...arr.slice(0,offset)];
 }
-function startQuickQuest(){
+function startQuickQuest(){go("discover");}
+function startMemoryQuest(){
  if(!state.cards.length){const added=mergeCards(state,DEMO_CARDS);state=added.state;persist()}
  const card=state.cards.find(c=>!!state.unlocked[cardIdentity(c)])||state.cards[0];
  const id=cardIdentity(card);
@@ -274,6 +332,8 @@ function bind(){
  $("#learn-card").addEventListener("change",e=>{quizIdentity=e.target.value;quizIndex=0;answerVisible=false;choiceResolved=false;questMode=false;renderTraining()});
  $("#reveal-fact").addEventListener("click",()=>{answerVisible=true;choiceResolved=false;renderTraining()});
  $("#quick-quest").addEventListener("click",startQuickQuest);
+ $("#discovery-reset").addEventListener("click",()=>{discoveryIndex=0;discoveryAnswered=false;renderDiscovery()});
+ $("#discovery-next").addEventListener("click",()=>{discoveryIndex=(discoveryIndex+1)%DISCOVERY_STORIES.length;discoveryAnswered=false;renderDiscovery()});
  $("#remembered").addEventListener("click",()=>finishPractice(true));
  $("#review-again").addEventListener("click",()=>finishPractice(false));
  $("#sell-card").addEventListener("change",renderSeller);
