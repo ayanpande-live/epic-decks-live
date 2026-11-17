@@ -102,29 +102,29 @@ function fillSelect(el,cards,selected,placeholder){
 // Curated fictional teaching content. Explanations are general principles, not real card metadata.
 // Real card metadata is grounded in linked publisher card records; scenarios are simulated.
 const DISCOVERY_STORIES=[
- {tag:"ARTWORK DETECTIVE · VERIFIED CARD",name:"Magikarp · 203/193",glyph:"✧",glow:"#47bfe8",source:"https://www.pokemon.com/uk/pokemon-tcg/pokemon-cards/series/sv02/203",
+ {tag:"ARTWORK DETECTIVE · VERIFIED CARD",name:"Magikarp · 203/193",image:"https://images.pokemontcg.io/sv2/203.png",glyph:"✧",glow:"#47bfe8",source:"https://www.pokemon.com/uk/pokemon-tcg/pokemon-cards/series/sv02/203",
   story:"This is a real Illustration Rare Magikarp from Scarlet & Violet—Paldea Evolved, illustrated by Shinji Kanda. The card number 203/193 is beyond the main 193-card sequence. The question is how to talk about its appeal without confusing rarity classification with guaranteed value.",
-  question:"A collector asks what makes this Magikarp different from the regular 042/193 printing. What would you explain?",
+  question:"An art collector is choosing between Magikarp 042/193 and 203/193. What should you compare FIRST?",
   choices:[
-   {label:"It's a distinct Illustration Rare printing with different artwork",reason:"Yes. The two numbers identify different printings. You can compare their art and documented rarity classifications without claiming future price gains.",good:true},
-   {label:"It must be worth more every year",reason:"A rarity label doesn't predict prices. Demand, supply, condition and actual transactions matter.",good:false},
-   {label:"203/193 means only 203 copies were printed",reason:"The numerator is the card's number in the set, not its print run. This is a useful collector misconception to catch.",good:false}
+   {label:"The two illustrations and how each printing expresses the character",reason:"Best for an art-first buyer. Compare the actual imagery before moving to rarity, condition and price.",good:true},
+   {label:"Their rarity classifications and recent completed sales",reason:"Important if scarcity or budget drives the choice. But those numbers don't reveal which artwork resonates with this collector.",good:false},
+   {label:"The physical condition and centering of available copies",reason:"Essential when comparing specific copies or considering grading. It doesn't establish which illustration the buyer prefers.",good:false}
   ],insight:"DISCOVERY · Card numbers identify printings, not population. A number higher than the main set total is not evidence of how many copies exist."},
- {tag:"COLLECTOR'S EYE · VERIFIED CARD",name:"Gardevoir ex · 245/198",glyph:"◇",glow:"#a38de8",source:"https://www.pokemon.com/uk/pokemon-tcg/pokemon-cards/series/sv01/245",
+ {tag:"COLLECTOR'S EYE · VERIFIED CARD",name:"Gardevoir ex · 245/198",image:"https://images.pokemontcg.io/sv1/245.png",glyph:"◇",glow:"#a38de8",source:"https://www.pokemon.com/uk/pokemon-tcg/pokemon-cards/series/sv01/245",
   story:"This real Scarlet & Violet Special Illustration Rare is illustrated by Jiro Sasumo. The official card record lists 310 HP and the Psychic Embrace Ability. An artwork collector and a competitive player may value different things about the same printing.",
-  question:"A buyer says they love illustration-focused cards, but don't know the difference between this and another Gardevoir ex. Where do you start?",
+  question:"An illustration collector is comparing Gardevoir ex 245/198 and 228/198. Which angle would you lead with?",
   choices:[
-   {label:"Confirm the set, number, illustrator and artwork first",reason:"Correct. Specific print identification helps the buyer compare like with like. Then you can explore the art and condition.",good:true},
-   {label:"Focus only on the 310 HP",reason:"310 HP is a verified card attribute, but it doesn't address the buyer's stated artwork preference.",good:false},
-   {label:"Call every Gardevoir ex printing equally rare",reason:"Different printings can have different rarity classifications. Always identify the exact set and card number.",good:false}
+   {label:"Compare the artwork's composition and visual storytelling",reason:"Best match for the buyer's expressed preference. The other factors can inform their decision after seeing both illustrations.",good:true},
+   {label:"Compare rarity categories and how they affect availability",reason:"A legitimate collector consideration, but rarity categories don't quantify print runs and may be secondary for an art-first buyer.",good:false},
+   {label:"Compare the cards' usefulness in a playable deck",reason:"Useful for a competitive player. Ask whether playability matters before making it the main argument.",good:false}
   ],insight:"DISCOVERY · Character name alone is not enough. Set + number + printing are the starting point for meaningful collector comparisons."},
- {tag:"SELLER'S INSTINCT · REAL CARD",name:"Magikarp · Buyer conversation",glyph:"✦",glow:"#e17fbd",source:"https://www.pokemon.com/uk/pokemon-tcg/pokemon-cards/series/sv02/203",
+ {tag:"SELLER'S INSTINCT · REAL CARD",name:"Magikarp · Buyer conversation",image:"https://images.pokemontcg.io/sv2/203.png",glyph:"✦",glow:"#e17fbd",source:"https://www.pokemon.com/uk/pokemon-tcg/pokemon-cards/series/sv02/203",
   story:"You're showing the real Magikarp Illustration Rare 203/193 to a simulated buyer. They like the artwork but say your hypothetical asking price feels high. No current comparable sales have been provided in this exercise.",
-  question:"What's the best next move?",
+  question:"A buyer likes Magikarp 203/193 but hesitates over the price. Which next step best addresses that concern?",
   choices:[
-   {label:"Ask what matters to them, explain the printing and check sold comparables",reason:"Strong approach. Explain the real set/printing details, ask about buyer priorities and verify recent comparable sales before discussing market value.",good:true},
-   {label:"Guarantee the card will double in value",reason:"That prediction is unsupported. Never present speculation as a guarantee.",good:false},
-   {label:"Claim it's the cheapest copy in Europe",reason:"Without current like-for-like listings and condition checks, that claim cannot be substantiated.",good:false}
+   {label:"Clarify their budget and check recent sold comparables for the exact printing",reason:"Best immediate response to a price objection. Compare condition and language as well as the printing.",good:true},
+   {label:"Show detailed condition photos and explain grading possibilities",reason:"Helpful for trust and perceived quality, but it may not resolve the price question without market comparisons.",good:false},
+   {label:"Offer to compare a cheaper Magikarp printing instead",reason:"A sensible alternative if they value the character more than this specific printing. First establish whether substitutions are welcome.",good:false}
   ],insight:"SELLER INSIGHT · A strong pitch connects verifiable card identity and buyer preferences. Pricing claims need current, comparable evidence."}
 ];
 function renderDiscovery(){
@@ -134,7 +134,7 @@ function renderDiscovery(){
  $("#discovery-tag").textContent=d.tag;$("#discovery-name").textContent=d.name;
  $("#discovery-story").textContent=d.story;$("#discovery-question").textContent=d.question;
  const source=$("#discovery-source");source.href=d.source;source.textContent="Verify card details ↗";
- $("#discovery-art").textContent=d.glyph;$("#discovery-art").style.setProperty("--discovery-glow",d.glow);
+ const art=$("#discovery-art");art.replaceChildren();art.style.setProperty("--discovery-glow",d.glow);if(d.image){const img=element("img","discovery-card-image");img.src=d.image;img.alt=d.name+" card image";img.loading="eager";img.addEventListener("error",()=>{art.replaceChildren(element("span","",d.glyph))},{once:true});art.append(img)}else art.textContent=d.glyph;
  const choices=$("#discovery-choices");choices.replaceChildren();
  d.choices.forEach((choice,i)=>{
   const button=element("button","discovery-choice",choice.label);button.type="button";
@@ -143,7 +143,7 @@ function renderDiscovery(){
    if(discoveryAnswered)return;
    discoveryAnswered=true;
    const feedback=$("#discovery-feedback");feedback.replaceChildren();
-   feedback.append(element("strong","",choice.good?"Great collector thinking.":"Here's the trade-off."));
+   feedback.append(element("strong","",choice.good?"Good judgment for this buyer.":"A reasonable approach — consider the priority."));
    feedback.append(element("p","",choice.reason));
    const insight=$("#discovery-insight");insight.textContent=d.insight;insight.hidden=false;
    $("#discovery-next").hidden=false;
