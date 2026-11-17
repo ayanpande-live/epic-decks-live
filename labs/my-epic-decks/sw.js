@@ -1,5 +1,5 @@
 // Scope restricted to /labs/my-epic-decks/. Caches only generic app shell; no personal collection or user photos.
-const CACHE="med-collector-demo-shell-v2";
+const CACHE="med-collector-demo-shell-v3";
 const ASSETS=["./index.html","./style.css","./app.mjs","./core.mjs","./manifest.webmanifest"];
 self.addEventListener("install",event=>{
  event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(ASSETS)).then(()=>self.skipWaiting()));
