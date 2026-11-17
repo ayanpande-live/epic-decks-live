@@ -23,16 +23,12 @@ jobs:
         with:
           role-to-assume: ${{ vars.AWS_ROLE_ARN }}
           aws-region: ${{ vars.AWS_REGION || 'eu-west-3' }}
-      - name: Sync static files
+      - name: Sync only approved game preview paths
         env:
           BUCKET: ${{ vars.AWS_STATIC_BUCKET }}
         run: |
-          aws s3 sync . "s3://$BUCKET/" --delete \
-            --exclude ".git/*" --exclude ".github/*" \
-            --exclude "*.md" --exclude "vercel.json" \
-            --exclude ".env*" --exclude "node_modules/*" \
-            --exclude "*.map" --exclude "*.zip" \
-            --exclude ".DS_Store"
+          aws s3 sync labs/my-epic-decks/ "s3://$BUCKET/labs/my-epic-decks/" --delete --exclude "*.map" --exclude "*.zip"
+          aws s3 sync labs/trading-floor/ "s3://$BUCKET/labs/trading-floor/" --delete --exclude "*.map" --exclude "*.zip"
       - name: Invalidate CloudFront cache
         env:
           DIST: ${{ vars.AWS_CLOUDFRONT_DISTRIBUTION_ID }}
