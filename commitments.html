@@ -408,6 +408,33 @@
 
       footer { padding: 44px 22px; }
     }
+
+    .impact-intro { max-width:760px; margin:0 auto; text-align:center; color:var(--white-dim); }
+    .impact-story-head { text-align:center; max-width:820px; margin:0 auto 46px; }
+    .impact-story-head p { color:var(--white-dim); font-size:1.04rem; }
+    .impact-feature { display:grid; grid-template-columns:minmax(220px,0.8fr) 1.2fr; overflow:hidden; border:1px solid rgba(245,240,232,.14); background:linear-gradient(120deg,#10263b,#152a43); margin-bottom:24px; }
+    .impact-feature-art { min-height:280px; display:flex; align-items:center; justify-content:center; position:relative; background:radial-gradient(circle at 40% 35%,rgba(255,209,102,.23),transparent 65%),linear-gradient(140deg,#164159,#0a1628); }
+    .impact-feature-art::after { content:""; position:absolute; inset:22px; border:1px solid rgba(245,240,232,.13); border-radius:50%; }
+    .impact-feature-art span { font-size:clamp(5rem,12vw,9rem); filter:drop-shadow(0 14px 22px rgba(0,0,0,.3)); }
+    .impact-feature-copy { padding:clamp(28px,5vw,58px); display:flex; flex-direction:column; justify-content:center; }
+    .impact-feature-copy h3 { font-size:clamp(2.5rem,5vw,4.5rem); margin:12px 0 20px; }
+    .impact-feature-copy p { color:var(--white-dim); max-width:58ch; }
+    .impact-date { font-family:'Barlow Condensed',sans-serif; color:var(--gold); font-weight:700; letter-spacing:.14em; text-transform:uppercase; font-size:.88rem; }
+    .impact-amount { color:var(--gold); font-family:'Bebas Neue',sans-serif; font-size:3.2rem; line-height:1; margin-top:22px; }
+    .impact-amount small { display:block; font:600 .76rem 'Barlow Condensed',sans-serif; color:var(--white-dim); text-transform:uppercase; letter-spacing:.13em; }
+    .impact-ledger { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:18px; }
+    .impact-ledger article { display:grid; grid-template-columns:70px 1fr; gap:18px; padding:26px; border:1px solid rgba(245,240,232,.12); background:rgba(245,240,232,.045); }
+    .impact-ledger-icon { width:70px; height:70px; display:grid; place-items:center; font-size:2.5rem; border-radius:18px; background:rgba(0,180,216,.1); }
+    .impact-ledger h3 { font-size:1.8rem; line-height:1.05; margin:8px 0 12px; }
+    .impact-ledger p { color:var(--white-dim); font-size:.94rem; margin-bottom:12px; }
+    .impact-ledger .amount { font-family:'Bebas Neue',sans-serif; font-size:2rem; color:var(--gold); }
+    .impact-ledger .amount span { font:500 .8rem 'DM Sans',sans-serif; color:var(--white-dim); }
+    .impact-note { margin:24px auto 0; max-width:860px; padding:20px 24px; border-left:3px solid var(--blue); color:var(--white-dim); background:rgba(0,180,216,.055); font-size:.9rem; }
+    .impact-steps { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; margin-top:32px; }
+    .impact-step { padding:26px; border:1px solid rgba(245,240,232,.12); background:rgba(245,240,232,.04); }
+    .impact-step strong { display:block; color:var(--gold); font:700 1.2rem 'Barlow Condensed',sans-serif; text-transform:uppercase; margin-bottom:8px; }
+    .impact-step p { color:var(--white-dim); font-size:.94rem; }
+    @media(max-width:768px){.impact-feature{grid-template-columns:1fr}.impact-feature-art{min-height:185px}.impact-feature-art span{font-size:6rem}.impact-ledger{grid-template-columns:1fr}.impact-ledger article{grid-template-columns:54px 1fr;padding:18px;gap:14px}.impact-ledger-icon{width:54px;height:54px;font-size:2rem}.impact-steps{grid-template-columns:1fr}.impact-feature-copy{padding:26px}}
   </style>
 </head>
 
@@ -444,7 +471,7 @@
   <div class="inner">
     <h2 class="section-title">Community Impact<br>So Far</h2>
     <p class="hero-sub" style="text-align:center;">
-      We are building this step by step — with transparent records, live donation streams, and community voting.
+      €1,326 in confirmed donations, nine recipient contributions, and one simple idea: collecting can bring people together to do some good.
     </p>
 
     <div class="impact-grid">
@@ -530,19 +557,20 @@
 <section>
   <div class="inner">
     <div class="eyebrow" style="text-align:center;">Monthly Transparency</div>
-    <h2 class="section-title">Donation Records<br>& Stream Updates</h2>
+    <h2 class="section-title">The Causes Behind<br>Our Commitments</h2>
 
     <p class="hero-sub" style="text-align:center;margin-bottom:28px">Confirmed donations total <strong>€1,326</strong> through November 1, 2026. One possible additional entry remains to be reconciled. Dates reflect when donations were made; some streams covered earlier sales periods.</p>
-    <div class="timeline">
-      <div class="donation-record"><h3>September 2025 · Pilot stream · €76</h3><p>Stichting Leven met Kanker €50; UNICEF €26</p></div>
-      <div class="donation-record"><h3>27 April 2026 · March and April · €390</h3><p>Ronald McDonald Huis NL €390</p></div>
-      <div class="donation-record"><h3>31 May 2026 · €75</h3><p>WWF / Wereld Natuur Fonds €75</p></div>
-      <div class="donation-record"><h3>30 June 2026 · €130</h3><p>Voedselbank €130</p></div>
-      <div class="donation-record"><h3>July 2026 · No commitment stream</h3><p>Vacation break; no donation entry</p></div>
-      <div class="donation-record"><h3>30 August 2026 · €200</h3><p>Save the Children €100; UN World Food Programme €100</p></div>
-      <div class="donation-record"><h3>3 October 2026 · September · €215</h3><p>Dierenbescherming €215</p></div>
-      <div class="donation-record"><h3>1 November 2026 · October · €240</h3><p>Nationaal Ouderenfonds €240</p></div>
-    </div>
+    <div class="impact-story-head"><p>Every stream supports a different story. Explore the organizations our community has backed, why their work matters, and the confirmed contribution made.</p></div>
+    <div class="impact-feature"><div class="impact-feature-art"><span aria-hidden="true">🤝</span></div><div class="impact-feature-copy"><div class="impact-date">1 November 2026 · October commitment · Latest</div><h3>Making sure older people aren't forgotten.</h3><p><strong>Nationaal Ouderenfonds</strong> works to improve the lives of older people in the Netherlands, with a focus on connection, participation and reducing loneliness. Growing older shouldn't mean feeling left out of the community.</p><p style="margin-top:14px">Our latest confirmed commitment supported that mission.</p><div class="impact-amount">€240<small>Confirmed donation · Nationaal Ouderenfonds</small></div></div></div>
+    <div class="impact-ledger">      <article><div class="impact-ledger-icon" aria-hidden="true">🐾</div><div><div class="impact-date">3 October 2026 · September commitment</div><h3>Dierenbescherming</h3><p><strong>Animal welfare.</strong> Dierenbescherming works to improve animal welfare in the Netherlands, including protecting animals in need and encouraging responsible care. A cause that speaks to anyone who believes animals deserve safety and compassion.</p><div class="amount">€215 <span>confirmed donation</span></div></div></article>
+      <article><div class="impact-ledger-icon" aria-hidden="true">🧸</div><div><div class="impact-date">30 August 2026 · August commitment</div><h3>Save the Children</h3><p><strong>Children's wellbeing.</strong> Save the Children works to protect children's rights and help children facing hardship, emergencies and barriers to education. Supporting children means looking beyond the cards we collect to the futures they deserve.</p><div class="amount">€100 <span>confirmed donation</span></div></div></article>
+      <article><div class="impact-ledger-icon" aria-hidden="true">🌾</div><div><div class="impact-date">30 August 2026 · August commitment</div><h3>UN World Food Programme</h3><p><strong>Food security.</strong> The World Food Programme provides food assistance in emergencies and works to improve food security. Hunger can be immediate and invisible; this contribution backed an organization focused on meeting that need.</p><div class="amount">€100 <span>confirmed donation</span></div></div></article>
+      <article><div class="impact-ledger-icon" aria-hidden="true">🥫</div><div><div class="impact-date">30 June 2026 · June commitment</div><h3>Voedselbank</h3><p><strong>Food support.</strong> Food banks help people who are struggling to afford groceries by redistributing food. It's a practical, local form of support: getting food to households that need it.</p><div class="amount">€130 <span>confirmed donation</span></div></div></article>
+      <article><div class="impact-ledger-icon" aria-hidden="true">🌍</div><div><div class="impact-date">31 May 2026 · May commitment</div><h3>WWF / Wereld Natuur Fonds</h3><p><strong>Nature and wildlife.</strong> WWF works on protecting nature, wildlife and the habitats they depend on. From biodiversity to healthy ecosystems, its work reminds us that the world beyond our collections is worth looking after.</p><div class="amount">€75 <span>confirmed donation</span></div></div></article>
+      <article><div class="impact-ledger-icon" aria-hidden="true">🏠</div><div><div class="impact-date">27 April 2026 · March + April commitment</div><h3>Ronald McDonald Huis NL</h3><p><strong>Family support.</strong> Ronald McDonald Houses help families stay close to children receiving hospital care. Being nearby during difficult days can matter enormously to parents, siblings and children alike.</p><div class="amount">€390 <span>confirmed donation</span></div></div></article>
+      <article><div class="impact-ledger-icon" aria-hidden="true">💛</div><div><div class="impact-date">September 2025 · Pilot commitment</div><h3>Stichting Leven met Kanker</h3><p><strong>Living with cancer.</strong> This pilot donation supported Stichting Leven met Kanker, an organization focused on people affected by cancer. It marked the beginning of our commitment-stream initiative.</p><div class="amount">€50 <span>confirmed donation</span></div></div></article>
+      <article><div class="impact-ledger-icon" aria-hidden="true">🌟</div><div><div class="impact-date">September 2025 · Pilot commitment</div><h3>UNICEF</h3><p><strong>Children's rights.</strong> UNICEF works for children's rights and wellbeing worldwide, including access to essential services and protection. Our first pilot stream included this contribution.</p><div class="amount">€26 <span>confirmed donation</span></div></div></article></div>
+    <div class="impact-note"><strong>July 2026:</strong> Vacation break — no commitment stream. <strong>Ledger note:</strong> €1,326 in confirmed contributions across nine recipient payments through 1 November 2026. One possible additional historical entry is still being reconciled. Descriptions explain each organization's general mission, not outcomes attributed to our donations. Supporting donation receipts and stream evidence will be added after review.</div>
   </div>
 </section>
 
